@@ -40,7 +40,7 @@ export default async function HomePage() {
           />
           <Feature 
             emoji="🎮"
-            text="Sunday "Table Talk" game made from your week"
+            text='Sunday "Table Talk" game made from your week'
           />
           <Feature 
             emoji="🗂️"
@@ -54,7 +54,7 @@ export default async function HomePage() {
             href="/auth/login"
             className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
           >
-            Start Free →
+            Start Free &rarr;
           </Link>
           
           <Link
