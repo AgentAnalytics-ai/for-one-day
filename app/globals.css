@@ -10,9 +10,7 @@
     --primary-foreground: 0 0% 100%;
   }
 
-  * {
-    @apply border-border;
-  }
+  /* Removed problematic border-border class */
 
   body {
     @apply bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50;
