@@ -68,7 +68,7 @@ export async function signUp(email: string, password: string, fullName: string) 
 
   // Initialize profile and family
   if (data.user) {
-    await initializeUserProfile(data.user.id, fullName, email)
+    await initializeUserProfile(data.user.id, fullName)
   }
 
   return { success: true }
@@ -83,7 +83,7 @@ export async function signOut() {
 /**
  * Initialize user profile and family on first signup
  */
-async function initializeUserProfile(userId: string, fullName: string, email: string) {
+async function initializeUserProfile(userId: string, fullName: string) {
   const supabase = await createClient()
 
   // Create profile

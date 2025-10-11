@@ -14,7 +14,7 @@ export default async function TableTalkPage() {
 
       <div className="bg-white/70 backdrop-blur rounded-xl p-12 text-center">
         <p className="text-6xl mb-4">🎮</p>
-        <h2 className="text-2xl font-serif font-bold mb-2">Complete This Week's Devotions</h2>
+        <h2 className="text-2xl font-serif font-bold mb-2">Complete This Week&apos;s Devotions</h2>
         <p className="text-gray-600 mb-6">
           Your Table Talk deck will be ready after you complete<br />
           Monday-Saturday devotional entries

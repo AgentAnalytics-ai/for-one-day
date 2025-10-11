@@ -7,7 +7,17 @@ import { signOut } from '@/app/auth/actions'
 /**
  * 🧭 Dashboard navigation
  */
-export function DashboardNav({ user, profile }: { user: any; profile: any }) {
+interface User {
+  id: string
+  email?: string
+}
+
+interface Profile {
+  plan: string
+  full_name?: string
+}
+
+export function DashboardNav({ profile }: { profile: Profile | null }) {
   const pathname = usePathname()
 
   const navItems = [

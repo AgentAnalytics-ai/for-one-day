@@ -11,12 +11,12 @@ export default async function DashboardPage() {
 
   if (!user) return null
 
-  // Get user's family
-  const { data: familyMember } = await supabase
-    .from('family_members')
-    .select('family_id')
-    .eq('user_id', user.id)
-    .single()
+  // Get user's family (for future use)
+  // const { data: familyMember } = await supabase
+  //   .from('family_members')
+  //   .select('family_id')
+  //   .eq('user_id', user.id)
+  //   .single()
 
   const today = format(new Date(), 'EEEE, MMMM d')
 
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
         {/* Today's Devotion */}
         <Card>
           <CardHeader>
-            <h2 className="text-2xl font-serif font-bold">Today's Devotion</h2>
+            <h2 className="text-2xl font-serif font-bold">Today&apos;s Devotion</h2>
           </CardHeader>
           <CardContent>
             <div className="text-center py-12 text-gray-500">
@@ -74,7 +74,7 @@ export default async function DashboardPage() {
         {/* Today's Tasks */}
         <Card>
           <CardHeader>
-            <h2 className="text-2xl font-serif font-bold">Today's Tasks</h2>
+            <h2 className="text-2xl font-serif font-bold">Today&apos;s Tasks</h2>
           </CardHeader>
           <CardContent>
             <div className="text-center py-12 text-gray-500">
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
       {/* Weekly Progress */}
       <Card>
         <CardHeader>
-          <h2 className="text-2xl font-serif font-bold">This Week's Progress</h2>
+          <h2 className="text-2xl font-serif font-bold">This Week&apos;s Progress</h2>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
@@ -107,7 +107,7 @@ export default async function DashboardPage() {
             ))}
           </div>
           <p className="text-sm text-gray-600 mt-4 text-center">
-            Complete 6 devotions to unlock Sunday's Table Talk
+            Complete 6 devotions to unlock Sunday&apos;s Table Talk
           </p>
         </CardContent>
       </Card>
