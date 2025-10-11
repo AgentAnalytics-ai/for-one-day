@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 
 /**
- * 🗂️ Legacy Vault - One Day
+ * 🗂️ For One Day - Legacy Platform
  * Gentle urgency with smart prompts for family legacy
  */
 export default async function VaultPage() {
@@ -19,7 +19,7 @@ export default async function VaultPage() {
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-serif font-light text-gray-900 mb-2">
-          Legacy Vault
+          For One Day
         </h1>
         <p className="text-xl text-gray-600">{today}</p>
       </div>

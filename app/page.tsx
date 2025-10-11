@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 /**
- * 🏠 Premium Landing Page - 2026 Design
- * Sophisticated, trust-building experience for fathers
+ * 🏠 Billion-Dollar UI Landing Page - 2026 Design
+ * Smooth-scroll single-page experience with expert-validated sections
  */
 export default async function HomePage() {
   const supabase = await createClient()
@@ -40,92 +40,203 @@ export default async function HomePage() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed">
-            The premium platform for fathers building daily rhythms of devotion, 
-            meaningful family connection, and lasting legacy.
+            The platform for fathers building daily rhythms of devotion, connection, and legacy.
           </p>
           
           {/* Primary CTA */}
           <div className="mb-20">
             <Link
-              href="/auth/login"
+              href="/auth/signup"
               className="inline-flex items-center gap-3 bg-gray-900 hover:bg-gray-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              Start Your Journey
+              Start Free Today
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
+            </Link>
+            
+            <Link
+              href="#how"
+              className="block mt-6 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              See How It Works
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 px-6 md:px-8 bg-gray-50">
+      {/* How It Works Section */}
+      <section id="how" className="py-24 px-6 md:px-8 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            Everything you need to lead your family well
+            How It Works
           </h2>
           
           <div className="grid md:grid-cols-3 gap-12">
-            <FeatureCard
+            <HowItWorksCard
+              step="1"
+              title="Daily Devotion"
+              subtitle="3 minutes"
+              description="Short guided reflections designed for busy fathers."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               }
-              title="Daily Devotion"
-              description="Three-minute guided reflections designed for busy fathers. Build spiritual depth without overwhelm."
             />
             
-            <FeatureCard
+            <HowItWorksCard
+              step="2"
+              title="Table Talk"
+              subtitle="Sundays"
+              description="Your week becomes seven meaningful questions for the family table."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               }
-              title="Table Talk"
-              description="Transform your week into meaningful family conversations. AI-powered questions that spark connection every Sunday."
             />
             
-            <FeatureCard
+            <HowItWorksCard
+              step="3"
+              title="For One Day"
+              subtitle="Legacy"
+              description="Letters, videos, and documents—preserved for the day they&apos;ll be needed most."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               }
-              title="Legacy Vault"
-              description="Secure storage for letters, videos, and documents. Your family's most precious memories, protected forever."
             />
           </div>
         </div>
       </section>
 
-      {/* Trust Section */}
+      {/* Feature Previews Section */}
+      <section id="features" className="py-24 px-6 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
+            See It In Action
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <FeaturePreviewCard
+              title="Daily Devotion"
+              preview="What unexpected blessing did you notice today?"
+              microCTA="Try This"
+              href="/auth/signup"
+            />
+            
+            <FeaturePreviewCard
+              title="Table Talk"
+              preview="Which day do you think Dad felt most grateful?"
+              microCTA="Try This"
+              href="/auth/signup"
+            />
+            
+            <FeaturePreviewCard
+              title="For One Day"
+              preview="Letter to My Daughter • release: wedding day"
+              microCTA="Try This"
+              href="/auth/signup"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof Section */}
+      <section id="stories" className="py-24 px-6 md:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-serif font-light text-gray-900 mb-16">
+            Trusted by fathers across the country
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <TestimonialCard
+              quote="Changed how I lead my family. Three minutes that matter."
+              author="David, Father of 3"
+            />
+            
+            <TestimonialCard
+              quote="Finally, a way to connect with my kids that feels authentic."
+              author="Marcus, Father of 2"
+            />
+            
+            <TestimonialCard
+              quote="Knowing my family will have my words forever brings peace."
+              author="James, Father of 4"
+            />
+          </div>
+          
+          <p className="text-lg text-gray-600">
+            Join a growing movement of fathers building what lasts.
+          </p>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 px-6 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
+            Choose Your Legacy Journey
+          </h2>
+          
+          <PricingTable />
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 px-6 md:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
+            Frequently Asked Questions
+          </h2>
+          
+          <div className="space-y-8">
+            <FAQItem
+              question="Is this faith-specific?"
+              answer="Faith-friendly, not pushy. You control content."
+            />
+            
+            <FAQItem
+              question="Is my data secure?"
+              answer="Encrypted storage, timed releases, cancel anytime."
+            />
+            
+            <FAQItem
+              question="Can my spouse see it?"
+              answer="Yes—grant access for Table Talk and shared memories."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
       <section className="py-24 px-6 md:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-light text-gray-900 mb-8">
-            Built for fathers who want more
+            Start building what lasts
           </h2>
-          <p className="text-xl text-gray-600 mb-16 leading-relaxed">
-            Join thousands of fathers who have transformed their daily routines 
-            into meaningful moments of connection and spiritual growth.
-          </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
             <Link
-              href="/auth/login"
-              className="bg-primary-500 hover:bg-primary-600 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+              href="/auth/signup"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Start Free Today
             </Link>
             
             <Link
-              href="#features"
+              href="#pricing"
               className="text-gray-700 hover:text-gray-900 px-10 py-4 rounded-full text-lg font-medium transition-colors border border-gray-300 hover:border-gray-400"
             >
-              See How It Works
+              See Pricing
             </Link>
           </div>
+          
+          <p className="text-sm text-gray-500">
+            Encrypted storage · Cancel anytime · Built for fathers who lead with love.
+          </p>
         </div>
       </section>
 
@@ -142,7 +253,7 @@ export default async function HomePage() {
             />
           </div>
           <p className="text-gray-400 text-sm">
-            For One Day is a premium family platform by Agent Analytics.
+            For fathers building what lasts.
           </p>
         </div>
       </footer>
@@ -150,27 +261,253 @@ export default async function HomePage() {
   )
 }
 
-function FeatureCard({ 
-  icon, 
+function HowItWorksCard({ 
+  step, 
   title, 
-  description 
+  subtitle, 
+  description, 
+  icon 
 }: { 
-  icon: React.ReactNode
+  step: string
   title: string
-  description: string 
+  subtitle: string
+  description: string
+  icon: React.ReactNode
 }) {
   return (
-    <div className="text-center group">
+    <div className="text-center">
+      <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 text-white rounded-full mb-6 text-xl font-bold">
+        {step}
+      </div>
+      
       <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-50 rounded-full mb-6 group-hover:bg-primary-100 transition-colors duration-300">
         <div className="text-primary-600">
           {icon}
         </div>
       </div>
-      <h3 className="text-xl font-serif font-medium text-gray-900 mb-4">
+      
+      <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
         {title}
       </h3>
+      
+      <p className="text-sm text-primary-600 font-medium mb-4">
+        {subtitle}
+      </p>
+      
       <p className="text-gray-600 leading-relaxed">
         {description}
+      </p>
+    </div>
+  )
+}
+
+function FeaturePreviewCard({ 
+  title, 
+  preview, 
+  microCTA, 
+  href 
+}: { 
+  title: string
+  preview: string
+  microCTA: string
+  href: string
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h3 className="text-lg font-serif font-medium text-gray-900 mb-4">
+        {title}
+      </h3>
+      
+      <div className="bg-gray-50 rounded-lg p-4 mb-4">
+        <p className="text-gray-700 text-sm italic">
+          &ldquo;{preview}&rdquo;
+        </p>
+      </div>
+      
+      <Link
+        href={href}
+        className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
+      >
+        {microCTA}
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </Link>
+    </div>
+  )
+}
+
+function TestimonialCard({ 
+  quote, 
+  author 
+}: { 
+  quote: string
+  author: string
+}) {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm">
+      <p className="text-gray-700 italic mb-4">
+        &ldquo;{quote}&rdquo;
+      </p>
+      <p className="text-sm text-gray-600 font-medium">
+        — {author}
+      </p>
+    </div>
+  )
+}
+
+function PricingTable() {
+  return (
+    <div className="grid md:grid-cols-4 gap-6">
+      <PricingCard
+        name="Free"
+        price="$0"
+        period=""
+        description="Perfect for getting started"
+        features={[
+          "1 devotion/week",
+          "1 Table Talk/month", 
+          "For One Day: 3 items",
+          "Email reminders"
+        ]}
+        cta="Start Free"
+        href="/auth/signup"
+        popular={false}
+      />
+      
+      <PricingCard
+        name="Devotion Pro"
+        price="$4.99"
+        period="/mo"
+        description="Daily rhythm and family connection"
+        features={[
+          "Daily devotions + streaks",
+          "Unlimited Table Talk",
+          "Spouse/family sharing",
+          "Weekly summary email"
+        ]}
+        cta="Upgrade"
+        href="/auth/signup"
+        popular={false}
+      />
+      
+      <PricingCard
+        name="Legacy Pro"
+        price="$9.99"
+        period="/mo"
+        description="Complete legacy platform"
+        features={[
+          "Everything in Pro",
+          "For One Day: unlimited items",
+          "Voice/video messages",
+          "Timed releases (wedding, graduation)",
+          "Priority support"
+        ]}
+        cta="Most Popular"
+        href="/auth/signup"
+        popular={true}
+      />
+      
+      <PricingCard
+        name="Lifetime"
+        price="$199"
+        period=""
+        description="One-time payment, forever access"
+        features={[
+          "All Legacy Pro features forever",
+          "Early access to new content",
+          "Premium themes & export kits",
+          "Priority support"
+        ]}
+        cta="Invest Once"
+        href="/auth/signup"
+        popular={false}
+      />
+    </div>
+  )
+}
+
+function PricingCard({ 
+  name, 
+  price, 
+  period, 
+  description, 
+  features, 
+  cta, 
+  href, 
+  popular 
+}: { 
+  name: string
+  price: string
+  period: string
+  description: string
+  features: string[]
+  cta: string
+  href: string
+  popular: boolean
+}) {
+  return (
+    <div className={`bg-white rounded-xl border-2 p-6 ${popular ? 'border-primary-500 shadow-lg' : 'border-gray-200 shadow-sm'} relative`}>
+      {popular && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <span className="bg-primary-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+            Most Popular
+          </span>
+        </div>
+      )}
+      
+      <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
+        {name}
+      </h3>
+      
+      <div className="mb-4">
+        <span className="text-3xl font-bold text-gray-900">{price}</span>
+        <span className="text-gray-600">{period}</span>
+      </div>
+      
+      <p className="text-gray-600 mb-6">
+        {description}
+      </p>
+      
+      <ul className="space-y-3 mb-8">
+        {features.map((feature, index) => (
+          <li key={index} className="flex items-start gap-3">
+            <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span className="text-gray-700 text-sm">{feature}</span>
+          </li>
+        ))}
+      </ul>
+      
+      <Link
+        href={href}
+        className={`w-full block text-center py-3 px-4 rounded-lg font-medium transition-colors ${
+          popular 
+            ? 'bg-primary-500 hover:bg-primary-600 text-white' 
+            : 'bg-gray-900 hover:bg-gray-800 text-white'
+        }`}
+      >
+        {cta}
+      </Link>
+    </div>
+  )
+}
+
+function FAQItem({ 
+  question, 
+  answer 
+}: { 
+  question: string
+  answer: string
+}) {
+  return (
+    <div className="bg-white rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg font-medium text-gray-900 mb-3">
+        {question}
+      </h3>
+      <p className="text-gray-600">
+        {answer}
       </p>
     </div>
   )
