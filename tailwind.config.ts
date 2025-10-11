@@ -13,6 +13,10 @@ const config: Config = {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // Custom colors from CSS variables
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        'primary-foreground': 'hsl(var(--primary-foreground))',
         primary: {
           50: '#fef7f0',
           100: '#fdeede',
