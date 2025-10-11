@@ -7,11 +7,6 @@ import { signOut } from '@/app/auth/actions'
 /**
  * 🧭 Dashboard navigation
  */
-interface User {
-  id: string
-  email?: string
-}
-
 interface Profile {
   plan: string
   full_name?: string

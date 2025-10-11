@@ -28,7 +28,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen">
-      <DashboardNav user={user} profile={profile} />
+      <DashboardNav profile={profile} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
