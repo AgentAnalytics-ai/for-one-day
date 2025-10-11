@@ -32,7 +32,7 @@ export default async function DevotionalPage() {
 
       {/* Current Week Progress */}
       <div className="bg-white/70 backdrop-blur rounded-xl border border-white/20 shadow-lg p-6">
-        <h2 className="text-xl font-serif font-medium text-gray-900 mb-4">This Week's Journey</h2>
+        <h2 className="text-xl font-serif font-medium text-gray-900 mb-4">This Week&apos;s Journey</h2>
         <div className="flex gap-2">
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
             <div key={day} className="flex-1 text-center">
@@ -79,14 +79,14 @@ export default async function DevotionalPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-8 mb-8 border border-white/40">
             <p className="text-xl text-gray-700 italic mb-6 leading-relaxed">
-              "Give thanks in all circumstances; for this is God's will for you in Christ Jesus."
+              &ldquo;Give thanks in all circumstances; for this is God&apos;s will for you in Christ Jesus.&rdquo;
             </p>
             <p className="text-sm text-gray-600">1 Thessalonians 5:18</p>
           </div>
           
           <div className="bg-white/60 backdrop-blur rounded-lg p-6 mb-8">
             <h3 className="text-lg font-serif font-medium text-gray-900 mb-4">
-              Today's Reflection
+              Today&apos;s Reflection
             </h3>
             <p className="text-gray-800 text-lg leading-relaxed">
               What unexpected blessing did you notice today?
@@ -120,7 +120,7 @@ export default async function DevotionalPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <h3 className="text-xl font-serif font-medium text-gray-900">Tonight's Family Connection</h3>
+          <h3 className="text-xl font-serif font-medium text-gray-900">Tonight&apos;s Family Connection</h3>
         </div>
         
         <div className="bg-white/80 rounded-lg p-4 mb-4">
@@ -128,7 +128,7 @@ export default async function DevotionalPage() {
             Share this question with your family tonight:
           </p>
           <p className="text-gray-700 italic">
-            "What unexpected blessing did you notice today?"
+            &ldquo;What unexpected blessing did you notice today?&rdquo;
           </p>
         </div>
         

@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
             <p className="text-lg text-gray-700 italic mb-4">
-              "Give thanks in all circumstances; for this is God's will for you in Christ Jesus."
+              &ldquo;Give thanks in all circumstances; for this is God&apos;s will for you in Christ Jesus.&rdquo;
             </p>
             <p className="text-sm text-gray-600">1 Thessalonians 5:18</p>
           </div>
@@ -130,7 +130,7 @@ function FamilyImpactCard() {
       
       <div className="bg-blue-50 rounded-lg p-4 mb-4">
         <p className="text-gray-800 font-medium">
-          "What unexpected blessing did you notice today?"
+          &ldquo;What unexpected blessing did you notice today?&rdquo;
         </p>
         <p className="text-sm text-gray-600 mt-2">
           Start the conversation with your family tonight
@@ -158,7 +158,7 @@ function LegacyMomentCard() {
       
       <div className="bg-purple-50 rounded-lg p-4 mb-4">
         <p className="text-gray-800 font-medium">
-          "Today I'm grateful for..."
+          &ldquo;Today I&apos;m grateful for...&rdquo;
         </p>
         <p className="text-sm text-gray-600 mt-2">
           Add to your family's story for One Day

@@ -39,7 +39,7 @@ export default async function TableTalkPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
             <p className="text-lg text-gray-700 mb-4">
-              "I discovered that gratitude isn't just about saying thanks—it's about noticing the small blessings that happen every day, even in the midst of challenges."
+              &ldquo;I discovered that gratitude isn&apos;t just about saying thanks—it&apos;s about noticing the small blessings that happen every day, even in the midst of challenges.&rdquo;
             </p>
             <p className="text-sm text-gray-600">From your Week 1: A Week of Gratitude</p>
           </div>
@@ -62,7 +62,7 @@ export default async function TableTalkPage() {
         <GameCard
           type="prompt"
           title="Gratitude Challenge"
-          question="What's one thing that made you smile today that you normally wouldn't notice?"
+          question="What&apos;s one thing that made you smile today that you normally wouldn&apos;t notice?"
           difficulty="Easy"
           color="green"
         />

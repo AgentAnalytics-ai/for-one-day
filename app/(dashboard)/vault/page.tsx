@@ -44,7 +44,7 @@ export default async function VaultPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
             <p className="text-gray-800 font-medium mb-2">
-              "Today I'm grateful for..."
+              &ldquo;Today I&apos;m grateful for...&rdquo;
             </p>
             <p className="text-sm text-gray-600">Start your legacy with gratitude</p>
           </div>
