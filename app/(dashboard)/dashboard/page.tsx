@@ -161,7 +161,7 @@ function LegacyMomentCard() {
           &ldquo;Today I&apos;m grateful for...&rdquo;
         </p>
         <p className="text-sm text-gray-600 mt-2">
-          Add to your family's story for One Day
+          Add to your family&apos;s story for One Day
         </p>
       </div>
       

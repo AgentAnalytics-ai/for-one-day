@@ -60,7 +60,7 @@ export default async function DevotionalPage() {
           ))}
         </div>
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Complete all 6 days to unlock Sunday's Family Table Talk
+          Complete all 6 days to unlock Sunday&apos;s Family Table Talk
         </p>
       </div>
 
@@ -205,7 +205,7 @@ function SundayTableTalkView() {
 
       {/* Quick Preview */}
       <div className="bg-white/70 backdrop-blur rounded-xl border border-white/20 shadow-lg p-6">
-        <h3 className="text-xl font-serif font-medium text-gray-900 mb-4">This Week's Highlights</h3>
+        <h3 className="text-xl font-serif font-medium text-gray-900 mb-4">This Week&apos;s Highlights</h3>
         <div className="space-y-3">
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -213,7 +213,7 @@ function SundayTableTalkView() {
           </div>
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-            <span className="text-gray-700">Wednesday: Your daughter's unexpected hug</span>
+            <span className="text-gray-700">Wednesday: Your daughter&apos;s unexpected hug</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>

@@ -45,7 +45,7 @@ export default async function TableTalkPage() {
           </div>
           
           <p className="text-xl text-gray-800 mb-8 leading-relaxed">
-            Now let's turn your week into a family conversation game!
+            Now let&apos;s turn your week into a family conversation game!
           </p>
           
           <button className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
@@ -141,7 +141,7 @@ export default async function TableTalkPage() {
         
         <div className="flex gap-4">
           <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-            Save This Week's Memory
+            Save This Week&apos;s Memory
           </button>
           
           <Link
