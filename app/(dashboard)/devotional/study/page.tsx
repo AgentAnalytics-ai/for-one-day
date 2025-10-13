@@ -134,7 +134,7 @@ export default async function DevotionalStudyPage() {
               key={book.id}
               book={book}
               isCurrent={userProgress.currentBook === book.id}
-              progress={userProgress.completedChapters[book.id]?.length || 0}
+              progress={(userProgress.completedChapters as Record<string, number[]>)[book.id]?.length || 0}
               totalChapters={book.chapters}
             />
           ))}
