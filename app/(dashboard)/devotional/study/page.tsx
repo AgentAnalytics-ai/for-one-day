@@ -146,7 +146,7 @@ export default async function DevotionalStudyPage() {
         <QuickStartCard
           title="Continue Reading"
           description="Pick up where you left off"
-          bookName={userProgress.currentBook ? RECOMMENDED_BOOKS.find(b => b.id === userProgress.currentBook)?.name : 'Genesis'}
+          bookName={userProgress.currentBook ? (RECOMMENDED_BOOKS.find(b => b.id === userProgress.currentBook)?.name || 'Genesis') : 'Genesis'}
           chapterNumber={userProgress.currentChapter || 1}
           cta="Continue"
           href={`/devotional/read/${userProgress.currentBook || 'genesis'}/${userProgress.currentChapter || 1}`}
