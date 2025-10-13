@@ -224,7 +224,7 @@ export function getKeyThemes(bookId: string, chapterNumber: number): string[] {
 export async function fetchBibleChapterFromAPI(
   bookId: string, 
   chapterNumber: number,
-  translation: 'ESV' | 'NIV' | 'NLT' = 'ESV'
+  _translation: 'ESV' | 'NIV' | 'NLT' = 'ESV'
 ): Promise<BibleChapter | null> {
   // TODO: Implement Bible API integration
   // Options: YouVersion API, ESV API, Bible.com API

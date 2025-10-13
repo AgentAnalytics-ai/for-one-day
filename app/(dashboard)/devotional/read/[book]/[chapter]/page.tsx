@@ -12,15 +12,16 @@ import { notFound } from 'next/navigation'
 export default async function DevotionalReadPage({ 
   params 
 }: { 
-  params: { book: string; chapter: string } 
+  params: Promise<{ book: string; chapter: string }> 
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) return null
 
-  const bookId = params.book
-  const chapterNumber = parseInt(params.chapter)
+  const resolvedParams = await params
+  const bookId = resolvedParams.book
+  const chapterNumber = parseInt(resolvedParams.chapter)
 
   const book = RECOMMENDED_BOOKS.find(b => b.id === bookId)
   if (!book || chapterNumber < 1 || chapterNumber > book.chapters) {

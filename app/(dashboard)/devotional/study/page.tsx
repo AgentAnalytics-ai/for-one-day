@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { RECOMMENDED_BOOKS, getPersonalizedRecommendations, BibleBook } from '@/lib/content/bible-library'
+import { RECOMMENDED_BOOKS, BibleBook } from '@/lib/content/bible-library'
 import { getPersonalizedRecommendations as getProgressRecommendations } from '@/lib/content/progression-system'
 import Link from 'next/link'
 
