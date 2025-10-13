@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { RECOMMENDED_BOOKS, getPersonalizedRecommendations } from '@/lib/content/bible-library'
-import { generateDevotional, generateTableTalkQuestions } from '@/lib/content/ai-generator'
-import { checkAndUnlockAchievements, getPersonalizedRecommendations as getProgressRecommendations } from '@/lib/content/progression-system'
+import { RECOMMENDED_BOOKS, getPersonalizedRecommendations, BibleBook } from '@/lib/content/bible-library'
+import { getPersonalizedRecommendations as getProgressRecommendations } from '@/lib/content/progression-system'
 import Link from 'next/link'
 
 /**
@@ -29,7 +28,6 @@ export default async function DevotionalStudyPage() {
     lastActiveDate: new Date().toISOString()
   }
 
-  const recommendations = getPersonalizedRecommendations(userProgress)
   const progressRecommendations = getProgressRecommendations(userProgress)
 
   return (
@@ -294,7 +292,7 @@ function BookCard({
   progress, 
   totalChapters 
 }: { 
-  book: any
+  book: BibleBook
   isCurrent: boolean
   progress: number
   totalChapters: number

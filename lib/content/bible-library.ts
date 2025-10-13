@@ -153,7 +153,9 @@ export type LearningPath = keyof typeof LEARNING_PATHS
 // 🎯 CONTENT GENERATION HELPERS
 export function getRecommendedBooksForPath(path: LearningPath): BibleBook[] {
   const bookIds = LEARNING_PATHS[path]
-  return RECOMMENDED_BOOKS.filter(book => bookIds.includes(book.id as any))
+  return RECOMMENDED_BOOKS.filter(book => 
+    bookIds.includes(book.id as 'genesis' | 'psalms' | 'matthew' | 'proverbs' | 'ephesians' | 'romans' | 'revelation')
+  )
 }
 
 export function getBooksByDifficulty(difficulty: 'beginner' | 'intermediate' | 'advanced'): BibleBook[] {

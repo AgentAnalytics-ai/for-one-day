@@ -4,7 +4,7 @@
  */
 
 import { openai } from '@/lib/ai'
-import { BibleBook, BibleChapter, DevotionalContent } from './bible-library'
+import { BibleBook, DevotionalContent } from './bible-library'
 
 /**
  * 🎯 EXPERT-OPTIMIZED AI PROMPTS

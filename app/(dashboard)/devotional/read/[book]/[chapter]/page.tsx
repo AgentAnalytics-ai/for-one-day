@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { RECOMMENDED_BOOKS } from '@/lib/content/bible-library'
 import { generateDevotional, generateTableTalkQuestions } from '@/lib/content/ai-generator'
+import { getBibleChapter } from '@/lib/content/bible-text'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -26,8 +27,9 @@ export default async function DevotionalReadPage({
     notFound()
   }
 
-  // Generate devotional content (in real app, would be cached/pre-generated)
-  const devotional = await generateDevotional(book, chapterNumber, ['faith', 'family', 'leadership'])
+  // Get Bible text and generate devotional content
+  const bibleChapter = getBibleChapter(bookId, chapterNumber)
+  const devotional = await generateDevotional(book, chapterNumber, bibleChapter?.keyThemes || ['faith', 'family', 'leadership'])
   const tableTalkQuestions = await generateTableTalkQuestions(book, chapterNumber)
 
   return (
@@ -70,6 +72,35 @@ export default async function DevotionalReadPage({
         </div>
       </div>
 
+      {/* Bible Text */}
+      {bibleChapter && (
+        <div className="bg-white rounded-2xl border border-gray-200 p-8">
+          <h2 className="text-xl font-serif font-medium text-gray-900 mb-6">
+            Scripture Reading
+          </h2>
+          
+          <div className="space-y-4">
+            {bibleChapter.verses.map((verse, index) => (
+              <div key={index} className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-medium text-sm">
+                  {verse.verse}
+                </span>
+                
+                <p className="text-gray-800 leading-relaxed text-lg">
+                  {verse.text}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-500">
+              {bibleChapter.book} {bibleChapter.chapter} • {bibleChapter.verses[0]?.translation}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Devotional Content */}
       <div className="bg-white rounded-2xl border border-gray-200 p-8 space-y-8">
         {/* Summary */}
@@ -80,7 +111,7 @@ export default async function DevotionalReadPage({
           
           <div className="prose prose-gray max-w-none">
             <p className="text-gray-700 leading-relaxed text-lg">
-              {devotional.summary}
+              {bibleChapter?.summary || devotional.summary}
             </p>
           </div>
         </div>

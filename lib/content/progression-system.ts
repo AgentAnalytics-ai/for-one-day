@@ -4,7 +4,6 @@
  */
 
 import { BibleBook, LEARNING_PATHS, LearningPath } from './bible-library'
-import { DevotionalContent } from './bible-library'
 
 export interface UserProgress {
   userId: string
