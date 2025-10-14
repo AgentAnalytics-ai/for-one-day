@@ -7,11 +7,32 @@ import { z } from 'zod'
 const emailSchema = z.string().email()
 
 /**
- * 🔐 Auth actions (server-side)
+ * 🔐 Premium Auth Actions - Billion-Dollar Authentication System
+ * Professional, secure authentication with multiple options
  */
 
-export async function signInWithMagicLink(email: string) {
+export async function signInWithGoogle() {
   const supabase = await createClient()
+  
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  if (data.url) {
+    redirect(data.url)
+  }
+}
+
+export async function signInWithMagicLink(formData: FormData) {
+  const supabase = await createClient()
+  const email = formData.get('email') as string
   
   // Validate email
   const result = emailSchema.safeParse(email)
@@ -30,11 +51,13 @@ export async function signInWithMagicLink(email: string) {
     return { error: error.message }
   }
 
-  return { success: true }
+  redirect('/auth/magic-link-sent?email=' + encodeURIComponent(email))
 }
 
-export async function signInWithPassword(email: string, password: string) {
+export async function signInWithPassword(formData: FormData) {
   const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
   
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -48,8 +71,11 @@ export async function signInWithPassword(email: string, password: string) {
   redirect('/dashboard')
 }
 
-export async function signUp(email: string, password: string, fullName: string) {
+export async function signUp(formData: FormData) {
   const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const fullName = formData.get('full-name') as string
   
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -71,7 +97,7 @@ export async function signUp(email: string, password: string, fullName: string) 
     await initializeUserProfile(data.user.id, fullName)
   }
 
-  return { success: true }
+  redirect('/auth/check-email?email=' + encodeURIComponent(email))
 }
 
 export async function signOut() {
