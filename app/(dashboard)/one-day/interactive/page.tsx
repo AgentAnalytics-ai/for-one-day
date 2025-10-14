@@ -14,7 +14,7 @@ import { saveLegacyNote } from '@/app/actions/user-actions'
 export default function InteractiveOneDayPage() {
   const [writingModalOpen, setWritingModalOpen] = useState(false)
   const [selectedPrompt, setSelectedPrompt] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [, setIsLoading] = useState(false)
   
   const { showNotification, NotificationContainer } = useNotification()
 
@@ -107,7 +107,7 @@ export default function InteractiveOneDayPage() {
       } else {
         showNotification(result.error || 'Failed to save legacy note', 'error')
       }
-    } catch (error) {
+    } catch {
       showNotification('An error occurred while saving', 'error')
     } finally {
       setIsLoading(false)

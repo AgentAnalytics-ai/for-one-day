@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { format } from 'date-fns'
+import Link from 'next/link'
 import { WritingModal, RecordingModal, ReminderModal } from '@/components/ui/modal'
 import { useNotification, successMessages } from '@/components/ui/notification'
 import { saveReflection, saveVoiceNote, setReminder } from '@/app/actions/user-actions'
@@ -38,7 +39,7 @@ export default function InteractiveDevotionalPage() {
       } else {
         showNotification(result.error || 'Failed to save reflection', 'error')
       }
-    } catch (error) {
+    } catch {
       showNotification('An error occurred while saving', 'error')
     } finally {
       setIsLoading(false)
@@ -59,7 +60,7 @@ export default function InteractiveDevotionalPage() {
       } else {
         showNotification(result.error || 'Failed to save voice note', 'error')
       }
-    } catch (error) {
+    } catch {
       showNotification('An error occurred while recording', 'error')
     } finally {
       setIsLoading(false)
@@ -81,7 +82,7 @@ export default function InteractiveDevotionalPage() {
       } else {
         showNotification(result.error || 'Failed to set reminder', 'error')
       }
-    } catch (error) {
+    } catch {
       showNotification('An error occurred while setting reminder', 'error')
     } finally {
       setIsLoading(false)

@@ -55,7 +55,7 @@ export async function saveVoiceNote(formData: FormData) {
   }
 
   const title = formData.get('title') as string
-  const audioBlob = formData.get('audioBlob') as File
+  const _audioBlob = formData.get('audioBlob') as File
 
   if (!title?.trim()) {
     return { error: 'Voice note title is required' }
