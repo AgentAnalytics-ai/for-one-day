@@ -13,7 +13,7 @@ import { saveLegacyNote } from '@/app/actions/user-actions'
  */
 export default function InteractiveOneDayPage() {
   const [writingModalOpen, setWritingModalOpen] = useState(false)
-  const [selectedPrompt, setSelectedPrompt] = useState('')
+  const [selectedPrompt, setSelectedPrompt] = useState<typeof legacyPrompts[0] | null>(null)
   const [, setIsLoading] = useState(false)
   
   const { showNotification, NotificationContainer } = useNotification()
@@ -94,9 +94,9 @@ export default function InteractiveOneDayPage() {
     setIsLoading(true)
     try {
       const formData = new FormData()
-      formData.append('title', selectedPrompt.title)
+      formData.append('title', selectedPrompt?.title || 'Legacy Note')
       formData.append('content', content)
-      formData.append('type', selectedPrompt.id)
+      formData.append('type', selectedPrompt?.id || 'legacy_note')
       formData.append('recipient', 'family')
 
       const result = await saveLegacyNote(formData)
@@ -280,9 +280,9 @@ export default function InteractiveOneDayPage() {
       <WritingModal
         isOpen={writingModalOpen}
         onClose={() => setWritingModalOpen(false)}
-        title={selectedPrompt.title || 'Write Your Legacy Note'}
-        prompt={selectedPrompt.prompt || 'Share your thoughts...'}
-        placeholder={selectedPrompt.placeholder || 'Start writing...'}
+        title={selectedPrompt?.title || 'Write Your Legacy Note'}
+        prompt={selectedPrompt?.prompt || 'Share your thoughts...'}
+        placeholder={selectedPrompt?.placeholder || 'Start writing...'}
         onSave={handleSaveLegacyNote}
       />
 
