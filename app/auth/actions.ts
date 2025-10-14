@@ -22,7 +22,8 @@ export async function signInWithGoogle() {
   })
 
   if (error) {
-    return { error: error.message }
+    // For form actions, we redirect to an error page instead of returning
+    redirect('/auth/login?error=' + encodeURIComponent(error.message))
   }
 
   if (data.url) {
@@ -37,7 +38,7 @@ export async function signInWithMagicLink(formData: FormData) {
   // Validate email
   const result = emailSchema.safeParse(email)
   if (!result.success) {
-    return { error: 'Invalid email address' }
+    redirect('/auth/login?error=' + encodeURIComponent('Invalid email address'))
   }
 
   const { error } = await supabase.auth.signInWithOtp({
@@ -48,7 +49,7 @@ export async function signInWithMagicLink(formData: FormData) {
   })
 
   if (error) {
-    return { error: error.message }
+    redirect('/auth/login?error=' + encodeURIComponent(error.message))
   }
 
   redirect('/auth/magic-link-sent?email=' + encodeURIComponent(email))
@@ -65,7 +66,7 @@ export async function signInWithPassword(formData: FormData) {
   })
 
   if (error) {
-    return { error: error.message }
+    redirect('/auth/login?error=' + encodeURIComponent(error.message))
   }
 
   redirect('/dashboard')
@@ -89,7 +90,7 @@ export async function signUp(formData: FormData) {
   })
 
   if (error) {
-    return { error: error.message }
+    redirect('/auth/signup?error=' + encodeURIComponent(error.message))
   }
 
   // Initialize profile and family
