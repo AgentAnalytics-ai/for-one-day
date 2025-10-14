@@ -5,12 +5,13 @@ import Image from 'next/image'
  * ✉️ Check Email - Account Verification
  * Professional email verification confirmation
  */
-export default function CheckEmailPage({ 
+export default async function CheckEmailPage({ 
   searchParams 
 }: { 
-  searchParams: { email?: string } 
+  searchParams: Promise<{ email?: string }> 
 }) {
-  const email = searchParams.email || 'your email'
+  const resolvedSearchParams = await searchParams
+  const email = resolvedSearchParams.email || 'your email'
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
