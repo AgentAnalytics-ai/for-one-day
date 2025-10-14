@@ -26,7 +26,7 @@ export function DashboardNav({ profile }: { profile: Profile | null }) {
       )
     },
     { 
-      href: '/devotional', 
+      href: '/devotional/interactive', 
       label: 'Devotion', 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export function DashboardNav({ profile }: { profile: Profile | null }) {
       )
     },
     { 
-      href: '/one-day', 
+      href: '/one-day/interactive', 
       label: 'For One Day', 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
