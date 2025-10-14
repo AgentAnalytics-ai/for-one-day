@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { DashboardNav } from '@/components/dashboard/nav'
+import { EnterpriseNav } from '@/components/dashboard/enterprise-nav'
+import { getUserPermissions } from '@/lib/types/family'
+import type { FamilyMember } from '@/lib/types/family'
 
 /**
  * 🏠 Dashboard layout
@@ -26,9 +28,27 @@ export default async function DashboardLayout({
     .eq('user_id', user.id)
     .single()
 
+  // Fetch family context for role-based navigation
+  const { data: familyMember } = await supabase
+    .from('family_members')
+    .select('*')
+    .eq('user_id', user.id)
+    .single()
+
+  let familyContext = null
+  if (familyMember) {
+    const permissions = getUserPermissions(familyMember as FamilyMember)
+    familyContext = {
+      role: familyMember.role,
+      permissions,
+      relationship: familyMember.relationship,
+      display_name: familyMember.display_name
+    }
+  }
+
   return (
     <div className="min-h-screen">
-      <DashboardNav profile={profile} />
+      <EnterpriseNav profile={profile} familyContext={familyContext} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}

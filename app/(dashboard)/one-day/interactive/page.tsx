@@ -5,7 +5,8 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { WritingModal } from '@/components/ui/modal'
 import { useNotification, successMessages } from '@/components/ui/notification'
-import { saveLegacyNote } from '@/app/actions/user-actions'
+import { ErrorSuccessDisplay } from '@/components/ui/error-success-display'
+import { saveLegacyNote } from '@/app/actions/enterprise-user-actions'
 
 /**
  * 🗂️ Interactive One Day Page - Working Legacy Buttons
@@ -122,6 +123,8 @@ export default function InteractiveOneDayPage() {
   return (
     <>
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* Error/Success Display */}
+        <ErrorSuccessDisplay />
         {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl font-serif font-light text-gray-900 mb-2">
