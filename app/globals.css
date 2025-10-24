@@ -6,14 +6,28 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
-    --primary: 24 87% 56%;
+    
+    /* Masculine Leadership Color System */
+    --primary: 220 100% 27%;       /* Blue-900 - Authority, leadership, trust */
     --primary-foreground: 0 0% 100%;
+    --primary-light: 220 100% 95%; /* Blue-50 */
+    
+    --secondary: 142 76% 20%;      /* Green-800 - Family protection, growth, stability */
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 142 76% 95%; /* Green-50 */
+    
+    --accent: 32 95% 44%;          /* Amber-700 - Legacy achievement, value, warmth */
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 32 95% 95%;    /* Amber-50 */
+    
+    /* Neutral Palette */
+    --neutral-50: 249 250 251;     /* Gray-50 */
+    --neutral-100: 243 244 246;    /* Gray-100 */
+    --neutral-900: 17 24 39;       /* Gray-900 */
   }
 
-  /* Removed problematic border-border class - no global border styling needed */
-
   body {
-    @apply bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50;
+    @apply bg-gradient-to-br from-blue-50 via-gray-50 to-green-50;
     @apply text-foreground;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }

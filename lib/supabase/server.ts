@@ -1,17 +1,23 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { env } from '@/lib/env'
 
 /**
  * 🔐 Server-side Supabase client
  * Use in Server Components, Server Actions, and API routes
  */
 export async function createClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn('Supabase environment variables not configured - using placeholder values')
+  }
+
   const cookieStore = await cookies()
 
   return createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         async get(name: string) {

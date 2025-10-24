@@ -40,14 +40,14 @@ export default async function HomePage() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed">
-            The platform for fathers building daily rhythms of devotion, connection, and legacy.
+            Preserve your legacy with secure, encrypted letters and messages for your family.
           </p>
           
           {/* Primary CTA */}
           <div className="mb-20">
             <Link
               href="/auth/signup"
-              className="inline-flex items-center gap-3 bg-gray-900 hover:bg-gray-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center gap-3 bg-blue-900 hover:bg-blue-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               Start Free Today
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,21 +75,21 @@ export default async function HomePage() {
           <div className="grid md:grid-cols-3 gap-12">
             <HowItWorksCard
               step="1"
-              title="Daily Devotion"
-              subtitle="3 minutes"
-              description="Short guided reflections designed for busy fathers."
+              title="Write Your Legacy"
+              subtitle="Secure & Private"
+              description="Create letters, messages, and memories for your family in a secure vault."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               }
             />
             
             <HowItWorksCard
               step="2"
-              title="Table Talk"
-              subtitle="Sundays"
-              description="Your week becomes seven meaningful questions for the family table."
+              title="Organize & Share"
+              subtitle="Family Access"
+              description="Designate trusted family members to access your legacy when needed."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -99,9 +99,9 @@ export default async function HomePage() {
             
             <HowItWorksCard
               step="3"
-              title="For One Day"
-              subtitle="Legacy"
-              description="Letters, videos, and documents—preserved for the day they&apos;ll be needed most."
+              title="Peace of Mind"
+              subtitle="Forever Secure"
+              description="Your words are encrypted, backed up, and preserved for generations to come."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -358,16 +358,16 @@ function TestimonialCard({
 
 function PricingTable() {
   return (
-    <div className="grid md:grid-cols-4 gap-6">
+    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
       <PricingCard
         name="Free"
         price="$0"
         period=""
         description="Perfect for getting started"
         features={[
-          "1 devotion/week",
-          "1 Table Talk/month", 
-          "For One Day: 3 items",
+          "Daily devotions",
+          "5 legacy notes",
+          "Basic reflections",
           "Email reminders"
         ]}
         cta="Start Free"
@@ -376,52 +376,20 @@ function PricingTable() {
       />
       
       <PricingCard
-        name="Devotion Pro"
-        price="$4.99"
-        period="/mo"
-        description="Daily rhythm and family connection"
-        features={[
-          "Daily devotions + streaks",
-          "Unlimited Table Talk",
-          "Spouse/family sharing",
-          "Weekly summary email"
-        ]}
-        cta="Upgrade"
-        href="/auth/signup"
-        popular={false}
-      />
-      
-      <PricingCard
-        name="Legacy Pro"
+        name="Pro"
         price="$9.99"
         period="/mo"
         description="Complete legacy platform"
         features={[
-          "Everything in Pro",
-          "For One Day: unlimited items",
-          "Voice/video messages",
-          "Timed releases (wedding, graduation)",
+          "Unlimited legacy notes",
+          "Unlimited reflections",
+          "Family sharing",
+          "AI-powered devotionals",
           "Priority support"
         ]}
-        cta="Most Popular"
+        cta="Upgrade to Pro"
         href="/auth/signup"
         popular={true}
-      />
-      
-      <PricingCard
-        name="Lifetime"
-        price="$199"
-        period=""
-        description="One-time payment, forever access"
-        features={[
-          "All Legacy Pro features forever",
-          "Early access to new content",
-          "Premium themes & export kits",
-          "Priority support"
-        ]}
-        cta="Invest Once"
-        href="/auth/signup"
-        popular={false}
       />
     </div>
   )

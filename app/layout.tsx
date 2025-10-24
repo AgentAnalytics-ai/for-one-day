@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: 'For One Day - Live today. Prepare for tomorrow.',
   description: 'Daily devotions, family planning, and legacy building in one beautiful app for fathers.',
   keywords: ['family', 'devotional', 'fatherhood', 'legacy', 'planning'],
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-icon.png',
+  },
 }
 
 export default function RootLayout({

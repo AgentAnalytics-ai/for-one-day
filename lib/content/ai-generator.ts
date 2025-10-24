@@ -91,6 +91,10 @@ export async function generateDevotional(
   chapterNumber: number, 
   themes: string[]
 ): Promise<DevotionalContent> {
+  if (!openai) {
+    throw new Error('OpenAI not configured')
+  }
+
   try {
     const prompt = DEVOTIONAL_PROMPT
       .replace('{bookName}', book.name)
@@ -149,6 +153,10 @@ export async function generateTableTalkQuestions(
   book: BibleBook,
   chapterNumber: number
 ): Promise<string[]> {
+  if (!openai) {
+    throw new Error('OpenAI not configured')
+  }
+
   try {
     const prompt = TABLE_TALK_PROMPT
       .replace('{bookName}', book.name)
@@ -194,6 +202,10 @@ export async function generateChapterSummary(
   book: BibleBook,
   chapterNumber: number
 ): Promise<string> {
+  if (!openai) {
+    throw new Error('OpenAI not configured')
+  }
+
   try {
     const prompt = SUMMARY_PROMPT
       .replace('{bookName}', book.name)
