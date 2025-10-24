@@ -11,25 +11,7 @@ const emailSchema = z.string().email()
  * Professional, secure authentication with multiple options
  */
 
-export async function signInWithGoogle() {
-  const supabase = await createClient()
-  
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  })
-
-  if (error) {
-    // For form actions, we redirect to an error page instead of returning
-    redirect('/auth/login?error=' + encodeURIComponent(error.message))
-  }
-
-  if (data.url) {
-    redirect(data.url)
-  }
-}
+// Google OAuth removed - using email/password authentication only
 
 export async function signInWithMagicLink(formData: FormData) {
   const supabase = await createClient()

@@ -7,12 +7,12 @@ import { z } from 'zod'
 
 const envSchema = z.object({
   // Supabase
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   
   // Site
-  NEXT_PUBLIC_SITE_URL: z.string().url(),
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   
   // OpenAI
   OPENAI_API_KEY: z.string().min(1).optional(),
@@ -21,10 +21,13 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   FROM_EMAIL: z.string().email().optional(),
   
+  // Cron
+  CRON_SECRET: z.string().min(1).optional(),
+  
   // Stripe (optional for now)
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  NEXT_PUBLIC_STRIPE_PRICE_ID: z.string().optional(),
+  NEXT_PUBLIC_STRIPE_PRO_PRICE_ID: z.string().optional(),
   
   // OneSignal (optional for now)
   ONESIGNAL_APP_ID: z.string().optional(),
@@ -42,9 +45,10 @@ const envParse = envSchema.safeParse({
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   FROM_EMAIL: process.env.FROM_EMAIL,
+  CRON_SECRET: process.env.CRON_SECRET,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-  NEXT_PUBLIC_STRIPE_PRICE_ID: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID,
+  NEXT_PUBLIC_STRIPE_PRO_PRICE_ID: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
   ONESIGNAL_APP_ID: process.env.ONESIGNAL_APP_ID,
   ONESIGNAL_REST_API_KEY: process.env.ONESIGNAL_REST_API_KEY,
   NODE_ENV: process.env.NODE_ENV,
