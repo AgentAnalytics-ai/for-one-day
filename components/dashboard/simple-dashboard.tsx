@@ -52,7 +52,11 @@ export function SimpleDashboard() {
         const data = await response.json()
         if (data.success) {
           setStats(data.stats)
+        } else {
+          console.error('Stats API returned error:', data.error)
         }
+      } else {
+        console.error('Stats API failed:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error loading stats:', error)
@@ -66,7 +70,11 @@ export function SimpleDashboard() {
         const data = await response.json()
         if (data.success) {
           setTodayReflection(data.reflection)
+        } else {
+          console.error('Reflection API returned error:', data.error)
         }
+      } else {
+        console.error('Reflection API failed:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error loading reflection:', error)
@@ -75,12 +83,22 @@ export function SimpleDashboard() {
 
   const loadAccountStatus = useCallback(async () => {
     try {
+      if (!user?.id) {
+        console.log('No user ID available for account status')
+        return
+      }
+      
       const supabase = createClient()
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('plan')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .single()
+      
+      if (error) {
+        console.error('Error fetching profile:', error)
+        return
+      }
       
       if (profile) {
         setAccountStatus(profile.plan as 'free' | 'pro' | 'lifetime')
@@ -91,10 +109,13 @@ export function SimpleDashboard() {
   }, [user?.id])
 
   useEffect(() => {
-    if (user) {
+    if (user && user.id) {
+      console.log('Loading dashboard data for user:', user.id)
       loadStats()
       loadTodayReflection()
       loadAccountStatus()
+    } else {
+      console.log('User not ready, skipping data load')
     }
   }, [user, loadStats, loadTodayReflection, loadAccountStatus])
 
