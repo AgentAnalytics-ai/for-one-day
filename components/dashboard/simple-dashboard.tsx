@@ -53,6 +53,18 @@ export function SimpleDashboard() {
     }
   }, [user])
 
+  // Refresh stats when component becomes visible (user navigates back to dashboard)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        loadStats()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [user])
+
   const loadStats = async () => {
     try {
       const response = await fetch('/api/stats/simple')

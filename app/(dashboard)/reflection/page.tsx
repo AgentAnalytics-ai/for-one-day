@@ -59,7 +59,14 @@ export default function ReflectionPage() {
           if (data.reflection.userReflection) {
             setUserReflection(data.reflection.userReflection)
           }
+        } else {
+          console.error('API returned error:', data.error)
+          toast.error(data.error || 'Failed to load daily reflection')
         }
+      } else {
+        const errorData = await response.json()
+        console.error('HTTP error:', response.status, errorData)
+        toast.error(errorData.error || 'Failed to load daily reflection')
       }
     } catch (error) {
       console.error('Error loading reflection:', error)
