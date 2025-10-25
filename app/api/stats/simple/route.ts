@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
 
     // Get total legacy notes
     const { data: legacyNotes, error: legacyError } = await supabase
-      .from('legacy_notes')
+      .from('vault_items')
       .select('id')
-      .eq('user_id', user.id)
+      .eq('owner_id', user.id)
 
     // Calculate reflection streak
     let reflectionStreak = 0

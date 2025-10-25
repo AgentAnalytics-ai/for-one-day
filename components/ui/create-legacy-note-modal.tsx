@@ -1,16 +1,26 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
 import { saveLegacyNote } from '@/app/actions/user-actions'
+
+interface LegacyTemplate {
+  id: string
+  name: string
+  description: string
+  category: string
+  template_content: string
+  placeholders: string[]
+}
 
 interface CreateLegacyNoteModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
+  selectedTemplate?: LegacyTemplate | null
 }
 
-export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess }: CreateLegacyNoteModalProps) {
+export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemplate }: CreateLegacyNoteModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -27,6 +37,17 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess }: CreateLega
     recipient: 'family',
     occasion: ''
   })
+
+  // Populate form when template is selected
+  useEffect(() => {
+    if (selectedTemplate) {
+      setFormData(prev => ({
+        ...prev,
+        title: selectedTemplate.name,
+        content: selectedTemplate.template_content
+      }))
+    }
+  }, [selectedTemplate])
 
   if (!isOpen) return null
 

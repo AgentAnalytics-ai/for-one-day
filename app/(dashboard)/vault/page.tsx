@@ -8,6 +8,7 @@ import { PremiumButton } from '@/components/ui/premium-button'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
+import { CreateLegacyNoteModal as AdvancedCreateLegacyNoteModal } from '@/components/ui/create-legacy-note-modal'
 
 interface VaultItem {
   id: string
@@ -40,6 +41,8 @@ export default function VaultPage() {
   const [templates, setTemplates] = useState<LegacyTemplate[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<LegacyTemplate | null>(null)
+  const [selectedLetter, setSelectedLetter] = useState<VaultItem | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
 
   useEffect(() => {
@@ -103,6 +106,20 @@ export default function VaultPage() {
     setSelectedTemplate(null)
     loadVaultItems()
     toast.success('Legacy note created successfully!')
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this legacy note?')) return
+
+    const supabase = createClient()
+    const { error } = await supabase.from('vault_items').delete().eq('id', id)
+
+    if (error) {
+      toast.error('Failed to delete note', error.message)
+    } else {
+      toast.success('Note deleted successfully')
+      loadVaultItems()
+    }
   }
 
   if (loading) {
@@ -255,10 +272,26 @@ export default function VaultPage() {
                     </p>
                   )}
                   <div className="flex items-center space-x-2">
-                    <PremiumButton size="sm" variant="secondary">
+                    <PremiumButton 
+                      size="sm" 
+                      variant="secondary"
+                      onClick={() => {
+                        // Open view modal
+                        setSelectedLetter(item)
+                        setIsModalOpen(true)
+                      }}
+                    >
                       View
                     </PremiumButton>
-                    <PremiumButton size="sm" variant="secondary">
+                    <PremiumButton 
+                      size="sm" 
+                      variant="secondary"
+                      onClick={() => {
+                        // Open edit modal
+                        setSelectedLetter(item)
+                        setShowCreateModal(true)
+                      }}
+                    >
                       Edit
                     </PremiumButton>
                     {!item.metadata?.is_shared && (
@@ -266,6 +299,13 @@ export default function VaultPage() {
                         Share
                       </PremiumButton>
                     )}
+                    <PremiumButton 
+                      size="sm" 
+                      variant="destructive"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Delete
+                    </PremiumButton>
                   </div>
                 </PremiumCard>
               ))}
@@ -276,77 +316,40 @@ export default function VaultPage() {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <CreateLegacyNoteModal
-          template={selectedTemplate}
+        <AdvancedCreateLegacyNoteModal
+          isOpen={showCreateModal}
           onClose={() => {
             setShowCreateModal(false)
             setSelectedTemplate(null)
           }}
           onSuccess={handleCreateSuccess}
+          selectedTemplate={selectedTemplate}
+        />
+      )}
+
+      {/* View Modal */}
+      {isModalOpen && selectedLetter && (
+        <LetterModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          letter={selectedLetter}
         />
       )}
     </>
   )
 }
 
-// Create Legacy Note Modal Component
-function CreateLegacyNoteModal({ 
-  template, 
+// Letter View Modal Component
+function LetterModal({ 
+  isOpen, 
   onClose, 
-  onSuccess 
+  letter 
 }: { 
-  template: LegacyTemplate | null
+  isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
+  letter: VaultItem
 }) {
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [recipientName, setRecipientName] = useState('')
-  const [recipientEmail, setRecipientEmail] = useState('')
-  const [saving, setSaving] = useState(false)
-
-  useEffect(() => {
-    if (template) {
-      setTitle(template.name)
-      setContent(template.template_content)
-    }
-  }, [template])
-
-  const handleSave = async () => {
-    if (!title.trim() || !content.trim()) {
-      toast.error('Title and content are required')
-      return
-    }
-
-    setSaving(true)
-    try {
-      const response = await fetch('/api/vault/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: title.trim(),
-          content: content.trim(),
-          template_type: template?.id,
-          recipient_name: recipientName.trim() || null,
-          recipient_email: recipientEmail.trim() || null
-        })
-      })
-
-      if (response.ok) {
-        onSuccess()
-      } else {
-        const data = await response.json()
-        toast.error(data.error || 'Failed to create legacy note')
-      }
-    } catch (error) {
-      console.error('Error creating legacy note:', error)
-      toast.error('Failed to create legacy note')
-    } finally {
-      setSaving(false)
-    }
-  }
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -354,7 +357,7 @@ function CreateLegacyNoteModal({
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-medium text-gray-900">
-              Create Legacy Note
+              {letter.title}
             </h2>
             <button
               onClick={onClose}
@@ -367,80 +370,43 @@ function CreateLegacyNoteModal({
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter note title"
-              />
-            </div>
+            {letter.metadata?.recipient_name && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  For
+                </label>
+                <p className="text-gray-900">{letter.metadata.recipient_name}</p>
+              </div>
+            )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Content
               </label>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={12}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                placeholder="Write your legacy note..."
-              />
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-gray-900 whitespace-pre-wrap">
+                  {letter.metadata?.content || letter.description}
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Recipient Name (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g., Sarah"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Recipient Email (Optional)
-                </label>
-                <input
-                  type="email"
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g., sarah@example.com"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Created
+              </label>
+              <p className="text-gray-600">
+                {new Date(letter.created_at).toLocaleDateString()}
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-end space-x-3 mt-6">
+          <div className="flex justify-end mt-6">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
             >
-              Cancel
+              Close
             </button>
-            <PremiumButton
-              onClick={handleSave}
-              disabled={saving || !title.trim() || !content.trim()}
-            >
-              {saving ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Saving...
-                </>
-              ) : (
-                'Save Legacy Note'
-              )}
-            </PremiumButton>
           </div>
         </div>
       </div>

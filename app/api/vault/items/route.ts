@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       .from('user_stats')
       .upsert({
         user_id: user.id,
-        total_legacy_notes: 1,
+        total_legacy_notes: supabase.sql`COALESCE(total_legacy_notes, 0) + 1`,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'user_id'
