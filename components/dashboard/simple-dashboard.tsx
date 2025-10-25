@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { PremiumCard } from '@/components/ui/premium-card'
@@ -51,7 +51,7 @@ export function SimpleDashboard() {
       loadTodayReflection()
       loadAccountStatus()
     }
-  }, [user])
+  }, [user, loadStats, loadTodayReflection, loadAccountStatus])
 
   // Refresh stats when component becomes visible (user navigates back to dashboard)
   useEffect(() => {
@@ -63,9 +63,9 @@ export function SimpleDashboard() {
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [user])
+  }, [user, loadStats])
 
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       const response = await fetch('/api/stats/simple')
       if (response.ok) {
@@ -77,9 +77,9 @@ export function SimpleDashboard() {
     } catch (error) {
       console.error('Error loading stats:', error)
     }
-  }
+  }, [])
 
-  const loadTodayReflection = async () => {
+  const loadTodayReflection = useCallback(async () => {
     try {
       const response = await fetch('/api/reflection/daily')
       if (response.ok) {
@@ -91,9 +91,9 @@ export function SimpleDashboard() {
     } catch (error) {
       console.error('Error loading reflection:', error)
     }
-  }
+  }, [])
 
-  const loadAccountStatus = async () => {
+  const loadAccountStatus = useCallback(async () => {
     try {
       const supabase = createClient()
       const { data: profile } = await supabase
@@ -108,7 +108,7 @@ export function SimpleDashboard() {
     } catch (error) {
       console.error('Error loading account status:', error)
     }
-  }
+  }, [user?.id])
 
   if (loading) {
     return (
