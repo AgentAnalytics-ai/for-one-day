@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { PremiumCard } from '@/components/ui/premium-card'
@@ -45,60 +45,42 @@ export function SimpleDashboard() {
     getUser()
   }, [])
 
-  const loadStats = useCallback(async () => {
+  const loadStats = async () => {
     try {
       const response = await fetch('/api/stats/simple')
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
           setStats(data.stats)
-        } else {
-          console.error('Stats API returned error:', data.error)
         }
-      } else {
-        console.error('Stats API failed:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error loading stats:', error)
     }
-  }, [])
+  }
 
-  const loadTodayReflection = useCallback(async () => {
+  const loadTodayReflection = async () => {
     try {
       const response = await fetch('/api/reflection/daily')
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
           setTodayReflection(data.reflection)
-        } else {
-          console.error('Reflection API returned error:', data.error)
         }
-      } else {
-        console.error('Reflection API failed:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error loading reflection:', error)
     }
-  }, [])
+  }
 
-  const loadAccountStatus = useCallback(async () => {
+  const loadAccountStatus = async () => {
     try {
-      if (!user?.id) {
-        console.log('No user ID available for account status')
-        return
-      }
-      
       const supabase = createClient()
-      const { data: profile, error } = await supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('plan')
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id)
         .single()
-      
-      if (error) {
-        console.error('Error fetching profile:', error)
-        return
-      }
       
       if (profile) {
         setAccountStatus(profile.plan as 'free' | 'pro' | 'lifetime')
@@ -106,30 +88,15 @@ export function SimpleDashboard() {
     } catch (error) {
       console.error('Error loading account status:', error)
     }
-  }, [user?.id])
+  }
 
   useEffect(() => {
-    if (user && user.id) {
-      console.log('Loading dashboard data for user:', user.id)
+    if (user) {
       loadStats()
       loadTodayReflection()
       loadAccountStatus()
-    } else {
-      console.log('User not ready, skipping data load')
     }
-  }, [user, loadStats, loadTodayReflection, loadAccountStatus])
-
-  // Refresh stats when component becomes visible (user navigates back to dashboard)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && user) {
-        loadStats()
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [user, loadStats])
+  }, [user])
 
   if (loading) {
     return (
