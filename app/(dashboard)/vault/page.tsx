@@ -301,7 +301,7 @@ export default function VaultPage() {
                     )}
                     <PremiumButton 
                       size="sm" 
-                      variant="destructive"
+                      variant="danger"
                       onClick={() => handleDelete(item.id)}
                     >
                       Delete
