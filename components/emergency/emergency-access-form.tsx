@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { submitEmergencyAccessRequest } from '@/app/actions/emergency-actions'
+// Emergency actions removed - implementing inline
 
 export function EmergencyAccessForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -12,7 +12,13 @@ export function EmergencyAccessForm() {
     setMessage(null)
 
     try {
-      const result = await submitEmergencyAccessRequest(formData)
+      // Simple inline implementation for emergency access request
+      const response = await fetch('/api/emergency-access', {
+        method: 'POST',
+        body: formData
+      })
+      
+      const result = await response.json()
       
       if (result.success) {
         setMessage({ 
