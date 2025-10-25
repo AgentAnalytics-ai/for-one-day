@@ -130,12 +130,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create legacy note' }, { status: 500 })
     }
 
-    // Update user stats
+    // Update user stats - increment total legacy notes
+    const { data: existingStats } = await supabase
+      .from('user_stats')
+      .select('total_legacy_notes')
+      .eq('user_id', user.id)
+      .single()
+
+    const newTotal = (existingStats?.total_legacy_notes || 0) + 1
+
     await supabase
       .from('user_stats')
       .upsert({
         user_id: user.id,
-        total_legacy_notes: supabase.sql`COALESCE(total_legacy_notes, 0) + 1`,
+        total_legacy_notes: newTotal,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'user_id'
