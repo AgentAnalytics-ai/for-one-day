@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
 import { saveLegacyNote } from '@/app/actions/user-actions'
 
@@ -62,6 +63,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   }, [audioUrl])
 
   if (!isOpen) return null
+
+  // Safety check to prevent ref access before component is fully mounted
+  if (typeof window === 'undefined') return null
 
   const startRecording = async () => {
     try {

@@ -8,7 +8,12 @@ import { PremiumButton } from '@/components/ui/premium-button'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
-import { CreateLegacyNoteModal as AdvancedCreateLegacyNoteModal } from '@/components/ui/create-legacy-note-modal'
+import dynamic from 'next/dynamic'
+
+const AdvancedCreateLegacyNoteModal = dynamic(
+  () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
+  { ssr: false }
+)
 
 interface VaultItem {
   id: string
