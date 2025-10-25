@@ -45,26 +45,6 @@ export function SimpleDashboard() {
     getUser()
   }, [])
 
-  useEffect(() => {
-    if (user) {
-      loadStats()
-      loadTodayReflection()
-      loadAccountStatus()
-    }
-  }, [user, loadStats, loadTodayReflection, loadAccountStatus])
-
-  // Refresh stats when component becomes visible (user navigates back to dashboard)
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && user) {
-        loadStats()
-      }
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [user, loadStats])
-
   const loadStats = useCallback(async () => {
     try {
       const response = await fetch('/api/stats/simple')
@@ -109,6 +89,26 @@ export function SimpleDashboard() {
       console.error('Error loading account status:', error)
     }
   }, [user?.id])
+
+  useEffect(() => {
+    if (user) {
+      loadStats()
+      loadTodayReflection()
+      loadAccountStatus()
+    }
+  }, [user, loadStats, loadTodayReflection, loadAccountStatus])
+
+  // Refresh stats when component becomes visible (user navigates back to dashboard)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        loadStats()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [user, loadStats])
 
   if (loading) {
     return (
