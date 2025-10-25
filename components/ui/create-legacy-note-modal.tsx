@@ -49,6 +49,18 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     }
   }, [selectedTemplate])
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current)
+      }
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl)
+      }
+    }
+  }, [audioUrl])
+
   if (!isOpen) return null
 
   const startRecording = async () => {
@@ -59,14 +71,20 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
 
       const chunks: BlobPart[] = []
       mediaRecorder.ondataavailable = (event) => {
-        chunks.push(event.data)
+        if (event.data) {
+          chunks.push(event.data)
+        }
       }
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' })
-        setAudioBlob(blob)
-        setAudioUrl(URL.createObjectURL(blob))
-        stream.getTracks().forEach(track => track.stop())
+        try {
+          const blob = new Blob(chunks, { type: 'audio/webm' })
+          setAudioBlob(blob)
+          setAudioUrl(URL.createObjectURL(blob))
+          stream.getTracks().forEach(track => track.stop())
+        } catch (error) {
+          console.error('Error processing recording:', error)
+        }
       }
 
       mediaRecorder.start()
@@ -84,34 +102,48 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   }
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current)
+    try {
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop()
+        setIsRecording(false)
+        if (recordingIntervalRef.current) {
+          clearInterval(recordingIntervalRef.current)
+        }
       }
+    } catch (error) {
+      console.error('Error stopping recording:', error)
+      setIsRecording(false)
     }
   }
 
   const playRecording = () => {
-    if (audioUrl && audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-        setIsPlaying(false)
-      } else {
-        audioRef.current.play()
-        setIsPlaying(true)
+    try {
+      if (audioUrl && audioRef.current) {
+        if (isPlaying) {
+          audioRef.current.pause()
+          setIsPlaying(false)
+        } else {
+          audioRef.current.play()
+          setIsPlaying(true)
+        }
       }
+    } catch (error) {
+      console.error('Error playing recording:', error)
+      setIsPlaying(false)
     }
   }
 
   const deleteRecording = () => {
-    setAudioBlob(null)
-    setAudioUrl(null)
-    setRecordingTime(0)
-    if (audioRef.current) {
-      audioRef.current.pause()
-      setIsPlaying(false)
+    try {
+      setAudioBlob(null)
+      setAudioUrl(null)
+      setRecordingTime(0)
+      if (audioRef.current) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      }
+    } catch (error) {
+      console.error('Error deleting recording:', error)
     }
   }
 
