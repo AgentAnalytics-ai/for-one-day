@@ -80,7 +80,20 @@ export async function signUp(formData: FormData) {
     await initializeUserProfile(data.user.id, fullName)
   }
 
-  redirect('/auth/check-email?email=' + encodeURIComponent(email))
+  // Send welcome email via Resend (async, don't wait for it)
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-welcome-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name: fullName })
+    })
+  } catch (err) {
+    console.error('Failed to send welcome email:', err)
+    // Don't fail signup if email fails
+  }
+
+  // Redirect directly to dashboard - NO EMAIL VERIFICATION NEEDED
+  redirect('/dashboard')
 }
 
 export async function signOut() {

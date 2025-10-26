@@ -193,3 +193,57 @@ export function weeklyDigestEmail(
   `
 }
 
+/**
+ * Welcome email for new users
+ */
+export async function sendWelcomeEmail({
+  to,
+  name,
+}: {
+  to: string
+  name: string
+}) {
+  const subject = 'Welcome to For One Day!'
+  
+  const html = `
+    <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #1f2937; font-size: 28px; margin-bottom: 16px;">
+        Welcome to For One Day, ${name}!
+      </h1>
+      
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+        Thank you for joining us. You're now part of a community dedicated to preserving 
+        what matters most - your legacy, your wisdom, and your love for your family.
+      </p>
+      
+      <div style="background: #f9fafb; border-radius: 8px; padding: 24px; margin: 24px 0;">
+        <h2 style="color: #1f2937; font-size: 20px; margin-bottom: 12px;">
+          Getting Started
+        </h2>
+        <ul style="color: #4b5563; font-size: 16px; line-height: 1.8; margin: 0; padding-left: 20px;">
+          <li>Create your first legacy note for someone you love</li>
+          <li>Start your daily reflection journey</li>
+          <li>Invite family members to join your legacy</li>
+        </ul>
+      </div>
+      
+      <a href="https://foroneday.app/dashboard" 
+         style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; 
+                text-decoration: none; border-radius: 6px; font-weight: 600; margin: 24px 0;">
+        Go to Dashboard
+      </a>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 32px;">
+        Questions? Reply to this email - we're here to help.
+      </p>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">
+        With gratitude,<br>
+        The For One Day Team
+      </p>
+    </div>
+  `
+  
+  return sendEmail({ to, subject, html })
+}
+
