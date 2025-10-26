@@ -47,7 +47,7 @@ export function UpgradeModal({ isOpen, onClose, feature, currentUsage, limit }: 
             </h3>
             {currentUsage !== undefined && limit !== undefined && (
               <p className="text-sm text-gray-600 mb-4">
-                You've used {currentUsage} of {limit} {feature.toLowerCase()}.
+                You&apos;ve used {currentUsage} of {limit} {feature.toLowerCase()}.
               </p>
             )}
             <p className="text-gray-700">
