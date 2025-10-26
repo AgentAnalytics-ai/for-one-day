@@ -4,6 +4,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
 import { saveLegacyNote } from '@/app/actions/user-actions'
+import { createClient } from '@/lib/supabase/client'
+import { UpgradeModal } from './upgrade-modal'
 
 interface LegacyTemplate {
   id: string
@@ -28,6 +30,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [recordingTime, setRecordingTime] = useState(0)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'lifetime'>('free')
+  const [legacyNoteCount, setLegacyNoteCount] = useState(0)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -38,6 +43,40 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     recipient: 'family',
     occasion: ''
   })
+
+  // Fetch user plan and legacy note count
+  useEffect(() => {
+    async function fetchUserData() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        // Get user plan
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('user_id', user.id)
+          .single()
+        
+        if (profile) {
+          setUserPlan(profile.plan as 'free' | 'pro' | 'lifetime')
+        }
+
+        // Get legacy note count
+        const { count } = await supabase
+          .from('vault_items')
+          .select('*', { count: 'exact', head: true })
+          .eq('owner_id', user.id)
+          .eq('kind', 'letter')
+        
+        setLegacyNoteCount(count || 0)
+      }
+    }
+    
+    if (isOpen) {
+      fetchUserData()
+    }
+  }, [isOpen])
 
   // Populate form when template is selected
   useEffect(() => {
@@ -280,6 +319,20 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             </button>
           </div>
 
+          {/* Usage Counter - Free plan only */}
+          {userPlan === 'free' && (
+            <div className="px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-700">
+                  Legacy Notes Used: <span className="font-semibold text-blue-600">{legacyNoteCount} / 5</span>
+                </span>
+                {legacyNoteCount >= 5 && (
+                  <span className="text-xs text-red-600 font-medium">Upgrade needed</span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Title */}
@@ -362,15 +415,28 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, content: 'Voice recording' }))}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                  onClick={() => {
+                    if (userPlan === 'free') {
+                      setShowUpgradeModal(true)
+                    } else {
+                      startRecording()
+                    }
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all relative ${
                     audioBlob
                       ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : userPlan === 'free'
+                      ? 'border-gray-200 hover:border-gray-300 text-gray-700 opacity-60'
                       : 'border-gray-200 hover:border-gray-300 text-gray-700'
                   }`}
                 >
                   <Mic className="w-4 h-4" />
                   <span className="text-sm font-medium">Record Voice</span>
+                  {userPlan === 'free' && (
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      PRO
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
@@ -486,6 +552,13 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
           </form>
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        feature="Voice Recordings"
+      />
     </div>
   )
 }
