@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkVoiceRecordingLimit } from '@/lib/subscription-utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,6 +10,15 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check subscription limits - voice recordings are Pro-only
+    const limitCheck = await checkVoiceRecordingLimit(user.id)
+    if (!limitCheck.canCreate) {
+      return NextResponse.json({ 
+        error: limitCheck.message || 'Voice recordings are available for Pro members. Upgrade to Pro to record and save voice messages.',
+        upgradeRequired: true
+      }, { status: 403 })
     }
 
     const formData = await request.formData()

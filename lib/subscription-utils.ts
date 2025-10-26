@@ -12,6 +12,7 @@ export interface SubscriptionStatus {
     legacyNotes: number
     familyConnections: number
     reflections: number
+    voiceRecordings: number
   }
 }
 
@@ -51,17 +52,20 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
     free: {
       legacyNotes: 5,
       familyConnections: 10,
-      reflections: -1 // unlimited
+      reflections: -1, // unlimited
+      voiceRecordings: 0 // Pro only
     },
     pro: {
       legacyNotes: -1, // unlimited
       familyConnections: -1, // unlimited
-      reflections: -1 // unlimited
+      reflections: -1, // unlimited
+      voiceRecordings: -1 // unlimited
     },
     lifetime: {
       legacyNotes: -1, // unlimited
       familyConnections: -1, // unlimited
-      reflections: -1 // unlimited
+      reflections: -1, // unlimited
+      voiceRecordings: -1 // unlimited
     }
   }
 
@@ -174,6 +178,31 @@ export async function checkFamilyConnectionLimit(userId: string): Promise<Featur
     message: canCreate 
       ? undefined 
       : `You've reached your limit of ${limit} family connections. Upgrade to Pro for unlimited connections.`
+  }
+}
+
+/**
+ * Check if user can create a voice recording
+ */
+export async function checkVoiceRecordingLimit(userId: string): Promise<FeatureLimit> {
+  const supabase = await createClient()
+  const subscription = await getUserSubscriptionStatus(userId)
+  
+  // Voice recordings are Pro-only
+  if (subscription.limits.voiceRecordings === -1) {
+    return {
+      current: 0,
+      limit: -1,
+      canCreate: true
+    }
+  }
+
+  // Free users can't create voice recordings
+  return {
+    current: 0,
+    limit: 0,
+    canCreate: false,
+    message: 'Voice recordings are available for Pro members. Upgrade to Pro to record and save voice messages.'
   }
 }
 

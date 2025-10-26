@@ -175,7 +175,15 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         })
 
         if (!response.ok) {
-          throw new Error('Failed to upload voice recording')
+          const errorData = await response.json()
+          if (errorData.upgradeRequired) {
+            // Show upgrade prompt
+            if (confirm(`${errorData.error}\n\nWould you like to upgrade to Pro?`)) {
+              window.location.href = '/upgrade'
+            }
+            return
+          }
+          throw new Error(errorData.error || 'Failed to upload voice recording')
         }
 
         const result = await response.json()
@@ -201,7 +209,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
       }
     } catch (error) {
       console.error('Error creating legacy note:', error)
-      alert('Failed to save legacy note. Please try again.')
+      alert(error instanceof Error ? error.message : 'Failed to save legacy note. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
