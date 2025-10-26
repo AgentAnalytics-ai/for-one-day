@@ -40,10 +40,10 @@ export default async function UnsubscribePage({
                 </svg>
                 <div>
                   <p className="text-sm font-medium text-green-800">
-                    You've been unsubscribed
+                    You&apos;ve been unsubscribed
                   </p>
                   <p className="text-sm text-green-700 mt-1">
-                    You won't receive any more marketing emails from For One Day.
+                    You won&apos;t receive any more marketing emails from For One Day.
                   </p>
                 </div>
               </div>
@@ -63,7 +63,7 @@ export default async function UnsubscribePage({
                   </p>
                   <p className="text-sm text-red-700 mt-1">
                     {error === 'email-required' && 'Email address is required'}
-                    {error === 'user-not-found' && 'We couldn\'t find an account with that email'}
+                    {error === 'user-not-found' && 'We couldn&apos;t find an account with that email'}
                     {error === 'processing-error' && 'An error occurred. Please try again'}
                   </p>
                 </div>
