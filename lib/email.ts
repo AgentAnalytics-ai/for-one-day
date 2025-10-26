@@ -21,11 +21,13 @@ export async function sendEmail({
   }
 
   try {
+    const fromEmail = process.env.FROM_EMAIL || 'hello@foroneday.app'
     const data = await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'hello@foroneday.app',
+      from: `For One Day <${fromEmail}>`,
       to,
       subject,
       html,
+      replyTo: fromEmail,
     })
     
     return data
@@ -233,11 +235,24 @@ export async function sendWelcomeEmail({
         Go to Dashboard
       </a>
       
-      <p style="color: #6b7280; font-size: 14px; margin-top: 32px;">
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+      
+      <p style="color: #6b7280; font-size: 12px; text-align: center; margin-bottom: 8px;">
+        This is a transactional email from For One Day.
+      </p>
+      
+      <p style="color: #6b7280; font-size: 12px; text-align: center; margin-bottom: 16px;">
         Questions? Reply to this email - we're here to help.
       </p>
       
-      <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">
+      <p style="color: #6b7280; font-size: 12px; text-align: center;">
+        <a href="https://foroneday.app/unsubscribe?email=${encodeURIComponent(to)}" 
+           style="color: #6b7280; text-decoration: underline;">
+          Unsubscribe from emails
+        </a>
+      </p>
+      
+      <p style="color: #6b7280; font-size: 14px; margin-top: 24px;">
         With gratitude,<br>
         The For One Day Team
       </p>
