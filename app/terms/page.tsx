@@ -23,7 +23,7 @@ export default function TermsPage() {
           <div className="prose prose-lg max-w-none">
             <h2>1. Acceptance of Terms</h2>
             <p>
-              By accessing and using For One Day ("Service"), you accept and agree to be bound by 
+              By accessing and using For One Day (&quot;Service&quot;), you accept and agree to be bound by 
               the terms and provision of this agreement.
             </p>
 

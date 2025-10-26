@@ -66,7 +66,7 @@ export default function PrivacyPage() {
               You can do this through your account settings or by contacting us.
             </p>
 
-            <h2>8. Children's Privacy</h2>
+            <h2>8. Children&apos;s Privacy</h2>
             <p>
               For One Day is not intended for users under the age of 13. We do not knowingly collect 
               personal information from children under 13.
