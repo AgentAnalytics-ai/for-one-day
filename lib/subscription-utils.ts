@@ -185,7 +185,6 @@ export async function checkFamilyConnectionLimit(userId: string): Promise<Featur
  * Check if user can create a voice recording
  */
 export async function checkVoiceRecordingLimit(userId: string): Promise<FeatureLimit> {
-  const supabase = await createClient()
   const subscription = await getUserSubscriptionStatus(userId)
   
   // Voice recordings are Pro-only

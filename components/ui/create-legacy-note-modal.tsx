@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
 import { saveLegacyNote } from '@/app/actions/user-actions'
 import { createClient } from '@/lib/supabase/client'
