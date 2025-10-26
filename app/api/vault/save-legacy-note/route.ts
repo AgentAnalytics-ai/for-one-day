@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkLegacyNoteLimit } from '@/lib/subscription-utils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,6 +10,15 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check subscription limits
+    const limitCheck = await checkLegacyNoteLimit(user.id)
+    if (!limitCheck.canCreate) {
+      return NextResponse.json({ 
+        error: limitCheck.message || 'You have reached your legacy note limit. Please upgrade to Pro for unlimited notes.',
+        upgradeRequired: true
+      }, { status: 403 })
     }
 
     const formData = await request.formData()
