@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
-import { saveLegacyNote } from '@/app/actions/user-actions'
 import { createClient } from '@/lib/supabase/client'
 import { UpgradeModal } from './upgrade-modal'
 
@@ -233,17 +232,35 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
           throw new Error(result.error || 'Failed to save voice note')
         }
       } else {
-        // Save as text note
+        // Save as text note using API (not server action to avoid redirect)
         const form = new FormData()
         form.append('title', formData.title)
         form.append('content', formData.content)
         form.append('recipient', formData.recipient)
         form.append('occasion', formData.occasion)
 
-        await saveLegacyNote(form)
-        onSuccess()
-        onClose()
-        resetForm()
+        const response = await fetch('/api/vault/save-legacy-note', {
+          method: 'POST',
+          body: form
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          if (errorData.upgradeRequired) {
+            setShowUpgradeModal(true)
+            return
+          }
+          throw new Error(errorData.error || 'Failed to save legacy note')
+        }
+
+        const result = await response.json()
+        if (result.success) {
+          onSuccess()
+          onClose()
+          resetForm()
+        } else {
+          throw new Error(result.error || 'Failed to save legacy note')
+        }
       }
     } catch (error) {
       console.error('Error creating legacy note:', error)
