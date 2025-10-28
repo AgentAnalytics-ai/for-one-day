@@ -58,16 +58,14 @@ export async function POST(request: NextRequest) {
 
       familyId = newFamily.id
 
-      // Add user as owner of the new family
-      const { error: memberError } = await supabase
-        .from('family_members')
-        .insert({
-          family_id: familyId,
-          user_id: user.id,
-          role: 'owner',
-          invitation_status: 'accepted',
-          joined_at: new Date().toISOString()
-        })
+          // Add user as owner of the new family
+          const { error: memberError } = await supabase
+            .from('family_members')
+            .insert({
+              family_id: familyId,
+              user_id: user.id,
+              role: 'owner'
+            })
 
       if (memberError) {
         console.error('Error adding user to family:', memberError)
@@ -83,29 +81,8 @@ export async function POST(request: NextRequest) {
       .single()
 
 
-    // Generate invitation token
+    // Generate simple invitation token for email
     const invitationToken = randomBytes(32).toString('hex')
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 7) // 7 days from now
-
-    // Create invitation record
-    const { error: inviteError } = await supabase
-      .from('family_invitations')
-      .insert({
-        family_id: familyId,
-        invited_email: email,
-        invited_name: name.trim(),
-        role: role,
-        invited_by: user.id,
-        invitation_token: invitationToken,
-        expires_at: expiresAt.toISOString(),
-        status: 'pending'
-      })
-
-    if (inviteError) {
-      console.error('Error creating invitation:', inviteError)
-      return NextResponse.json({ error: 'Failed to create invitation' }, { status: 500 })
-    }
 
     // Send invitation email
     const { data, error } = await resend.emails.send({
