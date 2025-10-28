@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { ToastContainer } from '@/components/ui/toast'
-import { toast } from '@/lib/toast'
 
 interface ScheduledDelivery {
   id: string
@@ -32,8 +31,8 @@ export default function ScheduledDeliveryPage() {
   const [scheduledDeliveries, setScheduledDeliveries] = useState<ScheduledDelivery[]>([])
   const [recipients, setRecipients] = useState<Recipient[]>([])
   const [loading, setLoading] = useState(true)
-  const [showScheduleModal, setShowScheduleModal] = useState(false)
-  const [showRecipientModal, setShowRecipientModal] = useState(false)
+  // const [showScheduleModal, setShowScheduleModal] = useState(false)
+  // const [showRecipientModal, setShowRecipientModal] = useState(false)
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
@@ -201,13 +200,13 @@ export default function ScheduledDeliveryPage() {
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <button
-          onClick={() => setShowScheduleModal(true)}
+          onClick={() => {/* TODO: Implement schedule modal */}}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
         >
           Schedule New Delivery
         </button>
         <button
-          onClick={() => setShowRecipientModal(true)}
+          onClick={() => {/* TODO: Implement recipient modal */}}
           className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
         >
           Manage Recipients
@@ -228,7 +227,7 @@ export default function ScheduledDeliveryPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">No scheduled deliveries yet</h3>
             <p className="text-gray-600 mb-6">Schedule your first legacy message to be delivered at the perfect time.</p>
             <button
-              onClick={() => setShowScheduleModal(true)}
+              onClick={() => {/* TODO: Implement schedule modal */}}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >
               Schedule Your First Delivery
