@@ -11,7 +11,7 @@ import { signUp } from '@/app/auth/actions'
 export default async function SignUpPage({ 
   searchParams 
 }: { 
-  searchParams: Promise<{ error?: string }> 
+  searchParams: Promise<{ error?: string; invite?: string; role?: string }> 
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -23,6 +23,8 @@ export default async function SignUpPage({
 
   const resolvedSearchParams = await searchParams
   const error = resolvedSearchParams.error
+  const inviteFamilyId = resolvedSearchParams.invite
+  const inviteRole = resolvedSearchParams.role || 'spouse'
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-800 via-gray-50 to-blue-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -39,11 +41,14 @@ export default async function SignUpPage({
         </div>
         
         <h2 className="text-center text-3xl font-serif font-light text-gray-900 mb-2">
-          Start your legacy journey
+          {inviteFamilyId ? 'Join your family' : 'Start your legacy journey'}
         </h2>
         
         <p className="text-center text-lg text-gray-600 mb-8">
-          Join thousands of fathers building what lasts.
+          {inviteFamilyId 
+            ? 'You\'ve been invited to join a family on For One Day.'
+            : 'Join thousands of fathers building what lasts.'
+          }
         </p>
       </div>
 
@@ -70,6 +75,14 @@ export default async function SignUpPage({
 
           {/* Email Signup Form */}
           <form action={signUp} className="space-y-6">
+            {/* Hidden fields for invitation */}
+            {inviteFamilyId && (
+              <>
+                <input type="hidden" name="invite" value={inviteFamilyId} />
+                <input type="hidden" name="role" value={inviteRole} />
+              </>
+            )}
+            
             <div>
               <label htmlFor="full-name" className="block text-sm font-medium text-gray-700 mb-2">
                 Full name

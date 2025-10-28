@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
+import { randomBytes } from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -47,9 +48,33 @@ export async function POST(request: NextRequest) {
 
     const userName = profile?.full_name || 'A family member'
 
+    // Generate invitation token
+    const invitationToken = randomBytes(32).toString('hex')
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 7) // 7 days from now
+
+    // Create invitation record
+    const { error: inviteError } = await supabase
+      .from('family_invitations')
+      .insert({
+        family_id: familyMember.family_id,
+        invited_email: email,
+        invited_name: userName,
+        role: role,
+        invited_by: user.id,
+        invitation_token: invitationToken,
+        expires_at: expiresAt.toISOString(),
+        status: 'pending'
+      })
+
+    if (inviteError) {
+      console.error('Error creating invitation:', inviteError)
+      return NextResponse.json({ error: 'Failed to create invitation' }, { status: 500 })
+    }
+
     // Send invitation email
     const { data, error } = await resend.emails.send({
-      from: 'For One Day <noreply@foroneday.app>',
+      from: 'For One Day <hello@foroneday.app>',
       to: [email],
       subject: `You're invited to join ${family?.name || 'a family'} on For One Day`,
       html: `

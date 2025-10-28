@@ -31,6 +31,8 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'lifetime'>('free')
   const [legacyNoteCount, setLegacyNoteCount] = useState(0)
+  const [familyMembers, setFamilyMembers] = useState<Array<{id: string, name: string, role: string}>>([])
+  const [sharingSettings, setSharingSettings] = useState<Record<string, boolean>>({})
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -68,6 +70,24 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
           .eq('kind', 'letter')
         
         setLegacyNoteCount(count || 0)
+
+        // Get family members for sharing
+        const { data: members } = await supabase
+          .from('family_members')
+          .select(`
+            user_id,
+            role,
+            profiles!inner(full_name)
+          `)
+          .neq('user_id', user.id) // Exclude current user
+        
+        if (members) {
+          setFamilyMembers(members.map(member => ({
+            id: member.user_id,
+            name: (member.profiles as { full_name: string }[])[0]?.full_name || 'Unknown',
+            role: member.role
+          })))
+        }
       }
     }
     
@@ -238,6 +258,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         form.append('content', formData.content)
         form.append('recipient', formData.recipient)
         form.append('occasion', formData.occasion)
+        form.append('sharing_settings', JSON.stringify(sharingSettings))
 
         const response = await fetch('/api/vault/save-legacy-note', {
           method: 'POST',
@@ -277,6 +298,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
       recipient: 'family',
       occasion: ''
     })
+    setSharingSettings({})
     setAudioBlob(null)
     setAudioUrl(null)
     setRecordingTime(0)
@@ -408,6 +430,37 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 ))}
               </select>
             </div>
+
+            {/* Sharing Settings */}
+            {familyMembers.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Share with Family Members
+                </label>
+                <div className="space-y-2">
+                  {familyMembers.map((member) => (
+                    <label key={member.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={sharingSettings[member.id] || false}
+                        onChange={(e) => setSharingSettings(prev => ({
+                          ...prev,
+                          [member.id]: e.target.checked
+                        }))}
+                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{member.name}</div>
+                        <div className="text-sm text-gray-500 capitalize">{member.role}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Only selected family members will be able to view this legacy note
+                </p>
+              </div>
+            )}
 
             {/* Content Type Selection */}
             <div>
