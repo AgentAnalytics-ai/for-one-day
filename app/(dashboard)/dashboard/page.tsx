@@ -45,8 +45,8 @@ export default async function DashboardPage() {
             </svg>
           </div>
           
-          <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 mb-4">
-            Today's Reflection
+            <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 mb-4">
+            Today&apos;s Reflection
           </h2>
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
