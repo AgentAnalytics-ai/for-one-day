@@ -27,9 +27,20 @@ export async function POST(request: NextRequest) {
     const recipient = formData.get('recipient') as string
     const occasion = formData.get('occasion') as string
     const templateId = formData.get('template_id') as string
+    const sharingSettings = formData.get('sharing_settings') as string
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
+    }
+
+    // Parse sharing settings
+    let parsedSharingSettings = {}
+    if (sharingSettings) {
+      try {
+        parsedSharingSettings = JSON.parse(sharingSettings)
+      } catch (e) {
+        console.error('Error parsing sharing settings:', e)
+      }
     }
 
     // Get user's family
@@ -81,11 +92,13 @@ export async function POST(request: NextRequest) {
         kind: 'letter',
         title,
         description: content.substring(0, 200) + (content.length > 200 ? '...' : ''),
+        sharing_settings: parsedSharingSettings,
         metadata: {
           recipient,
           occasion,
           template_id: templateId,
-          content: content
+          content: content,
+          is_shared: Object.keys(parsedSharingSettings).length > 0
         }
       })
       .select()

@@ -60,6 +60,10 @@ export async function signUp(formData: FormData) {
   const password = formData.get('password') as string
   const fullName = formData.get('full-name') as string
   
+  // Check for invitation parameters
+  const inviteFamilyId = formData.get('invite') as string
+  const inviteRole = formData.get('role') as string || 'spouse'
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -67,6 +71,8 @@ export async function signUp(formData: FormData) {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
       data: {
         full_name: fullName,
+        invite_family_id: inviteFamilyId,
+        invite_role: inviteRole,
       },
     },
   })
@@ -77,7 +83,7 @@ export async function signUp(formData: FormData) {
 
   // Initialize profile and family
   if (data.user) {
-    await initializeUserProfile(data.user.id, fullName)
+    await initializeUserProfile(data.user.id, fullName, inviteFamilyId, inviteRole)
   }
 
   // Send welcome email via Resend (async, don't wait for it)
@@ -105,7 +111,7 @@ export async function signOut() {
 /**
  * Initialize user profile and family on first signup
  */
-async function initializeUserProfile(userId: string, fullName: string) {
+async function initializeUserProfile(userId: string, fullName: string, inviteFamilyId?: string, inviteRole?: string) {
   const supabase = await createClient()
 
   // Create profile
@@ -115,7 +121,50 @@ async function initializeUserProfile(userId: string, fullName: string) {
     plan: 'free',
   })
 
-  // Create default family
+  // Handle family invitation
+  if (inviteFamilyId) {
+    // Check if invitation exists and is valid
+    const { data: invitation } = await supabase
+      .from('family_invitations')
+      .select('*')
+      .eq('family_id', inviteFamilyId)
+      .eq('invited_email', (await supabase.auth.getUser()).data.user?.email)
+      .eq('status', 'pending')
+      .single()
+
+    if (invitation) {
+      // Add user to family
+      await supabase.from('family_members').insert({
+        family_id: inviteFamilyId,
+        user_id: userId,
+        role: inviteRole || invitation.role,
+        invitation_status: 'accepted',
+        invited_at: invitation.created_at,
+        invited_by: invitation.invited_by,
+      })
+
+      // Mark invitation as accepted
+      await supabase
+        .from('family_invitations')
+        .update({ status: 'accepted' })
+        .eq('id', invitation.id)
+    } else {
+      // No valid invitation found, create new family
+      await createNewFamily(userId, fullName)
+    }
+  } else {
+    // No invitation, create new family
+    await createNewFamily(userId, fullName)
+  }
+}
+
+/**
+ * Create a new family for the user
+ */
+async function createNewFamily(userId: string, fullName: string) {
+  const supabase = await createClient()
+
+  // Create family
   const { data: family } = await supabase
     .from('families')
     .insert({
@@ -125,12 +174,13 @@ async function initializeUserProfile(userId: string, fullName: string) {
     .select()
     .single()
 
-  // Add user as family owner
   if (family) {
+    // Add user as family owner
     await supabase.from('family_members').insert({
       family_id: family.id,
       user_id: userId,
       role: 'owner',
+      invitation_status: 'accepted',
     })
   }
 }
