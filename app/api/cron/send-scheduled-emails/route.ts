@@ -126,8 +126,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function createEmailContent(delivery: any): string {
-  const { title, content, kind, recipient_name, delivery_message } = delivery
+function createEmailContent(delivery: {
+  title: string
+  content: string
+  kind: string
+  recipient_name: string
+  delivery_message?: string
+}): string {
+  const { title, content, recipient_name, delivery_message } = delivery
   
   return `
     <!DOCTYPE html>

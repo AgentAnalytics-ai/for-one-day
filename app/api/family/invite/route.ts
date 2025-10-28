@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
       .single()
 
 
-    // Generate simple invitation token for email
-    const invitationToken = randomBytes(32).toString('hex')
+    // Generate simple invitation token for email (not used in current implementation)
+    // const invitationToken = randomBytes(32).toString('hex')
 
     // Send invitation email
     const { data, error } = await resend.emails.send({
