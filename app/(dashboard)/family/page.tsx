@@ -20,20 +20,10 @@ interface FamilyMember {
   invited_at: string
 }
 
-interface FamilyInvitation {
-  id: string
-  invited_email: string
-  invited_name: string
-  role: string
-  status: string
-  created_at: string
-}
-
 export default function FamilyPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([])
-  const [invitations, setInvitations] = useState<FamilyInvitation[]>([])
   const [sharedNotesCount, setSharedNotesCount] = useState(0)
   const [showInviteModal, setShowInviteModal] = useState(false)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
