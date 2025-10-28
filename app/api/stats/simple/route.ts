@@ -3,7 +3,7 @@
  * Basic stats for the core features only
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
@@ -15,22 +15,15 @@ export async function GET() {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    // Get user stats
-    const { data: userStats, error: statsError } = await supabase
-      .from('user_stats')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
     // Get total reflections
-    const { data: reflections, error: reflectionsError } = await supabase
+    const { data: reflections } = await supabase
       .from('daily_reflections')
       .select('date')
       .eq('user_id', user.id)
       .order('date', { ascending: false })
 
     // Get total legacy notes
-    const { data: legacyNotes, error: legacyError } = await supabase
+    const { data: legacyNotes } = await supabase
       .from('vault_items')
       .select('id')
       .eq('owner_id', user.id)

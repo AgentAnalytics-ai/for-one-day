@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createDebugContext, logError, logSuccess } from '@/lib/debug'
 import { testDatabaseConnection, testEnvironmentVariables } from '@/lib/database-test'
-import { checkLegacyNoteLimit } from '@/lib/subscription-utils'
+// import { checkLegacyNoteLimit } from '@/lib/subscription-utils' // Removed - no longer used
 
 /**
  * 📝 Simple User Actions - Core Devotional & Legacy Features

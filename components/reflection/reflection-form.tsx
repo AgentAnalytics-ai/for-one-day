@@ -5,11 +5,11 @@ import { PremiumButton } from '@/components/ui/premium-button'
 import { toast } from '@/lib/toast'
 
 interface ReflectionFormProps {
-  question: string
-  date: string
+  // question: string // Removed - not used
+  // date: string // Removed - not used
 }
 
-export function ReflectionForm({ question, date }: ReflectionFormProps) {
+export function ReflectionForm({ }: ReflectionFormProps) {
   const [reflection, setReflection] = useState('')
   const [saving, setSaving] = useState(false)
 
