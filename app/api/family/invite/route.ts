@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const userName = profile?.full_name || 'A family member'
 
     // Get user's family or create one if they don't have one
-    let { data: familyMember } = await supabase
+    const { data: familyMember } = await supabase
       .from('family_members')
       .select('family_id')
       .eq('user_id', user.id)
