@@ -34,13 +34,16 @@ CREATE INDEX IF NOT EXISTS idx_family_invitations_family ON public.family_invita
 -- Enable RLS on new table
 ALTER TABLE public.family_invitations ENABLE ROW LEVEL SECURITY;
 
--- RLS policies for family_invitations
+-- RLS policies for family_invitations (with safe DROP statements)
+DROP POLICY IF EXISTS "Users can view invitations they sent" ON public.family_invitations;
 CREATE POLICY "Users can view invitations they sent" ON public.family_invitations
   FOR SELECT USING (invited_by = auth.uid());
 
+DROP POLICY IF EXISTS "Users can view invitations sent to them" ON public.family_invitations;
 CREATE POLICY "Users can view invitations sent to them" ON public.family_invitations
   FOR SELECT USING (invited_email = (SELECT email FROM auth.users WHERE id = auth.uid()));
 
+DROP POLICY IF EXISTS "Family owners can manage invitations" ON public.family_invitations;
 CREATE POLICY "Family owners can manage invitations" ON public.family_invitations
   FOR ALL USING (
     family_id IN (
