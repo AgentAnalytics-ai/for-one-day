@@ -30,50 +30,20 @@ export async function POST(request: NextRequest) {
 
     const userName = profile?.full_name || 'A family member'
 
-    // Get user's family or create one if they don't have one
+    // Get user's existing family (don't create new ones)
     const { data: familyMember } = await supabase
       .from('family_members')
       .select('family_id')
       .eq('user_id', user.id)
       .single()
 
-    let familyId = familyMember?.family_id
-
-    // If user doesn't have a family, create one for them
     if (!familyMember) {
-      // Create a new family
-      const { data: newFamily, error: familyError } = await supabase
-        .from('families')
-        .insert({
-          name: `${profile?.full_name || 'My Family'}'s Family`,
-          owner_id: user.id
-        })
-        .select('id')
-        .single()
-
-      if (familyError) {
-        console.error('Error creating family:', familyError)
-        return NextResponse.json({ error: 'Failed to create family' }, { status: 500 })
-      }
-
-      familyId = newFamily.id
-
-      // Add user as owner of the new family
-      const { error: memberError } = await supabase
-        .from('family_members')
-        .insert({
-          family_id: familyId,
-          user_id: user.id,
-          role: 'owner',
-          invitation_status: 'accepted',
-          joined_at: new Date().toISOString()
-        })
-
-      if (memberError) {
-        console.error('Error adding user to family:', memberError)
-        return NextResponse.json({ error: 'Failed to add user to family' }, { status: 500 })
-      }
+      return NextResponse.json({ 
+        error: 'You must have a family to invite members. Please create a legacy note first to set up your family.' 
+      }, { status: 400 })
     }
+
+    const familyId = familyMember.family_id
 
     // Get family details
     const { data: family } = await supabase
