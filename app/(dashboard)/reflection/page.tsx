@@ -106,10 +106,7 @@ export default async function ReflectionPage() {
               </div>
             </div>
           ) : (
-            <ReflectionForm 
-              question={reflectionData.question}
-              date={reflectionData.date}
-            />
+            <ReflectionForm />
           )}
         </div>
       </div>
