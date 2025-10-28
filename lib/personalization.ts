@@ -86,32 +86,7 @@ export function getPersonalizedContent(preferences: UserPreferences): Personaliz
     }
   }
 
-  // Role-based customization
-  if (role === 'executor') {
-    content = {
-      ...content,
-      greeting: "Honor their legacy",
-      callToAction: "Help preserve their wisdom for the family",
-      messaging: {
-        primary: "You've been trusted with something precious",
-        secondary: "Help ensure their wisdom reaches the right people",
-        cta: "Honor Their Legacy"
-      }
-    }
-  }
-
-  if (role === 'adult-child') {
-    content = {
-      ...content,
-      greeting: "Continue the family story",
-      callToAction: "Add your chapter to the family legacy",
-      messaging: {
-        primary: "Your story is part of a greater family narrative",
-        secondary: "Add your voice to the family's ongoing story",
-        cta: "Add Your Chapter"
-      }
-    }
-  }
+  // Role-based customization removed - simplified to gender-only personalization
 
   return content
 }
