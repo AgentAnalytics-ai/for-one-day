@@ -316,6 +316,7 @@ function InviteFamilyModal({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: name.trim(),
           email: email.trim(),
           role
         })
@@ -356,6 +357,20 @@ function InviteFamilyModal({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter family member's name"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
               </label>
               <input
@@ -394,7 +409,7 @@ function InviteFamilyModal({
             </button>
             <PremiumButton
               onClick={handleSendInvite}
-              disabled={sending || !email.trim()}
+              disabled={sending || !name.trim() || !email.trim()}
             >
               {sending ? (
                 <>

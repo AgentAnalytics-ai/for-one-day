@@ -15,10 +15,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { email, role = 'spouse' } = await request.json()
+    const { name, email, role = 'spouse' } = await request.json()
 
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    if (!name || !email) {
+      return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
     }
 
     // Get user's family
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       .insert({
         family_id: familyMember.family_id,
         invited_email: email,
-        invited_name: userName,
+        invited_name: name.trim(),
         role: role,
         invited_by: user.id,
         invitation_token: invitationToken,
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       to: [email],
       subject: `You're invited to join ${family?.name || 'a family'} on For One Day`,
       html: `
-        <h1>You're Invited!</h1>
+        <h1>You're Invited, ${name.trim()}!</h1>
         <p>${userName} has invited you to join their family on For One Day.</p>
         <p>For One Day helps families preserve their most important messages and memories through digital legacy notes.</p>
         <p>As a family member, you'll be able to:</p>
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           Accept Invitation
         </a>
         <p>If you have any questions, feel free to reach out to ${userName}.</p>
-        <p>Welcome to the family!<br>The For One Day Team</p>
+        <p>Welcome to the family, ${name.trim()}!<br>The For One Day Team</p>
       `,
     })
 
