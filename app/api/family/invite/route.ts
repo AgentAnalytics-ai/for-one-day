@@ -21,25 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
     }
 
-    // Get user's family
-    const { data: familyMember } = await supabase
-      .from('family_members')
-      .select('family_id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!familyMember) {
-      return NextResponse.json({ error: 'You must be part of a family to invite members' }, { status: 400 })
-    }
-
-    // Get family details
-    const { data: family } = await supabase
-      .from('families')
-      .select('name')
-      .eq('id', familyMember.family_id)
-      .single()
-
-    // Get user's name
+    // Get user's profile for family name
     const { data: profile } = await supabase
       .from('profiles')
       .select('full_name')
@@ -47,6 +29,59 @@ export async function POST(request: NextRequest) {
       .single()
 
     const userName = profile?.full_name || 'A family member'
+
+    // Get user's family or create one if they don't have one
+    let { data: familyMember } = await supabase
+      .from('family_members')
+      .select('family_id')
+      .eq('user_id', user.id)
+      .single()
+
+    let familyId = familyMember?.family_id
+
+    // If user doesn't have a family, create one for them
+    if (!familyMember) {
+      // Create a new family
+      const { data: newFamily, error: familyError } = await supabase
+        .from('families')
+        .insert({
+          name: `${profile?.full_name || 'My Family'}'s Family`,
+          owner_id: user.id
+        })
+        .select('id')
+        .single()
+
+      if (familyError) {
+        console.error('Error creating family:', familyError)
+        return NextResponse.json({ error: 'Failed to create family' }, { status: 500 })
+      }
+
+      familyId = newFamily.id
+
+      // Add user as owner of the new family
+      const { error: memberError } = await supabase
+        .from('family_members')
+        .insert({
+          family_id: familyId,
+          user_id: user.id,
+          role: 'owner',
+          invitation_status: 'accepted',
+          joined_at: new Date().toISOString()
+        })
+
+      if (memberError) {
+        console.error('Error adding user to family:', memberError)
+        return NextResponse.json({ error: 'Failed to add user to family' }, { status: 500 })
+      }
+    }
+
+    // Get family details
+    const { data: family } = await supabase
+      .from('families')
+      .select('name')
+      .eq('id', familyId)
+      .single()
+
 
     // Generate invitation token
     const invitationToken = randomBytes(32).toString('hex')
@@ -57,7 +92,7 @@ export async function POST(request: NextRequest) {
     const { error: inviteError } = await supabase
       .from('family_invitations')
       .insert({
-        family_id: familyMember.family_id,
+        family_id: familyId,
         invited_email: email,
         invited_name: name.trim(),
         role: role,
@@ -89,7 +124,7 @@ export async function POST(request: NextRequest) {
           <li>Access important family documents</li>
         </ul>
         <p>Click the link below to accept the invitation and create your account:</p>
-        <a href="https://foroneday.app/auth/signup?invite=${familyMember.family_id}&role=${role}" 
+        <a href="https://foroneday.app/auth/signup?invite=${familyId}&role=${role}" 
            style="background: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
           Accept Invitation
         </a>
