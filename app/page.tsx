@@ -45,19 +45,31 @@ export default async function HomePage() {
           
           {/* Primary CTA */}
           <div className="mb-20">
-            <Link
-              href="/auth/signup"
-              className="inline-flex items-center gap-3 bg-blue-900 hover:bg-blue-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              Start Free Today
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+              <Link
+                href="/auth/signup"
+                className="inline-flex items-center gap-3 bg-blue-900 hover:bg-blue-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                Start Free Today
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center gap-3 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-10 py-4 rounded-full text-lg font-medium transition-all duration-300"
+              >
+                Sign In
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+              </Link>
+            </div>
             
             <Link
               href="#how"
-              className="block mt-6 text-gray-600 hover:text-gray-900 transition-colors"
+              className="block text-gray-600 hover:text-gray-900 transition-colors"
             >
               See How It Works
             </Link>
@@ -365,9 +377,9 @@ function PricingTable() {
         period=""
         description="Perfect for getting started"
         features={[
-          "Daily devotions",
           "5 legacy notes",
-          "Basic reflections",
+          "Voice recordings",
+          "Family sharing",
           "Email reminders"
         ]}
         cta="Start Free"
@@ -382,10 +394,10 @@ function PricingTable() {
         description="Complete legacy platform"
         features={[
           "Unlimited legacy notes",
-          "Unlimited reflections",
-          "Family sharing",
-          "AI-powered devotionals",
-          "Priority support"
+          "Unlimited voice recordings",
+          "Advanced family sharing",
+          "Priority support",
+          "Premium templates"
         ]}
         cta="Upgrade to Pro"
         href="/auth/signup"

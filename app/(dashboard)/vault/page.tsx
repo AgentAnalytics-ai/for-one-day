@@ -232,7 +232,7 @@ export default function VaultPage() {
         {/* Legacy Notes */}
         <div>
           <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Legacy Notes</h2>
-          {!vaultItems || vaultItems.length === 0 ? (
+          {vaultItems && vaultItems.length === 0 ? (
             <PremiumCard className="p-8 text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
