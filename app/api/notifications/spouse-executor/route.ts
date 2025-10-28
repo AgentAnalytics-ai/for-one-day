@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }
 
-    const { type, contactEmail, contactName, relationship, userFullName } = await request.json()
+    const { type, contactEmail, contactName, userFullName } = await request.json()
+    // const { type, contactEmail, contactName, relationship, userFullName } = await request.json() // Simplified - removed unused relationship
 
     if (!contactEmail || !contactName || !type) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })

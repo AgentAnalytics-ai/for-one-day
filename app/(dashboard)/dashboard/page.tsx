@@ -51,7 +51,7 @@ export default async function DashboardPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
             <p className="text-lg text-gray-700 italic mb-4">
-              &ldquo;Give thanks in all circumstances; for this is God&apos;s will for you in Christ Jesus.&rdquo;
+              &ldquo;Give thanks in all circumstances; for this is God&rsquo;s will for you in Christ Jesus.&rdquo;
             </p>
             <p className="text-sm text-gray-600">1 Thessalonians 5:18</p>
           </div>

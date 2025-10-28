@@ -26,7 +26,8 @@ export interface PersonalizedContent {
 }
 
 export function getPersonalizedContent(preferences: UserPreferences): PersonalizedContent {
-  const { gender, role, familySituation } = preferences
+  const { gender } = preferences
+  // const { gender, role, familySituation } = preferences // Simplified - only using gender
 
   // Default content (inclusive)
   let content: PersonalizedContent = {
@@ -123,7 +124,8 @@ export function getPersonalizedTemplates(preferences: UserPreferences): Array<{
   template_content: string
   placeholders: string[]
 }> {
-  const { gender, role } = preferences
+  const { gender } = preferences
+  // const { gender, role } = preferences // Simplified - only using gender
   const baseTemplates = [
     {
       id: 'wedding-day',
