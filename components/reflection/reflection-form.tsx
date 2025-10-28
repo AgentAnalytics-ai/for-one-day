@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { toast } from '@/lib/toast'
 
-interface ReflectionFormProps {
-  // question: string // Removed - not used
-  // date: string // Removed - not used
-}
+// interface ReflectionFormProps {
+//   // question: string // Removed - not used
+//   // date: string // Removed - not used
+// }
 
-export function ReflectionForm({ }: ReflectionFormProps) {
+export function ReflectionForm() {
   const [reflection, setReflection] = useState('')
   const [saving, setSaving] = useState(false)
 
