@@ -92,25 +92,10 @@ export async function checkLegacyNoteLimit(userId: string): Promise<FeatureLimit
     }
   }
 
-  // Count current legacy notes
-  const { data: familyMember } = await supabase
-    .from('family_members')
-    .select('family_id')
-    .eq('user_id', userId)
-    .single()
-
-  if (!familyMember) {
-    return {
-      current: 0,
-      limit: subscription.limits.legacyNotes,
-      canCreate: true
-    }
-  }
-
+  // Count current legacy notes by owner only (no family dependency)
   const { count } = await supabase
     .from('vault_items')
     .select('*', { count: 'exact', head: true })
-    .eq('family_id', familyMember.family_id)
     .eq('owner_id', userId)
     .eq('kind', 'letter')
 

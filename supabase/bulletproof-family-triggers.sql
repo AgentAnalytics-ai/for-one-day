@@ -30,11 +30,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger on profiles table
+-- Disable auto-family creation trigger (family feature removed)
 DROP TRIGGER IF EXISTS ensure_family_on_profile_create ON public.profiles;
-CREATE TRIGGER ensure_family_on_profile_create
-  AFTER INSERT ON public.profiles
-  FOR EACH ROW EXECUTE FUNCTION ensure_user_has_family();
 
 -- ============================================================================
 -- LEGACY NOTE LIMIT ENFORCEMENT
