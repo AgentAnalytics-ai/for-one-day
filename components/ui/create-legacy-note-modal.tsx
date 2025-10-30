@@ -547,31 +547,44 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
               </div>
             ) : (
               <div>
-                {/* Recording Controls */}
-                <div className="flex items-center gap-4 mb-4">
-                  {!isRecording ? (
+                {/* Recording Controls (Pro only) */}
+                {userPlan !== 'free' ? (
+                  <div className="flex items-center gap-4 mb-4">
+                    {!isRecording ? (
+                      <button
+                        type="button"
+                        onClick={startRecording}
+                        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        <Mic className="w-4 h-4" />
+                        <span>Start Recording</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={stopRecording}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                      >
+                        <MicOff className="w-4 h-4" />
+                        <span>Stop Recording ({formatTime(recordingTime)})</span>
+                      </button>
+                    )}
+                    <span className="text-sm text-gray-600">
+                      {isRecording ? 'Recording in progress...' : 'Click to record your voice message'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                    <span className="text-sm text-purple-700 font-medium">Voice recording is a Pro feature.</span>
                     <button
                       type="button"
-                      onClick={startRecording}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="px-3 py-1 text-sm bg-purple-600 text-white rounded-md hover:bg-purple-700"
                     >
-                      <Mic className="w-4 h-4" />
-                      <span>Start Recording</span>
+                      Upgrade to Pro
                     </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={stopRecording}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                    >
-                      <MicOff className="w-4 h-4" />
-                      <span>Stop Recording ({formatTime(recordingTime)})</span>
-                    </button>
-                  )}
-                  <span className="text-sm text-gray-600">
-                    {isRecording ? 'Recording in progress...' : 'Click to record your voice message'}
-                  </span>
-                </div>
+                  </div>
+                )}
 
                 {/* Text Content */}
                 <div>

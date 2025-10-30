@@ -56,54 +56,10 @@ export async function POST(request: NextRequest) {
       .from('vault')
       .getPublicUrl(fileName)
 
-    // Get user's family
-    let familyId = null
-    const { data: familyMember } = await supabase
-      .from('family_members')
-      .select('family_id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (familyMember) {
-      familyId = familyMember.family_id
-    } else {
-      // Create family if it doesn't exist
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('user_id', user.id)
-        .single()
-
-      const familyName = profile?.full_name ? `${profile.full_name}'s Family` : 'My Family'
-      
-      const { data: family } = await supabase
-        .from('families')
-        .insert({
-          name: familyName,
-          owner_id: user.id,
-        })
-        .select()
-        .single()
-
-      if (family) {
-        familyId = family.id
-
-        // Add user as family member
-        await supabase
-          .from('family_members')
-          .insert({
-            family_id: familyId,
-            user_id: user.id,
-            role: 'owner'
-          })
-      }
-    }
-
     // Save to vault_items
     const { data: vaultItem, error: saveError } = await supabase
       .from('vault_items')
       .insert({
-        family_id: familyId,
         owner_id: user.id,
         kind: 'audio',
         title: title.trim(),
