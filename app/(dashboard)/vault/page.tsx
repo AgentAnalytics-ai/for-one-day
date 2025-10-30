@@ -39,6 +39,15 @@ interface LegacyTemplate {
   placeholders: string[]
 }
 
+interface LegacyApiTemplate {
+  id: string
+  title: string
+  description: string
+  category: string
+  template: string
+  tags?: string[]
+}
+
 export default function VaultPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -94,8 +103,8 @@ export default function VaultPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          const flattened = Object.values(data.templates || {}).flat() as any[]
-          const mapped = flattened.map((t: any) => ({
+          const flattened = Object.values(data.templates || {}).flat() as LegacyApiTemplate[]
+          const mapped: LegacyTemplate[] = flattened.map((t: LegacyApiTemplate) => ({
             id: t.id,
             name: t.title,
             description: t.description,
