@@ -53,6 +53,7 @@ export default function VaultPage() {
   const [loading, setLoading] = useState(true)
   const [vaultItems, setVaultItems] = useState<VaultItem[]>([])
   const [templates, setTemplates] = useState<LegacyTemplate[]>([])
+  const [selectedTemplateOption, setSelectedTemplateOption] = useState<LegacyTemplate | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<LegacyTemplate | null>(null)
   const [selectedLetter, setSelectedLetter] = useState<VaultItem | null>(null)
@@ -231,35 +232,64 @@ export default function VaultPage() {
 
         {/* Templates */}
         <div>
-          <h2 className="text-2xl font-medium text-gray-900 mb-6">Templates</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates && templates.length > 0 ? templates.map((template) => (
-              <PremiumCard key={template.id} className="p-6 hover:shadow-lg transition-shadow">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {template.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {template.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    {template.category}
-                  </span>
-                  <PremiumButton
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => handleCreateFromTemplate(template)}
+          <h2 className="text-2xl font-medium text-gray-900 mb-4">Templates</h2>
+          {templates && templates.length > 0 ? (
+            <PremiumCard className="p-6">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Choose a template</label>
+                  <select
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    value={selectedTemplateOption?.id || ''}
+                    onChange={(e) => {
+                      const t = templates.find(t => t.id === e.target.value) || null
+                      setSelectedTemplateOption(t)
+                    }}
                   >
-                    Use Template
-                  </PremiumButton>
+                    <option value="">Select a template...</option>
+                    {templates
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name} {t.category ? `• ${t.category}` : ''}
+                        </option>
+                      ))}
+                  </select>
                 </div>
-              </PremiumCard>
-            )) : (
-              <div className="col-span-full text-center py-8">
-                <p className="text-gray-500">Loading templates...</p>
+
+                {selectedTemplateOption && (
+                  <div className="rounded-lg border border-gray-200 p-4 bg-gray-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-lg font-medium text-gray-900">{selectedTemplateOption.name}</h3>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{selectedTemplateOption.category}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4">{selectedTemplateOption.description}</p>
+                    <div className="flex gap-3">
+                      <PremiumButton
+                        variant="secondary"
+                        onClick={() => handleCreateFromTemplate(selectedTemplateOption)}
+                      >
+                        Use Template
+                      </PremiumButton>
+                      <PremiumButton
+                        variant="secondary"
+                        onClick={() => {
+                          setSelectedTemplate(selectedTemplateOption)
+                          setShowCreateModal(true)
+                        }}
+                      >
+                        Preview & Edit
+                      </PremiumButton>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </PremiumCard>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Loading templates...</p>
+            </div>
+          )}
         </div>
 
         {/* Legacy Notes */}
