@@ -34,6 +34,16 @@ export default async function DashboardPage() {
         </h1>
         <p className="text-xl text-gray-600 mb-4">{today}</p>
         <SubscriptionBadge tier={profile?.plan || 'free'} />
+        {(!profile || profile.plan === 'free') && (
+          <div className="mt-4">
+            <Link
+              href="/upgrade"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors"
+            >
+              Upgrade to Pro
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Today's Invitation - Hero Card */}
@@ -141,7 +151,7 @@ function LegacyMomentCard() {
           &ldquo;Today I&apos;m grateful for...&rdquo;
         </p>
         <p className="text-sm text-gray-600 mt-2">
-          Add to your family&apos;s story for One Day
+          Add to your story for One Day
         </p>
       </div>
       
