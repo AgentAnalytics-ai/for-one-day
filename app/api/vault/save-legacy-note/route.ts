@@ -43,51 +43,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get user's family
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!profile) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
-    }
-
-    // Get or create family
-    let familyId = null
-    if (profile.family_id) {
-      familyId = profile.family_id
-    } else {
-      // Create a family for the user
-      const { data: family, error: familyError } = await supabase
-        .from('families')
-        .insert({
-          name: `${profile.full_name || 'My'} Family`,
-          owner_id: user.id
-        })
-        .select()
-        .single()
-
-      if (familyError) {
-        console.error('Error creating family:', familyError)
-        return NextResponse.json({ error: 'Failed to create family' }, { status: 500 })
-      }
-
-      familyId = family.id
-
-      // Update profile with family_id
-      await supabase
-        .from('profiles')
-        .update({ family_id: familyId })
-        .eq('user_id', user.id)
-    }
-
     // Create vault item
     const { data: vaultItem, error: vaultError } = await supabase
       .from('vault_items')
       .insert({
-        family_id: familyId,
         owner_id: user.id,
         kind: 'letter',
         title,

@@ -146,7 +146,7 @@ create index idx_tasks_assigned on tasks(assigned_to, status);
 
 create table public.vault_items (
   id uuid primary key default gen_random_uuid(),
-  family_id uuid not null references families(id) on delete cascade,
+  family_id uuid references families(id) on delete cascade,
   owner_id uuid not null references auth.users(id) on delete cascade,
   kind text not null check (kind in ('letter', 'video', 'audio', 'document', 'photo')),
   title text not null,

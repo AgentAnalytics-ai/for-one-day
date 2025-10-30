@@ -49,6 +49,7 @@ export default function VaultPage() {
   const [selectedLetter, setSelectedLetter] = useState<VaultItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
+  const [usage, setUsage] = useState<{ current: number; limit: number }>({ current: 0, limit: -1 })
 
   useEffect(() => {
     async function getUser() {
@@ -68,6 +69,7 @@ export default function VaultPage() {
     if (user) {
       loadVaultItems()
       loadTemplates()
+      loadUsage()
     }
   }, [user])
 
@@ -92,12 +94,33 @@ export default function VaultPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          setTemplates(data.templates)
+          const flattened = Object.values(data.templates || {}).flat() as any[]
+          const mapped = flattened.map((t: any) => ({
+            id: t.id,
+            name: t.title,
+            description: t.description,
+            category: t.category,
+            template_content: t.template,
+            placeholders: Array.isArray(t.tags) ? t.tags : []
+          }))
+          setTemplates(mapped)
         }
       }
     } catch (error) {
       console.error('Error loading templates:', error)
       toast.error('Failed to load templates')
+    }
+  }
+
+  const loadUsage = async () => {
+    try {
+      const response = await fetch('/api/usage/legacy')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) setUsage({ current: data.current, limit: data.limit })
+      }
+    } catch (error) {
+      console.error('Error loading usage:', error)
     }
   }
 
@@ -159,7 +182,7 @@ export default function VaultPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <PremiumCard className="p-6 text-center">
             <div className="text-3xl font-bold text-blue-600 mb-2">
-              {vaultItems?.length || 0}
+              {usage.limit === -1 ? (usage.current || 0) : `${usage.current || 0}/${usage.limit}`}
             </div>
             <div className="text-sm text-gray-600">Legacy Notes</div>
           </PremiumCard>
@@ -190,8 +213,9 @@ export default function VaultPage() {
               onClick={() => setShowCreateModal(true)}
               size="lg"
               className="px-8"
+              disabled={usage.limit !== -1 && usage.current >= usage.limit}
             >
-              Create New Note
+              {usage.limit !== -1 && usage.current >= usage.limit ? 'Limit Reached' : 'Create New Note'}
             </PremiumButton>
           </div>
         </PremiumCard>
