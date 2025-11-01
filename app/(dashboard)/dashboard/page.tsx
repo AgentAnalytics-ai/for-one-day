@@ -56,10 +56,15 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* Today's Invitation - Hero with Dynamic Background */}
-      <div className={`relative min-h-[500px] rounded-3xl overflow-hidden bg-gradient-to-br ${timeBasedGradient}`}>
-        {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-black/20" />
+      {/* Today's Invitation - Hero with Photo Background */}
+      <div 
+        className="relative min-h-[500px] rounded-3xl overflow-hidden"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), url(/dashboard-hero.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
         
         <div className="relative z-10 text-center max-w-3xl mx-auto py-12 md:py-16 px-6 md:px-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/90 backdrop-blur rounded-full mb-6 shadow-lg">
