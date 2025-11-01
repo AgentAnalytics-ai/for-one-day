@@ -21,27 +21,27 @@ DROP POLICY IF EXISTS "Family members can create vault items" ON public.vault_it
 DROP POLICY IF EXISTS "Item owner can update" ON public.vault_items;
 DROP POLICY IF EXISTS "Item owner can delete" ON public.vault_items;
 
--- CREATE new owner-based policies
--- Users can only see their own vault items
+-- CREATE new owner-based policies (safe with DROP IF EXISTS)
+DROP POLICY IF EXISTS "Users can view own vault items" ON public.vault_items;
 CREATE POLICY "Users can view own vault items" 
 ON public.vault_items
 FOR SELECT 
 USING (owner_id = auth.uid());
 
--- Users can only create vault items they own
+DROP POLICY IF EXISTS "Users can create own vault items" ON public.vault_items;
 CREATE POLICY "Users can create own vault items" 
 ON public.vault_items
 FOR INSERT 
 WITH CHECK (owner_id = auth.uid());
 
--- Users can only update their own vault items
+DROP POLICY IF EXISTS "Users can update own vault items" ON public.vault_items;
 CREATE POLICY "Users can update own vault items" 
 ON public.vault_items
 FOR UPDATE 
 USING (owner_id = auth.uid())
 WITH CHECK (owner_id = auth.uid());
 
--- Users can only delete their own vault items
+DROP POLICY IF EXISTS "Users can delete own vault items" ON public.vault_items;
 CREATE POLICY "Users can delete own vault items" 
 ON public.vault_items
 FOR DELETE 
