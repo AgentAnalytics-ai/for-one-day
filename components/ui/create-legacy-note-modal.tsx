@@ -14,14 +14,28 @@ interface LegacyTemplate {
   placeholders: string[]
 }
 
+interface VaultItem {
+  id: string
+  title: string
+  description: string
+  kind: string
+  metadata?: {
+    content?: string
+    recipient?: string
+    occasion?: string
+    template_id?: string
+  }
+}
+
 interface CreateLegacyNoteModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
   selectedTemplate?: LegacyTemplate | null
+  editingItem?: VaultItem | null
 }
 
-export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemplate }: CreateLegacyNoteModalProps) {
+export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemplate, editingItem }: CreateLegacyNoteModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -96,16 +110,23 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     }
   }, [isOpen])
 
-  // Populate form when template is selected
+  // Populate form when template is selected OR when editing
   useEffect(() => {
-    if (selectedTemplate) {
+    if (editingItem) {
+      setFormData({
+        title: editingItem.title,
+        content: editingItem.metadata?.content || editingItem.description,
+        recipient: editingItem.metadata?.recipient || 'family',
+        occasion: editingItem.metadata?.occasion || ''
+      })
+    } else if (selectedTemplate) {
       setFormData(prev => ({
         ...prev,
         title: selectedTemplate.name,
         content: selectedTemplate.template_content
       }))
     }
-  }, [selectedTemplate])
+  }, [selectedTemplate, editingItem])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -251,8 +272,35 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         } else {
           throw new Error(result.error || 'Failed to save voice note')
         }
+      } else if (editingItem) {
+        // Update existing note
+        const response = await fetch(`/api/vault/items/${editingItem.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: formData.title,
+            content: formData.content,
+            recipient: formData.recipient,
+            occasion: formData.occasion,
+            sharing_settings: sharingSettings
+          })
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to update legacy note')
+        }
+
+        const result = await response.json()
+        if (result.success) {
+          onSuccess()
+          onClose()
+          resetForm()
+        } else {
+          throw new Error(result.error || 'Failed to update legacy note')
+        }
       } else {
-        // Save as text note using API (not server action to avoid redirect)
+        // Create new text note using API
         const form = new FormData()
         form.append('title', formData.title)
         form.append('content', formData.content)
@@ -345,7 +393,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 <Heart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">Create Legacy Note</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {editingItem ? 'Edit Legacy Note' : 'Create Legacy Note'}
+                </h2>
                 <p className="text-sm text-gray-500">Share your heart with your family</p>
               </div>
             </div>
@@ -626,7 +676,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 ) : (
                   <>
                     <Heart className="w-4 h-4" />
-                    Create Legacy Note
+                    {editingItem ? 'Update Legacy Note' : 'Create Legacy Note'}
                   </>
                 )}
               </button>

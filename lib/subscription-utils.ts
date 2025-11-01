@@ -83,16 +83,7 @@ export async function checkLegacyNoteLimit(userId: string): Promise<FeatureLimit
   const supabase = await createClient()
   const subscription = await getUserSubscriptionStatus(userId)
   
-  // If unlimited, always allow
-  if (subscription.limits.legacyNotes === -1) {
-    return {
-      current: 0,
-      limit: -1,
-      canCreate: true
-    }
-  }
-
-  // Count current legacy notes by owner only (no family dependency)
+  // Always count current legacy notes (needed for UI display)
   const { count } = await supabase
     .from('vault_items')
     .select('*', { count: 'exact', head: true })
@@ -101,6 +92,17 @@ export async function checkLegacyNoteLimit(userId: string): Promise<FeatureLimit
 
   const current = count || 0
   const limit = subscription.limits.legacyNotes
+
+  // If unlimited (Pro/Lifetime), always allow
+  if (limit === -1) {
+    return {
+      current,
+      limit: -1,
+      canCreate: true
+    }
+  }
+
+  // Free users: check against limit
   const canCreate = current < limit
 
   return {
