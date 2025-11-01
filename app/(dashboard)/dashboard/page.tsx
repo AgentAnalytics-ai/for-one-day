@@ -66,29 +66,33 @@ export default async function DashboardPage() {
         }}
       >
         
-        <div className="relative z-10 text-center max-w-2xl mx-auto py-12 md:py-16 px-6 md:px-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/90 backdrop-blur rounded-full mb-6 shadow-lg">
-            <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-          
-          <h2 className="text-3xl md:text-4xl font-serif font-medium text-white mb-8 drop-shadow-lg">
-            Today&apos;s Reflection
-          </h2>
-          
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 md:p-8 mb-8 border border-white/50 shadow-2xl">
-            <p className="text-lg md:text-xl text-gray-800 italic mb-4 leading-relaxed">
-              &ldquo;Give thanks in all circumstances; for this is God&rsquo;s will for you in Christ Jesus.&rdquo;
+        <div className="relative z-10 flex flex-col justify-between h-full py-8 px-6 md:px-8">
+          {/* Top section - Title and verse */}
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/90 backdrop-blur rounded-full mb-6 shadow-lg">
+              <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-serif font-medium text-white mb-6 drop-shadow-lg">
+              Today&apos;s Reflection
+            </h2>
+            
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 md:p-6 mb-6 border border-white/50 shadow-2xl">
+              <p className="text-base md:text-lg text-gray-800 italic mb-3 leading-relaxed">
+                &ldquo;Give thanks in all circumstances; for this is God&rsquo;s will for you in Christ Jesus.&rdquo;
+              </p>
+              <p className="text-xs md:text-sm text-gray-600 font-medium">1 Thessalonians 5:18</p>
+            </div>
+            
+            <p className="text-lg md:text-xl text-white leading-relaxed drop-shadow-lg font-light">
+              What unexpected blessing did you notice today?
             </p>
-            <p className="text-sm text-gray-600 font-medium">1 Thessalonians 5:18</p>
           </div>
           
-          <p className="text-xl md:text-2xl text-white mb-10 leading-relaxed drop-shadow-md font-light">
-            What unexpected blessing did you notice today?
-          </p>
-          
-          <div className="flex justify-center">
+          {/* Bottom section - CTA button */}
+          <div className="text-center max-w-2xl mx-auto mt-8">
             <Link
               href="/reflection"
               className="inline-flex items-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-10 py-5 rounded-full text-lg font-semibold transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 hover:scale-105"
