@@ -84,73 +84,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Family Impact Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <FamilyImpactCard />
-        <LegacyMomentCard />
-      </div>
-
       {/* Dynamic Stats - Connected to Supabase */}
       <DynamicStats userId={user.id} />
-    </div>
-  )
-}
-
-function FamilyImpactCard() {
-  return (
-    <div className="bg-white/70 backdrop-blur rounded-xl border border-white/20 shadow-lg p-6">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-serif font-medium text-gray-900">Tonight, Share This</h3>
-      </div>
-      
-      <div className="bg-blue-50 rounded-lg p-4 mb-4">
-        <p className="text-gray-800 font-medium">
-          &ldquo;What unexpected blessing did you notice today?&rdquo;
-        </p>
-        <p className="text-sm text-gray-600 mt-2">
-          Start the conversation with your family tonight
-        </p>
-      </div>
-      
-      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
-        Set Reminder for Tonight
-      </button>
-    </div>
-  )
-}
-
-function LegacyMomentCard() {
-  return (
-    <div className="bg-white/70 backdrop-blur rounded-xl border border-white/20 shadow-lg p-6">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-          <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        </div>
-        <h3 className="text-xl font-serif font-medium text-gray-900">This Moment Matters</h3>
-      </div>
-      
-      <div className="bg-purple-50 rounded-lg p-4 mb-4">
-        <p className="text-gray-800 font-medium">
-          &ldquo;Today I&apos;m grateful for...&rdquo;
-        </p>
-        <p className="text-sm text-gray-600 mt-2">
-          Add to your story for One Day
-        </p>
-      </div>
-      
-      <Link
-        href="/vault"
-        className="block w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-medium transition-colors text-center"
-      >
-        Add to For One Day
-      </Link>
     </div>
   )
 }
