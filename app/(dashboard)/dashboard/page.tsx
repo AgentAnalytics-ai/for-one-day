@@ -60,7 +60,7 @@ export default async function DashboardPage() {
       <div 
         className="relative min-h-[600px] rounded-3xl overflow-hidden"
         style={{
-          backgroundImage: 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), url(/family-infront-of-cross.png)',
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), url(/father-daughter-kite-sunset.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}
