@@ -143,6 +143,7 @@ export default function VaultPage() {
     setShowCreateModal(false)
     setSelectedTemplate(null)
     loadVaultItems()
+    loadUsage() // Reload usage counter
     toast.success('Legacy note created successfully!')
   }
 
@@ -157,6 +158,7 @@ export default function VaultPage() {
     } else {
       toast.success('Note deleted successfully')
       loadVaultItems()
+      loadUsage() // Reload usage counter
     }
   }
 
@@ -355,8 +357,9 @@ export default function VaultPage() {
                       size="sm" 
                       variant="secondary"
                       onClick={() => {
-                        // Open edit modal
+                        // Open edit modal with item data
                         setSelectedLetter(item)
+                        setSelectedTemplate(null) // Clear template when editing
                         setShowCreateModal(true)
                       }}
                     >
@@ -382,16 +385,18 @@ export default function VaultPage() {
         </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Create/Edit Modal */}
       {showCreateModal && (
         <AdvancedCreateLegacyNoteModal
           isOpen={showCreateModal}
           onClose={() => {
             setShowCreateModal(false)
             setSelectedTemplate(null)
+            setSelectedLetter(null)
           }}
           onSuccess={handleCreateSuccess}
           selectedTemplate={selectedTemplate}
+          editingItem={selectedLetter}
         />
       )}
 
