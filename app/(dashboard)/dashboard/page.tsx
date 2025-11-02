@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
 import { getTodaysVerse } from '@/lib/father-verses'
+import { TimeGreeting } from '@/components/dashboard/time-greeting'
 
 /**
  * 🏠 Dashboard - Today's Invitation
@@ -16,18 +17,6 @@ export default async function DashboardPage() {
   if (!user) return null
 
   const today = format(new Date(), 'EEEE, MMMM d')
-  const timeOfDay = new Date().getHours()
-  const greeting = timeOfDay < 12 ? 'Good morning' : timeOfDay < 17 ? 'Good afternoon' : 'Good evening'
-  
-  // Dynamic background based on time of day
-  const timeBasedGradient = 
-    timeOfDay < 12 
-      ? 'from-amber-400 via-orange-300 to-rose-400' // Sunrise
-      : timeOfDay < 17 
-      ? 'from-sky-400 via-blue-300 to-cyan-400' // Daylight
-      : timeOfDay < 22
-      ? 'from-orange-500 via-pink-400 to-purple-500' // Sunset
-      : 'from-indigo-900 via-purple-900 to-blue-900' // Night
 
   // Get user profile for subscription status
   const { data: profile } = await supabase
@@ -43,9 +32,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* Hero Welcome */}
       <div className="text-center">
-        <h1 className="text-4xl md:text-5xl font-serif font-light text-gray-900 mb-2">
-          {greeting}
-        </h1>
+        <TimeGreeting />
         <p className="text-xl text-gray-600 mb-4">{today}</p>
         <SubscriptionBadge tier={profile?.plan || 'free'} />
         {(!profile || profile.plan === 'free') && (
