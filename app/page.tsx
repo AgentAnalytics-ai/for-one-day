@@ -133,22 +133,22 @@ export default async function HomePage() {
           
           <div className="grid md:grid-cols-3 gap-8">
             <FeaturePreviewCard
-              title="Daily Devotion"
+              title="Daily Reflection"
               preview="What unexpected blessing did you notice today?"
               microCTA="Try This"
               href="/auth/signup"
             />
             
             <FeaturePreviewCard
-              title="Table Talk"
-              preview="Which day do you think Dad felt most grateful?"
+              title="Legacy Letters"
+              preview="Letter to My Daughter • release: wedding day"
               microCTA="Try This"
               href="/auth/signup"
             />
             
             <FeaturePreviewCard
-              title="For One Day"
-              preview="Letter to My Daughter • release: wedding day"
+              title="Bible Verses"
+              preview="Daily father-focused verses that challenge and inspire"
               microCTA="Try This"
               href="/auth/signup"
             />
@@ -156,35 +156,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Social Proof Section */}
-      <section id="stories" className="py-24 px-6 md:px-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-gray-900 mb-16">
-            Trusted by fathers across the country
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <TestimonialCard
-              quote="Changed how I lead my family. Three minutes that matter."
-              author="David, Father of 3"
-            />
-            
-            <TestimonialCard
-              quote="Finally, a way to connect with my kids that feels authentic."
-              author="Marcus, Father of 2"
-            />
-            
-            <TestimonialCard
-              quote="Knowing my family will have my words forever brings peace."
-              author="James, Father of 4"
-            />
-          </div>
-          
-          <p className="text-lg text-gray-600">
-            Join a growing movement of fathers building what lasts.
-          </p>
-        </div>
-      </section>
+      {/* Social Proof Section - Removed fake testimonials */}
 
       {/* Pricing Section */}
       <section id="pricing" className="py-24 px-6 md:px-8">
@@ -217,7 +189,7 @@ export default async function HomePage() {
             
             <FAQItem
               question="Can my spouse see it?"
-              answer="Yes—grant access for Table Talk and shared memories."
+              answer="Yes—grant access for family sharing and shared memories."
             />
           </div>
         </div>
@@ -349,24 +321,7 @@ function FeaturePreviewCard({
   )
 }
 
-function TestimonialCard({ 
-  quote, 
-  author 
-}: { 
-  quote: string
-  author: string
-}) {
-  return (
-    <div className="bg-white rounded-xl p-6 shadow-sm">
-      <p className="text-gray-700 italic mb-4">
-        &ldquo;{quote}&rdquo;
-      </p>
-      <p className="text-sm text-gray-600 font-medium">
-        — {author}
-      </p>
-    </div>
-  )
-}
+// TestimonialCard removed - will add real testimonials when available
 
 function PricingTable() {
   return (
@@ -377,7 +332,7 @@ function PricingTable() {
         period=""
         description="Perfect for getting started"
         features={[
-          "5 legacy notes",
+          "3 legacy notes",
           "Voice recordings",
           "Family sharing",
           "Email reminders"
