@@ -84,6 +84,49 @@ With love and pride,
 Dad`,
       category: 'milestones',
       tags: ['graduation', 'education', 'future', 'character']
+    },
+    {
+      id: 'if-i-die-tomorrow',
+      title: 'If I Die Tomorrow',
+      description: 'The most important things your family needs to know',
+      template: `My Dearest Family,
+
+If you're reading this, I'm no longer with you. But I want you to know that every moment with you was a gift I never took for granted.
+
+**What I Want You to Know:**
+
+I love you more than words can express. You made my life meaningful and full of joy.
+
+**For My Wife:**
+You were my partner, my best friend, my everything. Thank you for choosing me. Thank you for building a life with me. You made me a better man. Continue being the amazing mother and person you are. The kids need you, but don't forget to take care of yourself too.
+
+**For My Children:**
+I'm so proud of who you are and who you're becoming. Here's what I want you to remember:
+
+1. **God is real and He loves you** - Even in this pain, He's with you
+2. **Your mom is incredible** - Honor her, help her, love her
+3. **Family is everything** - Take care of each other
+4. **Make your life count** - Don't waste the time you have
+5. **I'm not really gone** - I'm with Jesus, and we'll see each other again
+
+**Practical Matters:**
+- [List important documents, passwords, accounts]
+- [Name key contacts: lawyer, financial advisor, etc.]
+- [Share any special wishes or instructions]
+
+**Final Words:**
+Don't let grief define you. Let it shape you into people of compassion and strength. 
+
+Live fully. Love deeply. Trust God completely.
+
+And know that I died grateful for the life we shared.
+
+Until we meet again,
+Dad/[Your Name]
+
+P.S. Check the vault for other letters I wrote for specific occasions. They're my gift to you.`,
+      category: 'milestones',
+      tags: ['death', 'emergency', 'essential', 'family', 'legacy']
     }
   ],
   wisdom: [

@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -212,6 +213,33 @@ export default function VaultPage() {
           </PremiumCard>
         </div>
 
+        {/* Upgrade Prompt for Free Users */}
+        {usage.limit !== -1 && usage.current >= usage.limit - 1 && (
+          <PremiumCard className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  You&apos;ve used {usage.current} of {usage.limit} free letters
+                </h3>
+                <p className="text-gray-700 mb-4">
+                  What happens if you need to write more? Upgrade to Pro for unlimited letters, 
+                  scheduled delivery, and emergency access features.
+                </p>
+                <Link href="/upgrade">
+                  <PremiumButton className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
+                    Upgrade to Pro - $9.99/month
+                  </PremiumButton>
+                </Link>
+              </div>
+            </div>
+          </PremiumCard>
+        )}
+
         {/* Create New Note */}
         <PremiumCard className="p-8">
           <div className="text-center">
@@ -298,21 +326,57 @@ export default function VaultPage() {
         <div>
           <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Legacy Notes</h2>
           {vaultItems && vaultItems.length === 0 ? (
-            <PremiumCard className="p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <PremiumCard className="p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-50">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No legacy notes yet
+              
+              <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">
+                Your Family&apos;s Future Starts Here
               </h3>
-              <p className="text-gray-600 mb-4">
-                Create your first legacy note to start preserving your wisdom for your family
+              
+              <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
+                Imagine your daughter on her wedding day, reading a letter you wrote today. 
+                Or your son facing a tough decision, guided by wisdom you shared years ago.
               </p>
-              <PremiumButton onClick={() => setShowCreateModal(true)}>
-                Create Your First Note
+              
+              <div className="bg-white/80 backdrop-blur rounded-lg p-6 mb-8 max-w-xl mx-auto">
+                <p className="text-gray-800 font-medium mb-3">Most powerful first letters:</p>
+                <ul className="text-left text-gray-700 space-y-2">
+                  <li className="flex items-start">
+                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span><strong>&quot;If I Die Tomorrow&quot;</strong> - Your most important values</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span><strong>&quot;Wedding Day Letter&quot;</strong> - For their biggest day</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span><strong>&quot;Life Lessons&quot;</strong> - Wisdom you wish you knew earlier</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <PremiumButton 
+                onClick={() => setShowCreateModal(true)}
+                size="lg"
+                className="px-10 py-4 text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
+              >
+                Write Your First Letter (5 minutes)
               </PremiumButton>
+              
+              <p className="text-sm text-gray-500 mt-4">
+                {usage.limit === -1 ? '✨ Unlimited letters with Pro' : `${usage.limit - usage.current} free letters remaining`}
+              </p>
             </PremiumCard>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

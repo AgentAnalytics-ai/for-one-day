@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
+import { getTodaysVerse } from '@/lib/father-verses'
 
 /**
  * 🏠 Dashboard - Today's Invitation
@@ -34,6 +35,9 @@ export default async function DashboardPage() {
     .select('plan')
     .eq('user_id', user.id)
     .single()
+
+  // Get today's verse
+  const dailyVerse = getTodaysVerse()
 
   return (
     <div className="space-y-8">
@@ -81,13 +85,13 @@ export default async function DashboardPage() {
             
             <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 md:p-6 mb-6 border border-white/50 shadow-2xl">
               <p className="text-base md:text-lg text-gray-800 italic mb-3 leading-relaxed">
-                &ldquo;Give thanks in all circumstances; for this is God&rsquo;s will for you in Christ Jesus.&rdquo;
+                &ldquo;{dailyVerse.text}&rdquo;
               </p>
-              <p className="text-xs md:text-sm text-gray-600 font-medium">1 Thessalonians 5:18</p>
+              <p className="text-xs md:text-sm text-gray-600 font-medium">{dailyVerse.reference}</p>
             </div>
             
             <p className="text-lg md:text-xl text-white leading-relaxed drop-shadow-lg font-light">
-              What unexpected blessing did you notice today?
+              {dailyVerse.prompt}
             </p>
           </div>
           
