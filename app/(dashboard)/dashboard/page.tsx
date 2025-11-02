@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { format } from 'date-fns'
 import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
@@ -16,8 +15,6 @@ export default async function DashboardPage() {
 
   if (!user) return null
 
-  const today = format(new Date(), 'EEEE, MMMM d')
-
   // Get user profile for subscription status
   const { data: profile } = await supabase
     .from('profiles')
@@ -33,7 +30,6 @@ export default async function DashboardPage() {
       {/* Hero Welcome */}
       <div className="text-center">
         <TimeGreeting />
-        <p className="text-xl text-gray-600 mb-4">{today}</p>
         <SubscriptionBadge tier={profile?.plan || 'free'} />
         {(!profile || profile.plan === 'free') && (
           <div className="mt-4">
