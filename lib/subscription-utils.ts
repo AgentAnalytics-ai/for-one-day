@@ -50,7 +50,7 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
   // Define limits based on plan
   const limits = {
     free: {
-      legacyNotes: 5,
+      legacyNotes: 3,
       familyConnections: 10,
       reflections: -1, // unlimited
       voiceRecordings: 0 // Pro only
