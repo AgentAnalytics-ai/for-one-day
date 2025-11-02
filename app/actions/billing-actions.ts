@@ -54,7 +54,7 @@ export async function createCheckoutSession() {
     console.log('Fetching profile for user:', user.id)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('stripe_customer_id, subscription_status')
+      .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
 
@@ -72,7 +72,7 @@ export async function createCheckoutSession() {
     console.log('Profile fetched successfully:', profile)
 
     // Check if user already has an active subscription
-    if (profile.subscription_status === 'pro' || profile.subscription_status === 'lifetime') {
+    if (profile.plan === 'pro' || profile.plan === 'lifetime') {
       return { success: false, error: 'You already have an active subscription!' }
     }
 
@@ -353,7 +353,7 @@ export async function canCreateLegacyNote(userId: string): Promise<{
       return {
         canCreate: true,
         current: 0,
-        limit: 5
+        limit: 3
       }
     }
 
@@ -365,7 +365,7 @@ export async function canCreateLegacyNote(userId: string): Promise<{
       .eq('kind', 'letter')
 
     const current = count || 0
-    const limit = 5
+    const limit = 3
     const canCreate = current < limit
 
     return {

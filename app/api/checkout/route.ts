@@ -32,7 +32,7 @@ export async function POST() {
     // Get user's profile and Stripe customer ID
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('stripe_customer_id, subscription_status')
+      .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
 
@@ -45,7 +45,7 @@ export async function POST() {
     }
 
     // Check if user already has an active subscription
-    if (profile.subscription_status === 'pro' || profile.subscription_status === 'lifetime') {
+    if (profile.plan === 'pro' || profile.plan === 'lifetime') {
       return NextResponse.json(
         { error: 'User already has an active subscription' },
         { status: 400 }
