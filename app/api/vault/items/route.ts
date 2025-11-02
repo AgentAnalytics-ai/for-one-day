@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
-    // Check if user has reached their limit (free users get 5 notes)
+    // Check if user has reached their limit (free users get 3 notes)
     const { data: profile } = await supabase
       .from('profiles')
       .select('plan, family_id, full_name')
@@ -69,9 +69,9 @@ export async function POST(request: NextRequest) {
         .select('id')
         .eq('owner_id', user.id)
 
-      if (existingNotes && existingNotes.length >= 5) {
+      if (existingNotes && existingNotes.length >= 3) {
         return NextResponse.json({ 
-          error: 'You\'ve reached your limit of 5 legacy notes. Upgrade to Pro for unlimited notes.' 
+          error: 'You\'ve reached your limit of 3 legacy notes. Upgrade to Pro for unlimited notes.' 
         }, { status: 403 })
       }
     }
