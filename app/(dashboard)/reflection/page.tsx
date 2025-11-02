@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ReflectionForm } from '@/components/reflection/reflection-form'
+import { getTodaysVerse } from '@/lib/father-verses'
 
 /**
  * 📖 Daily Reflection Page
@@ -25,30 +26,19 @@ export default async function ReflectionPage() {
     .eq('date', today)
     .single()
 
-  // If no reflection exists, create a simple daily prompt
-  const dailyPrompts = [
-    "What are you most grateful for today?",
-    "What challenge did you face today, and how did you grow from it?",
-    "What moment brought you the most joy today?",
-    "What did you learn about yourself today?",
-    "How did you show love to someone today?",
-    "What would you like to remember about today?",
-    "What are you looking forward to tomorrow?"
-  ]
-
-  const dayOfWeek = new Date().getDay() // 0 = Sunday, 1 = Monday, etc.
-  const promptIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // Use Sunday prompt for Sunday, otherwise use day-1
+  // Get today's verse (rotates daily based on day of year)
+  const dailyVerse = getTodaysVerse()
 
   const reflectionData = existingReflection ? {
     day: new Date().getDay(),
     date: today,
-    question: "What are you most grateful for today?",
+    verse: dailyVerse,
     completed: true,
     userReflection: existingReflection.reflection
   } : {
-    day: dayOfWeek,
+    day: new Date().getDay(),
     date: today,
-    question: dailyPrompts[promptIndex],
+    verse: dailyVerse,
     completed: false,
     userReflection: null
   }
@@ -83,13 +73,16 @@ export default async function ReflectionPage() {
           
           <div className="bg-white/80 backdrop-blur rounded-xl p-6 mb-6 border border-white/40">
             <p className="text-lg text-blue-600 font-medium mb-3">
-              1 Thessalonians 5:18
+              {reflectionData.verse.reference}
             </p>
             <p className="text-lg text-gray-700 italic mb-4">
-              &ldquo;Give thanks in all circumstances; for this is God&apos;s will for you in Christ Jesus.&rdquo;
+              &ldquo;{reflectionData.verse.text}&rdquo;
             </p>
             <p className="text-lg text-gray-800 font-medium">
-              {reflectionData.question}
+              {reflectionData.verse.prompt}
+            </p>
+            <p className="text-xs text-gray-500 mt-3 capitalize">
+              Theme: {reflectionData.verse.theme}
             </p>
           </div>
 
