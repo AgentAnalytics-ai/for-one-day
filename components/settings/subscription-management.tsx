@@ -104,7 +104,7 @@ export function SubscriptionManagement() {
             </h3>
             <p className="text-sm text-gray-600">
               {subscription.plan === 'free' 
-                ? 'Limited to 5 legacy notes'
+                ? 'Limited to 3 legacy notes'
                 : subscription.plan === 'pro'
                 ? 'Unlimited legacy notes and features'
                 : 'Lifetime access to all features'

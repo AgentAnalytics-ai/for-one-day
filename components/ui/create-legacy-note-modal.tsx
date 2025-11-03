@@ -412,9 +412,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             <div className="px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-700">
-                  Legacy Notes Used: <span className="font-semibold text-blue-600">{legacyNoteCount} / 5</span>
+                  Legacy Notes Used: <span className="font-semibold text-blue-600">{legacyNoteCount} / 3</span>
                 </span>
-                {legacyNoteCount >= 5 && (
+                {legacyNoteCount >= 3 && (
                   <span className="text-xs text-red-600 font-medium">Upgrade needed</span>
                 )}
               </div>
