@@ -382,7 +382,7 @@ export async function canCreateLegacyNote(userId: string): Promise<{
     return {
       canCreate: false,
       current: 0,
-      limit: 5,
+      limit: 3,
       message: 'Error checking subscription limits'
     }
   }
