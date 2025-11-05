@@ -85,7 +85,7 @@ export default async function SettingsPage() {
         {/* General Support */}
         <div className="bg-white rounded-lg p-4 border border-gray-200">
           <p className="text-sm text-gray-700 mb-3">
-            <strong>General Questions:</strong> Send us a message and we'll respond within 24 hours.
+            <strong>General Questions:</strong> Send us a message and we&apos;ll respond within 24 hours.
           </p>
           <SupportContactButton />
         </div>

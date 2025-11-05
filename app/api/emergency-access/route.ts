@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     
-    const accountHolderName = formData.get('account_holder_name') as string
     const accountHolderEmail = formData.get('account_holder_email') as string
     const requesterName = formData.get('requester_name') as string
     const requesterEmail = formData.get('requester_email') as string
