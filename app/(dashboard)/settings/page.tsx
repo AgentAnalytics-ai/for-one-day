@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { ProfileSettingsForm } from '@/components/settings/profile-settings-form'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
-import { FunctionalityTest } from '@/components/settings/functionality-test'
 
 /**
  * ⚙️ Settings Page - User Profile & Emergency Contact
@@ -51,9 +50,29 @@ export default async function SettingsPage() {
         <AccountManagement profile={profile} />
       </div>
 
-      {/* Expert Functionality Test */}
-      <div className="mt-8">
-        <FunctionalityTest />
+      {/* Support Contact */}
+      <div className="mt-8 bg-gray-50 rounded-lg border border-gray-200 p-6">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Need Help?
+            </h3>
+            <p className="text-sm text-gray-600 mb-2">
+              For questions, support, or to report an issue, contact us at:
+            </p>
+            <a 
+              href="mailto:support@foroneday.app" 
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              support@foroneday.app
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Emergency Contact Info */}
