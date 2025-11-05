@@ -45,10 +45,11 @@ export default function EmergencyAccessPage() {
               <strong>Processing time:</strong> Requests are typically processed within 1-2 business days.
             </p>
             <p>
-              <strong>Contact:</strong> If you have urgent questions, email us at{' '}
-              <a href="mailto:support@foroneday.app" className="underline">
-                support@foroneday.app
+              <strong>Urgent?</strong> Call Grant directly at{' '}
+              <a href="tel:+14055357750" className="underline font-bold text-blue-700">
+                (405) 535-7750
               </a>
+              {' '}for immediate assistance (Mon-Fri 9am-6pm CST)
             </p>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { ProfileSettingsForm } from '@/components/settings/profile-settings-form'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
+import { SupportContactButton } from '@/components/support-contact-button'
 
 /**
  * ⚙️ Settings Page - User Profile & Emergency Contact
@@ -51,27 +52,42 @@ export default async function SettingsPage() {
       </div>
 
       {/* Support Contact */}
-      <div className="mt-8 bg-gray-50 rounded-lg border border-gray-200 p-6">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+      <div className="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
+        <h3 className="text-xl font-medium text-gray-900 mb-4">
+          Need Help or Support?
+        </h3>
+        
+        {/* Emergency Contact */}
+        <div className="bg-white rounded-lg p-4 mb-4 border border-blue-200">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 mr-3">
+              <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-900 mb-1">
+                🚨 Emergency Access (Death/Incapacitation):
+              </p>
+              <a 
+                href="tel:+14055357750"
+                className="text-blue-600 hover:text-blue-700 font-bold text-xl block"
+              >
+                📞 (405) 535-7750
+              </a>
+              <p className="text-sm text-gray-600 mt-1">
+                Founder Grant handles personally - Mon-Fri 9am-6pm CST
+              </p>
+            </div>
           </div>
-          <div className="ml-3">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Need Help?
-            </h3>
-            <p className="text-sm text-gray-600 mb-2">
-              For questions, support, or to report an issue, contact us at:
-            </p>
-            <a 
-              href="mailto:support@foroneday.app" 
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-              support@foroneday.app
-            </a>
-          </div>
+        </div>
+
+        {/* General Support */}
+        <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <p className="text-sm text-gray-700 mb-3">
+            <strong>General Questions:</strong> Send us a message and we'll respond within 24 hours.
+          </p>
+          <SupportContactButton />
         </div>
       </div>
 
