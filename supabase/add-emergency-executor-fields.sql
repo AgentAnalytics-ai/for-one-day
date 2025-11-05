@@ -4,21 +4,19 @@
  * Run this in Supabase SQL Editor
  */
 
--- Add emergency contact fields to profiles
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS
-  emergency_contact_name TEXT,
-  emergency_contact_email TEXT,
-  emergency_contact_phone TEXT,
-  emergency_contact_relationship TEXT,
-  emergency_access_enabled BOOLEAN DEFAULT TRUE,
-  emergency_access_notes TEXT;
+-- Add emergency contact fields to profiles (one at a time - PostgreSQL requirement)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_contact_name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_contact_email TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_contact_phone TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_contact_relationship TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_access_enabled BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS emergency_access_notes TEXT;
 
--- Add executor/trustee fields to profiles  
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS
-  executor_name TEXT,
-  executor_email TEXT,
-  executor_phone TEXT,
-  executor_relationship TEXT;
+-- Add executor/trustee fields to profiles
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS executor_name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS executor_email TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS executor_phone TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS executor_relationship TEXT;
 
 -- Create index for emergency contact lookups
 CREATE INDEX IF NOT EXISTS idx_profiles_emergency_email 
