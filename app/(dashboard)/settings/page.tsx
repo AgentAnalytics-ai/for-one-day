@@ -51,43 +51,51 @@ export default async function SettingsPage() {
         <AccountManagement profile={profile} />
       </div>
 
-      {/* Support Contact */}
-      <div className="mt-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
-        <h3 className="text-xl font-medium text-gray-900 mb-4">
-          Need Help or Support?
-        </h3>
+      {/* Support Contact - Redesigned */}
+      <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-xl font-medium text-gray-900 mb-4">Support</h2>
         
-        {/* Emergency Contact */}
-        <div className="bg-white rounded-lg p-4 mb-4 border border-blue-200">
-          <div className="flex items-start">
+        <div className="space-y-4">
+          {/* Priority Support */}
+          <div className="flex items-start p-4 bg-blue-50 rounded-lg border border-blue-100">
             <div className="flex-shrink-0 mr-3">
-              <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-gray-900 mb-1">
-                🚨 Emergency Access (Death/Incapacitation):
+              <p className="font-medium text-gray-900 mb-1">
+                For urgent family access requests
               </p>
               <a 
                 href="tel:+14055357750"
-                className="text-blue-600 hover:text-blue-700 font-bold text-xl block"
+                className="text-blue-600 hover:text-blue-700 font-semibold text-lg"
               >
-                📞 (405) 535-7750
+                (405) 535-7750
               </a>
-              <p className="text-sm text-gray-600 mt-1">
-                Founder Grant handles personally - Mon-Fri 9am-6pm CST
+              <p className="text-xs text-gray-600 mt-1">
+                Mon-Fri 9am-6pm CST • Founder direct line
               </p>
             </div>
           </div>
-        </div>
 
-        {/* General Support */}
-        <div className="bg-white rounded-lg p-4 border border-gray-200">
-          <p className="text-sm text-gray-700 mb-3">
-            <strong>General Questions:</strong> Send us a message and we&apos;ll respond within 24 hours.
-          </p>
-          <SupportContactButton />
+          {/* General Support */}
+          <div className="flex items-start p-4 bg-gray-50 rounded-lg">
+            <div className="flex-shrink-0 mr-3">
+              <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-900 mb-2">
+                General questions and support
+              </p>
+              <SupportContactButton />
+              <p className="text-xs text-gray-600 mt-2">
+                Response within 24 hours
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
