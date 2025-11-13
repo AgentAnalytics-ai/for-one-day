@@ -29,14 +29,36 @@ export async function POST() {
       )
     }
 
-    // Get user's profile and Stripe customer ID
-    const { data: profile, error: profileError } = await supabase
+    // Get user's profile and Stripe customer ID (or create if missing)
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
 
-    if (profileError) {
+    // If profile doesn't exist, create one
+    if (profileError && profileError.code === 'PGRST116') {
+      console.log('Profile not found, creating default profile for user:', user.id)
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          plan: 'free',
+          full_name: user.email?.split('@')[0] || 'User'
+        })
+        .select('stripe_customer_id, plan')
+        .single()
+
+      if (createError) {
+        console.error('Error creating profile:', createError)
+        return NextResponse.json(
+          { error: 'Failed to create user profile' },
+          { status: 500 }
+        )
+      }
+
+      profile = newProfile
+    } else if (profileError) {
       console.error('Error fetching profile:', profileError)
       return NextResponse.json(
         { error: 'Failed to fetch user profile' },

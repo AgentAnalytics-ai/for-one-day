@@ -45,16 +45,36 @@ export default function UpgradePage() {
       setUser(user)
 
       if (user) {
-        const { data: profile, error } = await supabase
+        let { data: profile, error } = await supabase
           .from('profiles')
           .select('plan')
           .eq('user_id', user.id)
           .single()
 
+        // If profile doesn't exist, create one
+        if (error && error.code === 'PGRST116') {
+          console.log('Profile not found, creating default profile')
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              user_id: user.id,
+              plan: 'free',
+              full_name: user.email?.split('@')[0] || 'User'
+            })
+            .select('plan')
+            .single()
+
+          if (newProfile) {
+            profile = newProfile
+          } else if (createError) {
+            console.error('Error creating profile:', createError)
+          }
+        } else if (error) {
+          console.error('Error fetching profile:', error)
+        }
+
         if (profile) {
           setCurrentPlan(profile.plan as 'free' | 'pro' | 'lifetime')
-        } else if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching profile:', error)
         }
       }
       setLoading(false)

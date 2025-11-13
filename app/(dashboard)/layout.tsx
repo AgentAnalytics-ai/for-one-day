@@ -20,12 +20,29 @@ export default async function DashboardLayout({
     redirect('/auth/login')
   }
 
-  // Fetch user profile
-  const { data: profile } = await supabase
+  // Fetch user profile (or create if missing)
+  let { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('user_id', user.id)
     .single()
+
+  // If profile doesn't exist, create one
+  if (profileError && profileError.code === 'PGRST116') {
+    const { data: newProfile } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: user.id,
+        plan: 'free',
+        full_name: user.email?.split('@')[0] || 'User'
+      })
+      .select('*')
+      .single()
+
+    if (newProfile) {
+      profile = newProfile
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

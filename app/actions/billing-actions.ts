@@ -50,15 +50,35 @@ export async function createCheckoutSession() {
       return { success: false, error: 'Authentication required' }
     }
 
-    // Get user's profile
+    // Get user's profile (or create if missing)
     console.log('Fetching profile for user:', user.id)
-    const { data: profile, error: profileError } = await supabase
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
 
-    if (profileError) {
+    // If profile doesn't exist, create one
+    if (profileError && profileError.code === 'PGRST116') {
+      console.log('Profile not found, creating default profile for user:', user.id)
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          plan: 'free',
+          full_name: user.email?.split('@')[0] || 'User'
+        })
+        .select('stripe_customer_id, plan')
+        .single()
+
+      if (createError) {
+        console.error('Error creating profile:', createError)
+        return { success: false, error: `Failed to create user profile: ${createError.message}` }
+      }
+
+      profile = newProfile
+      console.log('Profile created successfully:', profile)
+    } else if (profileError) {
       console.error('Error fetching profile:', profileError)
       console.error('Profile error details:', {
         code: profileError.code,
@@ -67,9 +87,9 @@ export async function createCheckoutSession() {
         hint: profileError.hint
       })
       return { success: false, error: `Failed to fetch user profile: ${profileError.message}` }
+    } else {
+      console.log('Profile fetched successfully:', profile)
     }
-
-    console.log('Profile fetched successfully:', profile)
 
     // Check if user already has an active subscription
     if (profile.plan === 'pro' || profile.plan === 'lifetime') {
@@ -198,19 +218,39 @@ export async function createPortalSession() {
 
     console.log('Creating portal session for user:', user.id)
 
-    // Get user's Stripe customer ID and subscription status
-    const { data: profile, error: profileError } = await supabase
+    // Get user's Stripe customer ID and subscription status (or create if missing)
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
 
-    if (profileError) {
+    // If profile doesn't exist, create one
+    if (profileError && profileError.code === 'PGRST116') {
+      console.log('Profile not found, creating default profile for user:', user.id)
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          plan: 'free',
+          full_name: user.email?.split('@')[0] || 'User'
+        })
+        .select('stripe_customer_id, plan')
+        .single()
+
+      if (createError) {
+        console.error('Error creating profile:', createError)
+        return { success: false, error: `Failed to create user profile: ${createError.message}` }
+      }
+
+      profile = newProfile
+      console.log('Profile created successfully:', profile)
+    } else if (profileError) {
       console.error('Error fetching profile:', profileError)
       return { success: false, error: `Failed to fetch user profile: ${profileError.message}` }
+    } else {
+      console.log('Profile fetched:', profile)
     }
-
-    console.log('Profile fetched:', profile)
 
     // Check if user has a subscription
     if (profile.plan === 'free') {
