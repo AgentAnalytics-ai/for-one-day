@@ -45,11 +45,13 @@ export default function UpgradePage() {
       setUser(user)
 
       if (user) {
-        let { data: profile, error } = await supabase
+        const { data: profileData, error } = await supabase
           .from('profiles')
           .select('plan')
           .eq('user_id', user.id)
           .single()
+
+        let profile = profileData
 
         // If profile doesn't exist, create one
         if (error && error.code === 'PGRST116') {

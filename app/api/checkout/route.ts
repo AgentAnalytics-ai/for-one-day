@@ -30,11 +30,13 @@ export async function POST() {
     }
 
     // Get user's profile and Stripe customer ID (or create if missing)
-    let { data: profile, error: profileError } = await supabase
+    const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id, plan')
       .eq('user_id', user.id)
       .single()
+
+    let profile = profileData
 
     // If profile doesn't exist, create one
     if (profileError && profileError.code === 'PGRST116') {

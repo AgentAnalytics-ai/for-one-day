@@ -21,11 +21,13 @@ export default async function DashboardLayout({
   }
 
   // Fetch user profile (or create if missing)
-  let { data: profile, error: profileError } = await supabase
+  const { data: profileData, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('user_id', user.id)
     .single()
+
+  let profile = profileData
 
   // If profile doesn't exist, create one
   if (profileError && profileError.code === 'PGRST116') {
