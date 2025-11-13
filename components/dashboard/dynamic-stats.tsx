@@ -7,13 +7,6 @@ interface DynamicStatsProps {
 export async function DynamicStats({ userId }: DynamicStatsProps) {
   const supabase = await createClient()
 
-  // Fetch user stats
-  const { data: userStats } = await supabase
-    .from('user_stats')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
-
   // Get total reflections
   const { data: reflections } = await supabase
     .from('daily_reflections')
