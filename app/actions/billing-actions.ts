@@ -93,6 +93,11 @@ export async function createCheckoutSession() {
       console.log('Profile fetched successfully:', profile)
     }
 
+    // Ensure we have a profile at this point
+    if (!profile) {
+      return { success: false, error: 'Failed to fetch or create user profile' }
+    }
+
     // Check if user already has an active subscription
     if (profile.plan === 'pro' || profile.plan === 'lifetime') {
       return { success: false, error: 'You already have an active subscription!' }
@@ -254,6 +259,11 @@ export async function createPortalSession() {
       return { success: false, error: `Failed to fetch user profile: ${profileError.message}` }
     } else {
       console.log('Profile fetched:', profile)
+    }
+
+    // Ensure we have a profile at this point
+    if (!profile) {
+      return { success: false, error: 'Failed to fetch or create user profile' }
     }
 
     // Check if user has a subscription

@@ -68,6 +68,14 @@ export async function POST() {
       )
     }
 
+    // Ensure we have a profile at this point
+    if (!profile) {
+      return NextResponse.json(
+        { error: 'Failed to fetch or create user profile' },
+        { status: 500 }
+      )
+    }
+
     // Check if user already has an active subscription
     if (profile.plan === 'pro' || profile.plan === 'lifetime') {
       return NextResponse.json(
