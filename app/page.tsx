@@ -223,7 +223,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <p className="text-gray-400 text-sm">
-            Your life's story, preserved and delivered.
+            Your life&apos;s story, preserved and delivered.
           </p>
         </div>
       </footer>
