@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Header } from '@/components/header'
 
 /**
  * 🏠 Billion-Dollar UI Landing Page - 2026 Design
@@ -18,21 +18,11 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
+      <Header />
+      
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 md:px-8">
+      <section className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center px-6 md:px-8 pt-16 md:pt-24">
         <div className="text-center max-w-4xl mx-auto">
-          {/* Logo */}
-          <div className="mb-12">
-            <Image
-              src="/ForOneDay_HeroLockup.png"
-              alt="For One Day"
-              width={400}
-              height={120}
-              className="mx-auto"
-              priority
-            />
-          </div>
-          
           {/* Hero Copy */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light text-gray-900 mb-8 leading-tight">
             Live today.<br />
@@ -40,7 +30,7 @@ export default async function HomePage() {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed">
-            Preserve your legacy with secure, encrypted letters and messages for your family.
+            Your life, documented. Your wishes, preserved. Your legacy, delivered—on your timeline.
           </p>
           
           {/* Primary CTA */}
@@ -148,7 +138,7 @@ export default async function HomePage() {
             
             <FeaturePreviewCard
               title="Bible Verses"
-              preview="Daily father-focused verses that challenge and inspire"
+              preview="Daily Bible verses that inspire reflection and growth"
               microCTA="Try This"
               href="/auth/signup"
             />
@@ -219,7 +209,7 @@ export default async function HomePage() {
           </div>
           
           <p className="text-sm text-gray-500">
-            Encrypted storage · Cancel anytime · Built for fathers who lead with love.
+            Encrypted storage · Cancel anytime · Your story, preserved forever. Your voice, heard beyond your lifetime.
           </p>
         </div>
       </section>
@@ -228,16 +218,12 @@ export default async function HomePage() {
       <footer className="py-16 px-6 md:px-8 bg-slate-800 text-white">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
-            <Image
-              src="/ForOneDay_PrimaryLogo.png"
-              alt="For One Day"
-              width={200}
-              height={60}
-              className="mx-auto opacity-80"
-            />
+            <h2 className="text-3xl font-serif font-light text-white">
+              For One Day
+            </h2>
           </div>
           <p className="text-gray-400 text-sm">
-            For fathers building what lasts.
+            Your life's story, preserved and delivered.
           </p>
         </div>
       </footer>

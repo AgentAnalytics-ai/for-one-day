@@ -1,6 +1,6 @@
 /**
  * 🤖 AI Content Generator - Premium Devotional System
- * Expert-validated AI prompts for father-focused content
+ * Expert-validated AI prompts for daily reflection content
  */
 
 import { openai } from '@/lib/ai'
@@ -12,21 +12,21 @@ import { BibleBook, DevotionalContent } from './bible-library'
  */
 
 const DEVOTIONAL_PROMPT = `
-You are a wise, experienced pastor writing a 3-minute devotional specifically for busy fathers. 
+You are a wise, experienced pastor writing a 3-minute devotional for busy individuals seeking daily reflection. 
 
 CONTEXT:
 - Book: {bookName}
 - Chapter: {chapterNumber}
 - Key themes: {themes}
-- Father's time: Limited but precious
-- Goal: Spiritual growth + family connection
+- Reader's time: Limited but precious
+- Goal: Spiritual growth + meaningful connection
 
 REQUIREMENTS:
-1. Title: Catchy, father-relevant (8-12 words)
+1. Title: Catchy, relevant (8-12 words)
 2. Summary: 150-200 words, conversational tone
-3. Reflection: 3 questions that help fathers apply the text to their daily life
+3. Reflection: 3 questions that help readers apply the text to their daily life
 4. Prayer: Short, honest prayer prompt (not formal)
-5. Family Action: One simple way to share this with family today
+5. Action: One simple way to apply this today
 6. Tone: Encouraging, practical, authentic (not preachy)
 
 FORMAT:
@@ -37,9 +37,9 @@ Reflection Questions:
 2. [Question 2] 
 3. [Question 3]
 Prayer: [Prayer prompt]
-Family Action: [Action step]
+Action: [Action step]
 
-Make this feel like a conversation with a trusted friend who understands the challenges of fatherhood.
+Make this feel like a conversation with a trusted friend who understands the challenges of daily life.
 `
 
 const TABLE_TALK_PROMPT = `
@@ -72,11 +72,11 @@ Make questions that kids will actually want to answer and parents will enjoy dis
 `
 
 const SUMMARY_PROMPT = `
-Summarize {bookName} chapter {chapterNumber} in 2-3 sentences for a busy father who wants to understand the main point quickly.
+Summarize {bookName} chapter {chapterNumber} in 2-3 sentences for a busy individual who wants to understand the main point quickly.
 
 Focus on:
 - The core message
-- How it applies to fatherhood/family life
+- How it applies to daily life and relationships
 - Any practical wisdom
 
 Keep it conversational and relevant.
@@ -106,7 +106,7 @@ export async function generateDevotional(
       messages: [
         {
           role: 'system',
-          content: 'You are a wise pastor writing devotionals for busy fathers. Be authentic, practical, and encouraging.'
+          content: 'You are a wise pastor writing devotionals for busy individuals. Be authentic, practical, and encouraging.'
         },
         {
           role: 'user',
@@ -216,7 +216,7 @@ export async function generateChapterSummary(
       messages: [
         {
           role: 'system',
-          content: 'You are summarizing Bible chapters for busy fathers. Be concise and practical.'
+          content: 'You are summarizing Bible chapters for busy individuals. Be concise and practical.'
         },
         {
           role: 'user',
@@ -274,7 +274,7 @@ export function addPersonalizationHooks(content: string, userProfile: {
   let personalizedContent = content
   
   if (userProfile.name) {
-    personalizedContent = personalizedContent.replace(/father/g, userProfile.name)
+    personalizedContent = personalizedContent.replace(/\[Your Name\]/g, userProfile.name)
   }
   
   if (userProfile.familyStage === 'new-dad') {

@@ -2,12 +2,12 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
-import { getTodaysVerse } from '@/lib/father-verses'
+import { getTodaysVerse } from '@/lib/daily-verses'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 
 /**
  * 🏠 Dashboard - Today's Invitation
- * Emotional, not functional. Sacred space for fathers.
+ * Emotional, not functional. Sacred space for reflection and documentation.
  */
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -45,12 +45,7 @@ export default async function DashboardPage() {
 
       {/* Today's Invitation - Hero with Photo Background */}
       <div 
-        className="relative min-h-[600px] rounded-3xl overflow-hidden"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), url(/father-daughter-kite-sunset.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
+        className="relative min-h-[600px] rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800"
       >
         
         <div className="relative z-10 flex flex-col justify-between h-full py-8 px-6 md:px-8">

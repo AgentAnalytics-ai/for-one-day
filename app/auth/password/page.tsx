@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { signInWithPassword } from '@/app/auth/actions'
+import { Header } from '@/components/header'
 
 /**
  * 🔐 Password Login Page - Traditional Authentication
@@ -18,29 +18,20 @@ export default async function PasswordLoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/ForOneDay_PrimaryLogo.png"
-            alt="For One Day"
-            width={200}
-            height={60}
-            priority
-          />
-        </div>
-        
-        <h2 className="text-center text-3xl font-serif font-light text-gray-900 mb-2">
-          Sign in with password
-        </h2>
-        
-        <p className="text-center text-lg text-gray-600 mb-8">
-          Enter your email and password to continue
-        </p>
-      </div>
+    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
+      <Header />
+      
+      <div className="flex-1 flex items-center justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <h2 className="text-center text-3xl font-serif font-light text-gray-900 mb-2">
+            Sign in with password
+          </h2>
+          
+          <p className="text-center text-lg text-gray-600 mb-8">
+            Enter your email and password to continue
+          </p>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="mt-8">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-gray-100">
           
           <form action={signInWithPassword} className="space-y-6">
@@ -136,8 +127,10 @@ export default async function PasswordLoginPage() {
           {/* Trust Elements */}
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              🔒 Secure authentication · 🚀 Fast & lightweight · 💝 Built for fathers
+              🔒 Secure authentication · 🚀 Fast & lightweight · 💝 Your personal legacy vault
             </p>
+          </div>
+            </div>
           </div>
         </div>
       </div>

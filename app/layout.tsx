@@ -8,23 +8,23 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://foroneday.app'),
   title: {
-    default: 'For One Day - Legacy Letters for Fathers | Write Letters to Your Family',
+    default: 'For One Day - Your Personal Legacy Vault | Document Your Life & Final Wishes',
     template: '%s | For One Day'
   },
-  description: 'Write meaningful legacy letters to your children. Daily Bible reflections, professional letter templates, and secure vault for fathers to preserve wisdom and love for their families.',
+  description: 'Document your life, preserve your final wishes, and create your legacy. Secure personal vault for journaling, storing important documents, and scheduled delivery to loved ones.',
   keywords: [
-    'legacy letters',
-    'fathers',
-    'family',
-    'christian fathers',
-    'parenting',
-    'bible reflections',
-    'daily devotions',
-    'letter to my son',
-    'letter to my daughter',
-    'fatherhood',
+    'personal legacy vault',
+    'document final wishes',
+    'secure life documentation',
+    'personal archive',
     'legacy planning',
-    'family legacy'
+    'document your life',
+    'preserve legacy',
+    'secure vault',
+    'life documentation',
+    'final wishes storage',
+    'scheduled delivery',
+    'legacy letters'
   ],
   authors: [{ name: 'For One Day' }],
   creator: 'For One Day',
@@ -42,21 +42,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://foroneday.app',
     siteName: 'For One Day',
-    title: 'For One Day - Legacy Letters for Fathers',
-    description: 'Write meaningful legacy letters to your children. Professional templates, daily reflections, and secure storage for fathers.',
+    title: 'For One Day - Your Personal Legacy Vault',
+    description: 'Document your life, preserve your wishes, and deliver your legacy—on your timeline.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'For One Day - Legacy Letters for Fathers',
+        alt: 'For One Day - Your Personal Legacy Vault',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'For One Day - Legacy Letters for Fathers',
-    description: 'Write meaningful legacy letters to your children. Daily reflections and professional templates for fathers.',
+    title: 'Your Personal Legacy Vault',
+    description: 'Document your life, preserve your wishes, and deliver your legacy—on your timeline.',
     images: ['/og-image.png'],
   },
   icons: {

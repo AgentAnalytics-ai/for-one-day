@@ -27,7 +27,7 @@ Marriage is one of God's greatest gifts. It's not always easy, but it's always w
 I pray that your marriage will be a reflection of God's love for His people. May you grow together in faith, love, and wisdom.
 
 With all my love,
-Dad
+[Your Name]
 
 P.S. Remember the family values we've talked about - they will guide you through any storm.`,
       category: 'milestones',
@@ -56,7 +56,7 @@ The most important thing is to love them unconditionally, just as God loves us. 
 I'm so proud of the person you've become, and I know you'll be an amazing parent.
 
 With love and pride,
-Dad`,
+[Your Name]`,
       category: 'milestones',
       tags: ['parenting', 'advice', 'family', 'children']
     },
@@ -81,7 +81,7 @@ I believe in you and the person you're becoming. The world needs people like you
 Go make a difference in the world, but never forget where you came from and who you belong to.
 
 With love and pride,
-Dad`,
+[Your Name]`,
       category: 'milestones',
       tags: ['graduation', 'education', 'future', 'character']
     },
@@ -122,7 +122,7 @@ Live fully. Love deeply. Trust God completely.
 And know that I died grateful for the life we shared.
 
 Until we meet again,
-Dad/[Your Name]
+[Your Name]
 
 P.S. Check the vault for other letters I wrote for specific occasions. They're my gift to you.`,
       category: 'milestones',
@@ -166,7 +166,7 @@ As I reflect on my life, there are some lessons I've learned that I want to shar
 Remember, these aren't just my words - they're principles that have stood the test of time. Live by them, and you'll have a life well-lived.
 
 With love,
-Dad`,
+[Your Name]`,
       category: 'wisdom',
       tags: ['life lessons', 'wisdom', 'character', 'faith']
     },
@@ -242,7 +242,7 @@ I want to make sure you know what our family stands for. These are the values th
 These values have made our family strong. Pass them on to your children, and they will make your family strong too.
 
 With love,
-Dad`,
+[Your Name]`,
       category: 'family',
       tags: ['family values', 'tradition', 'heritage', 'legacy']
     },
@@ -277,7 +277,7 @@ These stories are part of who you are. They connect you to your past and give yo
 Remember, every family has a story. Ours is one of faith, love, and perseverance. I'm proud to be part of it, and I'm proud that you're part of it too.
 
 With love,
-Dad`,
+[Your Name]`,
       category: 'family',
       tags: ['family stories', 'memories', 'traditions', 'heritage']
     }
@@ -318,7 +318,7 @@ Remember, money is a tool, not a goal. Use it to provide for your family, help o
 The best investment you can make is in your relationship with God and your family.
 
 With love,
-Dad`,
+[Your Name]`,
       category: 'practical',
       tags: ['money', 'finances', 'budgeting', 'investing']
     },
@@ -366,7 +366,7 @@ As you navigate your career, I want to share some advice that has served me well
 Your career is important, but it's not everything. Don't sacrifice your family, your faith, or your character for success.
 
 With love and support,
-Dad`,
+[Your Name]`,
       category: 'practical',
       tags: ['career', 'work', 'calling', 'success']
     }
@@ -458,7 +458,7 @@ Remember, prayer is not about getting what you want - it's about aligning your h
 Keep praying, even when you don't feel like it. God is listening.
 
 With love,
-Dad`,
+[Your Name]`,
       category: 'spiritual',
       tags: ['prayer', 'spiritual growth', 'relationship with God']
     }

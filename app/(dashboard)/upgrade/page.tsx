@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { PremiumCard } from '@/components/ui/premium-card'
@@ -119,19 +118,11 @@ export default function UpgradePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Logo */}
+        {/* Page Title */}
         <div className="text-center mb-8">
-          <Image
-            src="/ForOneDay_HeroLockup.png"
-            alt="For One Day"
-            width={300}
-            height={90}
-            className="mx-auto mb-4"
-            priority
-          />
-          <h1 className="text-4xl font-serif font-light text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-serif font-light text-gray-900 mb-2">
             Upgrade to Pro
-          </h1>
+          </h2>
           <p className="text-xl text-gray-600 mt-2">Unlock unlimited legacy notes and family connections.</p>
         </div>
 
