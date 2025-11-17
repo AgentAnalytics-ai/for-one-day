@@ -65,45 +65,50 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
   ]
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="sticky top-4 md:top-6 z-50 bg-white/98 backdrop-blur-md shadow-sm/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Clean Header - Logo moved to main content */}
-          <div className="flex items-center">
-            <Link href="/dashboard" className="text-xl font-serif font-medium text-gray-900">
-              For One Day
-            </Link>
-          </div>
+        <div className="flex items-center justify-center h-20 relative">
+          {/* Centered Brand Name - Expert-Designed with Color Psychology */}
+          <Link 
+            href="/dashboard" 
+            className="absolute left-1/2 transform -translate-x-1/2 group"
+          >
+            <div className="relative px-6 py-2 rounded-full bg-gradient-to-br from-slate-900 to-gray-800 border border-slate-700/50 shadow-lg group-hover:from-slate-800 group-hover:to-gray-700 group-hover:shadow-xl transition-all duration-300">
+              <h1 className="text-2xl md:text-3xl font-serif font-light text-white tracking-wide">
+                For One Day
+              </h1>
+            </div>
+          </Link>
 
-          {/* Navigation */}
-          <div className="flex items-center space-x-8">
+          {/* Left-side Navigation */}
+          <div className="flex items-center space-x-2 mr-auto">
             {navItems.map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive 
-                      ? 'text-purple-600 bg-purple-50' 
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-gray-900 bg-gray-100' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
                   {item.icon}
-                  {item.name}
+                  <span className="hidden sm:inline">{item.name}</span>
                 </Link>
               )
             })}
           </div>
 
-          {/* User menu with dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          {/* Right-side User menu with dropdown */}
+          <div className="relative ml-auto" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-sm font-medium text-purple-700">
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-700">
                   {(profile?.full_name || 'User').charAt(0).toUpperCase()}
                 </span>
               </div>

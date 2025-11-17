@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { unsubscribeUser } from '@/app/actions/unsubscribe-actions'
+import { Header } from '@/components/header'
 
 /**
  * 🚫 Unsubscribe Page
@@ -17,19 +17,10 @@ export default async function UnsubscribePage({
   const error = resolvedSearchParams.error
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white shadow-xl rounded-2xl p-8">
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <Image
-              src="/ForOneDay_PrimaryLogo.png"
-              alt="For One Day"
-              width={200}
-              height={60}
-              priority
-            />
-          </div>
 
           {/* Success Message */}
           {success && (

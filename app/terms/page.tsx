@@ -1,22 +1,16 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { Header } from '@/components/header'
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white shadow-xl rounded-2xl p-8 md:p-12">
           <div className="mb-8">
-            <Image
-              src="/ForOneDay_PrimaryLogo.png"
-              alt="For One Day"
-              width={200}
-              height={60}
-              className="mb-6"
-            />
-            <h1 className="text-4xl font-serif font-light text-gray-900 mb-4">
+            <h2 className="text-4xl font-serif font-light text-gray-900 mb-4">
               Terms of Service
-            </h1>
+            </h2>
             <p className="text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
           </div>
 

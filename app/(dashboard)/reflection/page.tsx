@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ReflectionForm } from '@/components/reflection/reflection-form'
-import { getTodaysVerse } from '@/lib/father-verses'
+import { getTodaysVerse } from '@/lib/daily-verses'
 
 /**
  * 📖 Daily Reflection Page
