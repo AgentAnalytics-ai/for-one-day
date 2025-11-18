@@ -10,7 +10,7 @@ import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { SimpleTour } from '@/components/onboarding/simple-tour'
+import { ProfessionalTour } from '@/components/onboarding/professional-tour'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -179,7 +179,7 @@ export default function VaultPage() {
 
   return (
     <>
-      <SimpleTour />
+      <ProfessionalTour />
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       
       <div className="max-w-6xl mx-auto space-y-8">
