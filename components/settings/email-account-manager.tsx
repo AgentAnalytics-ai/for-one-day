@@ -15,6 +15,7 @@ export function EmailAccountManager() {
   const [accounts, setAccounts] = useState<EmailAccount[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     child_name: '',
     email_address: '',
@@ -51,6 +52,8 @@ export function EmailAccountManager() {
       return
     }
 
+    setSubmitting(true)
+
     try {
       // Simple encoding for storage (in production, use proper encryption library)
       // Note: This is base64 encoding, not true encryption. For production, consider
@@ -58,24 +61,51 @@ export function EmailAccountManager() {
       const passwordEncrypted = btoa(formData.password)
 
       const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        toast.error('You must be logged in to save email accounts')
+        setSubmitting(false)
+        return
+      }
+
       const { error } = await supabase
         .from('child_email_accounts')
         .insert({
-          child_name: formData.child_name,
-          email_address: formData.email_address,
+          user_id: user.id,
+          child_name: formData.child_name.trim(),
+          email_address: formData.email_address.trim().toLowerCase(),
           password_encrypted: passwordEncrypted
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
       toast.success('Email account saved securely')
       setFormData({ child_name: '', email_address: '', password: '' })
       setShowForm(false)
-      loadAccounts()
+      await loadAccounts()
     } catch (error) {
       console.error('Error saving account:', error)
-      const message = error instanceof Error ? error.message : 'Failed to save email account'
+      let message = 'Failed to save email account'
+      
+      if (error instanceof Error) {
+        message = error.message
+        // Make error messages more user-friendly
+        if (message.includes('duplicate') || message.includes('unique')) {
+          message = 'An account with this email already exists'
+        } else if (message.includes('permission') || message.includes('policy')) {
+          message = 'Permission denied. Please check your account settings.'
+        } else if (message.includes('relation') || message.includes('does not exist')) {
+          message = 'Database error. Please contact support if this persists.'
+        }
+      }
+      
       toast.error(message)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -219,9 +249,10 @@ export function EmailAccountManager() {
             </button>
             <button
               type="submit"
-              className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              disabled={submitting}
+              className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save
+              {submitting ? 'Saving...' : 'Save'}
             </button>
           </div>
         </form>

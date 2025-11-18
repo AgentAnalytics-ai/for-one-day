@@ -1,32 +1,68 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { ProfileSettingsForm } from '@/components/settings/profile-settings-form'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
 import { EmailAccountManager } from '@/components/settings/email-account-manager'
+import { ToastContainer } from '@/components/ui/toast'
+import { toast } from '@/lib/toast'
 
 /**
  * ⚙️ Settings Page - User Profile & Emergency Contact
  * Simple, professional settings interface
  */
-export default async function SettingsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export default function SettingsPage() {
+  const router = useRouter()
+  const [profile, setProfile] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [toasts, setToasts] = useState<any[]>([])
 
-  if (!user) {
-    redirect('/auth/login')
+  useEffect(() => {
+    loadProfile()
+    const unsubscribe = toast.subscribe(setToasts)
+    return unsubscribe
+  }, [])
+
+  const loadProfile = async () => {
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+
+      if (error) throw error
+      setProfile(data)
+    } catch (error) {
+      console.error('Error loading profile:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Fetch user profile with emergency contact info
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+        <div className="text-center text-gray-600">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <div className="mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-serif font-light text-gray-900 mb-2">
           Account Settings
