@@ -73,8 +73,8 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
             href="/dashboard" 
             className="absolute left-1/2 transform -translate-x-1/2 group"
           >
-            <div className="relative px-6 py-2 rounded-full bg-gradient-to-br from-slate-900 to-gray-800 border border-slate-700/50 shadow-lg group-hover:from-slate-800 group-hover:to-gray-700 group-hover:shadow-xl transition-all duration-300">
-              <h1 className="text-2xl md:text-3xl font-serif font-light text-white tracking-wide">
+            <div className="relative px-5 sm:px-6 py-2 sm:py-2.5 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-white tracking-tight">
                 For One Day
               </h1>
             </div>

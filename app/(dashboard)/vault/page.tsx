@@ -188,7 +188,7 @@ export default function VaultPage() {
     <>
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-center">
           <h1 className="text-3xl font-serif font-medium text-gray-900 mb-2">
