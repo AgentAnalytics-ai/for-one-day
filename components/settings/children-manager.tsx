@@ -38,36 +38,37 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       const supabase = createClient()
       const { data, error } = await supabase
         .from('child_email_accounts')
-        .select('id, child_name, email_address, created_at')
+        .select('id, child_name, email_address, photo_url, created_at')
         .order('created_at', { ascending: false })
 
       if (error) throw error
       
-      // Load photos from unsent_messages (where photos are stored)
+      // Photos are now stored directly in child_email_accounts.photo_url
+      // For backwards compatibility, check unsent_messages if photo_url is null
       const childrenWithPhotos = await Promise.all(
         (data || []).map(async (child) => {
-          // Try to find photo in unsent_messages for this child
-          const { data: messageData } = await supabase
-            .from('unsent_messages')
-            .select('child_photo_url')
-            .eq('child_email_account_id', child.id)
-            .not('child_photo_url', 'is', null)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          let photoUrl = child.photo_url || null
           
-          // If not found by account_id, try by name (for backwards compatibility)
-          let photoUrl = messageData?.child_photo_url || null
+          // Backwards compatibility: if no photo_url, check unsent_messages
           if (!photoUrl) {
-            const { data: messageByName } = await supabase
+            const { data: messageData } = await supabase
               .from('unsent_messages')
               .select('child_photo_url')
-              .eq('child_name', child.child_name)
+              .eq('child_email_account_id', child.id)
               .not('child_photo_url', 'is', null)
               .order('created_at', { ascending: false })
               .limit(1)
               .maybeSingle()
-            photoUrl = messageByName?.child_photo_url || null
+            
+            photoUrl = messageData?.child_photo_url || null
+            
+            // If found in messages, update the child record for future use
+            if (photoUrl) {
+              await supabase
+                .from('child_email_accounts')
+                .update({ photo_url: photoUrl })
+                .eq('id', child.id)
+            }
           }
           
           return {
@@ -138,7 +139,7 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
         photoUrl = await handlePhotoUpload(formData.photo)
       }
 
-      // Create child email account
+      // Create child email account with photo URL
       const passwordEncrypted = btoa(formData.password)
 
       const { data: childData, error } = await supabase
@@ -147,27 +148,13 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
           user_id: user.id,
           child_name: formData.child_name.trim(),
           email_address: formData.email_address.trim().toLowerCase(),
-          password_encrypted: passwordEncrypted
+          password_encrypted: passwordEncrypted,
+          photo_url: photoUrl // Store photo URL directly with child profile
         })
         .select()
         .single()
 
       if (error) throw error
-
-      // If photo was uploaded, create a placeholder unsent message to store the photo
-      if (photoUrl) {
-        await supabase
-          .from('unsent_messages')
-          .insert({
-            user_id: user.id,
-            child_email_account_id: childData.id,
-            child_name: formData.child_name.trim(),
-            child_photo_url: photoUrl,
-            message_content: 'Photo saved',
-            message_title: 'Child Profile Photo',
-            status: 'draft'
-          })
-      }
 
       toast.success('Child profile created successfully')
       setFormData({ child_name: '', email_address: '', password: '', photo: null })

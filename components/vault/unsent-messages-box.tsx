@@ -44,37 +44,37 @@ export function UnsentMessagesBox() {
         .eq('status', 'draft')
         .order('created_at', { ascending: false })
 
-      // Load children
+      // Load children with photos (photos now stored directly in child_email_accounts)
       const { data: childrenData } = await supabase
         .from('child_email_accounts')
-        .select('id, child_name, email_address, created_at')
+        .select('id, child_name, email_address, photo_url, created_at')
         .order('created_at', { ascending: false })
 
-      // Load photos for children
+      // For backwards compatibility, check unsent_messages if photo_url is null
       const childrenWithPhotos = await Promise.all(
         (childrenData || []).map(async (child) => {
-          // Try to find photo by account_id first
-          const { data: messageData } = await supabase
-            .from('unsent_messages')
-            .select('child_photo_url')
-            .eq('child_email_account_id', child.id)
-            .not('child_photo_url', 'is', null)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          let photoUrl = child.photo_url || null
           
-          // If not found, try by name (backwards compatibility)
-          let photoUrl = messageData?.child_photo_url || null
+          // Backwards compatibility: if no photo_url, check unsent_messages
           if (!photoUrl) {
-            const { data: messageByName } = await supabase
+            const { data: messageData } = await supabase
               .from('unsent_messages')
               .select('child_photo_url')
-              .eq('child_name', child.child_name)
+              .eq('child_email_account_id', child.id)
               .not('child_photo_url', 'is', null)
               .order('created_at', { ascending: false })
               .limit(1)
               .maybeSingle()
-            photoUrl = messageByName?.child_photo_url || null
+            
+            photoUrl = messageData?.child_photo_url || null
+            
+            // If found in messages, update the child record
+            if (photoUrl) {
+              await supabase
+                .from('child_email_accounts')
+                .update({ photo_url: photoUrl })
+                .eq('id', child.id)
+            }
           }
           
           return {
@@ -121,7 +121,7 @@ export function UnsentMessagesBox() {
           user_id: user.id,
           child_email_account_id: selectedChild.id,
           child_name: selectedChild.child_name,
-          child_photo_url: selectedChild.photo_url,
+          child_photo_url: selectedChild.photo_url, // Use photo from child profile
           message_content: formData.message_content,
           message_title: formData.message_title || `A Letter for ${selectedChild.child_name}`,
           status: 'draft'
