@@ -280,7 +280,7 @@ export function UnsentMessagesBox() {
                 type="button"
                 onClick={() => {
                   setShowCreateForm(false)
-                  setFormData({ child_name: '', message_title: '', message_content: '', photo: null })
+                  setFormData({ child_id: '', message_title: '', message_content: '' })
                 }}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
