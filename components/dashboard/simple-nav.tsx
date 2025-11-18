@@ -74,9 +74,12 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
   ]
 
   return (
-    <nav className="sticky top-4 md:top-6 z-50 bg-white border-b border-gray-200 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-20 relative">
+    <>
+      {/* Spacer for top offset */}
+      <div className="h-4 md:h-6"></div>
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md" style={{ backgroundColor: '#ffffff' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-20 relative">
           {/* Centered Brand Name - Expert-Designed with Color Psychology */}
           <Link 
             href="/dashboard" 
@@ -188,5 +191,6 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
         </div>
       </div>
     </nav>
+    </>
   )
 }
