@@ -61,6 +61,7 @@ export default function VaultPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
   const [usage, setUsage] = useState<{ current: number; limit: number }>({ current: 0, limit: -1 })
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     async function getUser() {
@@ -78,9 +79,14 @@ export default function VaultPage() {
 
   useEffect(() => {
     if (user) {
-      loadVaultItems()
-      loadTemplates()
-      loadUsage()
+      setStatsLoading(true)
+      Promise.all([
+        loadVaultItems(),
+        loadTemplates(),
+        loadUsage()
+      ]).finally(() => {
+        setStatsLoading(false)
+      })
     }
   }, [user])
 
@@ -132,6 +138,8 @@ export default function VaultPage() {
       }
     } catch (error) {
       console.error('Error loading usage:', error)
+    } finally {
+      setStatsLoading(false)
     }
   }
 
@@ -191,23 +199,35 @@ export default function VaultPage() {
           </p>
         </div>
 
-        {/* Stats */}
+        {/* Stats - Fixed height to prevent layout shift */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <PremiumCard className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">
-              {usage.limit === -1 ? (usage.current || 0) : `${usage.current || 0}/${usage.limit}`}
+          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2 min-h-[40px] flex items-center justify-center">
+              {statsLoading ? (
+                <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
+              ) : (
+                usage.limit === -1 ? (usage.current || 0) : `${usage.current || 0}/${usage.limit}`
+              )}
             </div>
             <div className="text-sm text-gray-600">Legacy Notes</div>
           </PremiumCard>
-          <PremiumCard className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">
-              {vaultItems?.filter(item => item.metadata?.is_shared).length || 0}
+          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
+            <div className="text-3xl font-bold text-green-600 mb-2 min-h-[40px] flex items-center justify-center">
+              {statsLoading ? (
+                <div className="w-12 h-8 bg-gray-200 rounded animate-pulse"></div>
+              ) : (
+                vaultItems?.filter(item => item.metadata?.is_shared).length || 0
+              )}
             </div>
             <div className="text-sm text-gray-600">Shared with Family</div>
           </PremiumCard>
-          <PremiumCard className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">
-              {templates?.length || 0}
+          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
+            <div className="text-3xl font-bold text-purple-600 mb-2 min-h-[40px] flex items-center justify-center">
+              {statsLoading ? (
+                <div className="w-12 h-8 bg-gray-200 rounded animate-pulse"></div>
+              ) : (
+                templates?.length || 0
+              )}
             </div>
             <div className="text-sm text-gray-600">Available Templates</div>
           </PremiumCard>

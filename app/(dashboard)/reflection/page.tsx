@@ -44,7 +44,7 @@ export default async function ReflectionPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-serif font-light text-gray-900 mb-2">
           Today&apos;s Reflection

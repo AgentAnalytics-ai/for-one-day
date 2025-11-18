@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   const dailyVerse = getTodaysVerse()
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       {/* Hero Welcome */}
       <div className="text-center">
         <TimeGreeting />
