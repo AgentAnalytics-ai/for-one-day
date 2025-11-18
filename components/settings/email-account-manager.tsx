@@ -234,22 +234,22 @@ export function EmailAccountManager() {
           {accounts.map((account) => (
             <div
               key={account.id}
-              className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
+              className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
             >
-              <div>
-                <div className="font-medium text-gray-900">{account.child_name}</div>
-                <div className="text-sm text-gray-600">{account.email_address}</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-gray-900 truncate">{account.child_name}</div>
+                <div className="text-sm text-gray-600 truncate">{account.email_address}</div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => showPassword(account.id)}
-                  className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
+                  className="flex-1 sm:flex-none px-3 py-1.5 text-xs sm:text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                 >
                   View Password
                 </button>
                 <button
                   onClick={() => handleDelete(account.id)}
-                  className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-md"
+                  className="flex-1 sm:flex-none px-3 py-1.5 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
                 >
                   Delete
                 </button>

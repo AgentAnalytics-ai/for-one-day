@@ -208,26 +208,42 @@ export function NavigationTour() {
   const scrollY = window.scrollY
   const scrollX = window.scrollX
 
-  // Calculate tooltip position
+  // Calculate tooltip position (mobile-optimized)
   const getTooltipPosition = () => {
     const spacing = 20
-    const tooltipWidth = 360
+    const isMobile = window.innerWidth < 640
+    const tooltipWidth = isMobile ? window.innerWidth - 32 : 360
     const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
 
+    // Default: below the target
     let top = rect.bottom + scrollY + spacing
     let left = rect.left + scrollX + rect.width / 2
 
-    // Adjust for viewport
-    if (left < tooltipWidth / 2) {
-      left = tooltipWidth / 2 + 20
-    } else if (left > viewportWidth - tooltipWidth / 2) {
-      left = viewportWidth - tooltipWidth / 2 - 20
+    // Mobile: center horizontally, position below
+    if (isMobile) {
+      left = viewportWidth / 2
+      // If not enough space below, position above
+      if (rect.bottom + spacing + 250 > viewportHeight) {
+        top = rect.top + scrollY - 250 - spacing
+      }
+    } else {
+      // Desktop: adjust for viewport boundaries
+      if (left < tooltipWidth / 2) {
+        left = tooltipWidth / 2 + 20
+      } else if (left > viewportWidth - tooltipWidth / 2) {
+        left = viewportWidth - tooltipWidth / 2 - 20
+      }
+      // If not enough space below, position above
+      if (rect.bottom + spacing + 250 > viewportHeight + scrollY) {
+        top = rect.top + scrollY - 250 - spacing
+      }
     }
 
-    return { top, left }
+    return { top, left, isMobile }
   }
 
-  const { top, left } = getTooltipPosition()
+  const { top, left, isMobile } = getTooltipPosition()
 
   return (
     <>
@@ -252,34 +268,42 @@ export function NavigationTour() {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[10000] bg-white rounded-2xl shadow-2xl max-w-sm w-[360px] pointer-events-auto"
+        className="fixed z-[10000] bg-white rounded-2xl shadow-2xl pointer-events-auto"
         style={{
           top: `${top}px`,
-          left: `${left}px`,
-          transform: 'translateX(-50%)',
+          left: isMobile ? '1rem' : `${left}px`,
+          right: isMobile ? '1rem' : 'auto',
+          width: isMobile ? 'calc(100vw - 2rem)' : '360px',
+          maxWidth: isMobile ? 'calc(100vw - 2rem)' : '360px',
+          transform: isMobile ? 'none' : 'translateX(-50%)',
         }}
       >
-        {/* Arrow */}
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-r-[12px] border-b-[12px] border-l-transparent border-r-transparent border-b-white" />
+        {/* Arrow - only show on desktop when positioned below */}
+        {!isMobile && top > rect.bottom + scrollY && (
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-r-[12px] border-b-[12px] border-l-transparent border-r-transparent border-b-white" />
+        )}
+        {!isMobile && top < rect.top + scrollY && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-white" />
+        )}
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
-            <div className="flex-1">
+            <div className="flex-1 pr-2">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-semibold text-xs sm:text-sm">
                     {currentStep + 1}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                   {step.title}
                 </h3>
               </div>
             </div>
             <button
               onClick={skipTour}
-              className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="ml-2 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 p-1"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,30 +313,30 @@ export function NavigationTour() {
           </div>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 leading-relaxed mb-6">
+          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-4 sm:mb-6">
             {step.description}
           </p>
 
           {/* Actions */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3">
             <button
               onClick={skipTour}
-              className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors px-3 py-1.5"
+              className="text-xs sm:text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors px-3 py-2 sm:py-1.5 text-center"
             >
               Skip
             </button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               {currentStep > 0 && (
                 <button
                   onClick={() => setCurrentStep(currentStep - 1)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                 >
                   Back
                 </button>
               )}
               <button
                 onClick={nextStep}
-                className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow"
+                className="flex-1 sm:flex-none px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow"
               >
                 {currentStep === TOUR_STEPS.length - 1 ? 'Done' : 'Next'}
               </button>
