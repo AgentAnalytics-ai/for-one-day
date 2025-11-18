@@ -16,16 +16,16 @@ export function Header() {
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
   return (
-    <header className="sticky top-0 sm:top-4 md:top-6 z-50 bg-white/98 backdrop-blur-md shadow-sm/50 border-b border-gray-100 sm:border-b-0">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-16 sm:h-20 relative">
-          {/* Centered Brand Name - Responsive sizing */}
+    <header className="sticky top-0 z-50 bg-white/98 backdrop-blur-md shadow-sm border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center h-20 sm:h-24 relative py-3 sm:py-4">
+          {/* Centered Brand Name - Professional spacing */}
           <Link 
             href={isDashboard ? "/dashboard" : "/"} 
             className="absolute left-1/2 transform -translate-x-1/2 group"
           >
             <div className={`relative rounded-full bg-gradient-to-br from-slate-900 to-gray-800 border border-slate-700/50 shadow-lg group-hover:from-slate-800 group-hover:to-gray-700 group-hover:shadow-xl transition-all duration-300 ${
-              isDashboard ? 'px-4 sm:px-6 py-1.5 sm:py-2' : 'px-5 sm:px-8 py-2 sm:py-3'
+              isDashboard ? 'px-5 sm:px-6 py-2 sm:py-2.5' : 'px-6 sm:px-8 py-2.5 sm:py-3'
             }`}>
               <h1 className={`font-serif font-light text-white tracking-wide ${
                 isDashboard 
