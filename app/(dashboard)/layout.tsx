@@ -50,7 +50,9 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <NavigationTour />
-      <SimpleNav profile={profile} />
+      <div className="bg-white">
+        <SimpleNav profile={profile} />
+      </div>
       
       <main className="flex-1 w-full py-4 sm:py-8">
         {children}
