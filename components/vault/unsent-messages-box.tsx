@@ -53,19 +53,35 @@ export function UnsentMessagesBox() {
       // Load photos for children
       const childrenWithPhotos = await Promise.all(
         (childrenData || []).map(async (child) => {
+          // Try to find photo by account_id first
           const { data: messageData } = await supabase
             .from('unsent_messages')
             .select('child_photo_url')
-            .eq('child_name', child.child_name)
+            .eq('child_email_account_id', child.id)
             .not('child_photo_url', 'is', null)
+            .order('created_at', { ascending: false })
             .limit(1)
-            .single()
+            .maybeSingle()
+          
+          // If not found, try by name (backwards compatibility)
+          let photoUrl = messageData?.child_photo_url || null
+          if (!photoUrl) {
+            const { data: messageByName } = await supabase
+              .from('unsent_messages')
+              .select('child_photo_url')
+              .eq('child_name', child.child_name)
+              .not('child_photo_url', 'is', null)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle()
+            photoUrl = messageByName?.child_photo_url || null
+          }
           
           return {
             id: child.id,
             child_name: child.child_name,
             email_address: child.email_address,
-            photo_url: messageData?.child_photo_url || null,
+            photo_url: photoUrl,
             created_at: child.created_at
           }
         })

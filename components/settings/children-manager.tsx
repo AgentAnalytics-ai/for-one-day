@@ -46,17 +46,33 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       // Load photos from unsent_messages (where photos are stored)
       const childrenWithPhotos = await Promise.all(
         (data || []).map(async (child) => {
+          // Try to find photo in unsent_messages for this child
           const { data: messageData } = await supabase
             .from('unsent_messages')
             .select('child_photo_url')
-            .eq('child_name', child.child_name)
+            .eq('child_email_account_id', child.id)
             .not('child_photo_url', 'is', null)
+            .order('created_at', { ascending: false })
             .limit(1)
-            .single()
+            .maybeSingle()
+          
+          // If not found by account_id, try by name (for backwards compatibility)
+          let photoUrl = messageData?.child_photo_url || null
+          if (!photoUrl) {
+            const { data: messageByName } = await supabase
+              .from('unsent_messages')
+              .select('child_photo_url')
+              .eq('child_name', child.child_name)
+              .not('child_photo_url', 'is', null)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle()
+            photoUrl = messageByName?.child_photo_url || null
+          }
           
           return {
             ...child,
-            photo_url: messageData?.child_photo_url || null
+            photo_url: photoUrl
           }
         })
       )
