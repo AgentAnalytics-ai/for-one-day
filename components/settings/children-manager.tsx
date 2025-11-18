@@ -22,6 +22,7 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     child_name: '',
     email_address: '',
@@ -87,28 +88,96 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
     }
   }
 
-  const handlePhotoUpload = async (file: File): Promise<string | null> => {
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be less than 5MB')
+      return
+    }
+
+    setFormData({ ...formData, photo: file })
+
+    // Create preview
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const cropAndUploadPhoto = async (file: File): Promise<string | null> => {
     try {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return null
+      // Simple crop: create square image from center
+      const img = new Image()
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
 
-      const fileExt = file.name.split('.').pop()
-      const fileName = `children/${user.id}/${Date.now()}.${fileExt}`
-      
-      const { data, error } = await supabase.storage
-        .from('vault')
-        .upload(fileName, file, { upsert: false })
+      return new Promise((resolve) => {
+        img.onload = async () => {
+          // Calculate square crop from center
+          const size = Math.min(img.width, img.height)
+          const x = (img.width - size) / 2
+          const y = (img.height - size) / 2
 
-      if (error) throw error
+          // Set canvas to square (400x400 for profile photos)
+          canvas.width = 400
+          canvas.height = 400
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('vault')
-        .getPublicUrl(data.path)
+          // Draw cropped and resized image
+          ctx?.drawImage(img, x, y, size, size, 0, 0, 400, 400)
 
-      return publicUrl
+          // Convert to blob
+          canvas.toBlob(async (blob) => {
+            if (!blob) {
+              resolve(null)
+              return
+            }
+
+            // Upload cropped image
+            const supabase = createClient()
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) {
+              resolve(null)
+              return
+            }
+
+            const fileExt = 'jpg' // Always use jpg for cropped images
+            const fileName = `children/${user.id}/${Date.now()}.${fileExt}`
+            
+            const { data, error } = await supabase.storage
+              .from('vault')
+              .upload(fileName, blob, { 
+                upsert: false,
+                contentType: 'image/jpeg'
+              })
+
+            if (error) {
+              console.error('Upload error:', error)
+              resolve(null)
+              return
+            }
+
+            const { data: { publicUrl } } = supabase.storage
+              .from('vault')
+              .getPublicUrl(data.path)
+
+            resolve(publicUrl)
+          }, 'image/jpeg', 0.9) // 90% quality
+        }
+
+        img.src = URL.createObjectURL(file)
+      })
     } catch (error) {
-      console.error('Error uploading photo:', error)
+      console.error('Error processing photo:', error)
       return null
     }
   }
@@ -133,10 +202,15 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
         return
       }
 
-      // Upload photo if provided
+      // Upload and crop photo if provided
       let photoUrl: string | null = null
       if (formData.photo) {
-        photoUrl = await handlePhotoUpload(formData.photo)
+        photoUrl = await cropAndUploadPhoto(formData.photo)
+        if (!photoUrl) {
+          toast.error('Failed to upload photo. Please try again.')
+          setSubmitting(false)
+          return
+        }
       }
 
       // Create child email account with photo URL
@@ -158,6 +232,7 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
 
       toast.success('Child profile created successfully')
       setFormData({ child_name: '', email_address: '', password: '', photo: null })
+      setPhotoPreview(null)
       setShowForm(false)
       await loadChildren()
       
@@ -258,9 +333,36 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setFormData({ ...formData, photo: e.target.files?.[0] || null })}
+                onChange={handlePhotoSelect}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
+              
+              {/* Photo Preview */}
+              {photoPreview && (
+                <div className="mt-4">
+                  <p className="text-xs text-gray-600 mb-2">Preview (will be cropped to square):</p>
+                  <div className="relative inline-block">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photoPreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPhotoPreview(null)
+                        setFormData({ ...formData, photo: null })
+                      }}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -300,6 +402,7 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
                 onClick={() => {
                   setShowForm(false)
                   setFormData({ child_name: '', email_address: '', password: '', photo: null })
+                  setPhotoPreview(null)
                 }}
                 className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
