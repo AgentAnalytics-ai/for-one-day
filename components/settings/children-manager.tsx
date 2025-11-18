@@ -216,24 +216,35 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       // Create child email account with photo URL
       const passwordEncrypted = btoa(formData.password)
 
+      const insertData: any = {
+        user_id: user.id,
+        child_name: formData.child_name.trim(),
+        email_address: formData.email_address.trim().toLowerCase(),
+        password_encrypted: passwordEncrypted
+      }
+      
+      // Only include photo_url if we have one
+      if (photoUrl) {
+        insertData.photo_url = photoUrl
+      }
+
       const { data: childData, error } = await supabase
         .from('child_email_accounts')
-        .insert({
-          user_id: user.id,
-          child_name: formData.child_name.trim(),
-          email_address: formData.email_address.trim().toLowerCase(),
-          password_encrypted: passwordEncrypted,
-          photo_url: photoUrl // Store photo URL directly with child profile
-        })
+        .insert(insertData)
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error creating child:', error)
+        throw error
+      }
 
-      toast.success('Child profile created successfully')
+      toast.success('Child profile created successfully' + (photoUrl ? ' with photo!' : ''))
       setFormData({ child_name: '', email_address: '', password: '', photo: null })
       setPhotoPreview(null)
       setShowForm(false)
+      
+      // Reload children to show the new photo
       await loadChildren()
       
       if (onChildCreated && childData) {
