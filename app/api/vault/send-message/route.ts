@@ -147,19 +147,6 @@ ${message.message_content}
       </html>
     `
 
-    const emailText = `
-A Message for You
-From: ${senderName}
-
-${message.message_title || `A Letter for ${message.child_name}`}
-
-${message.message_content}
-
----
-This message was sent through For One Day.
-Live today. Prepare for the day that matters most.
-    `.trim()
-
     try {
       await sendEmail({
         to: recipientEmail,
