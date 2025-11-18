@@ -10,6 +10,7 @@ import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { UnsentMessagesBox } from '@/components/vault/unsent-messages-box'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -340,6 +341,11 @@ export default function VaultPage() {
               <p className="text-gray-500">Loading templates...</p>
             </div>
           )}
+        </div>
+
+        {/* Unsent Messages */}
+        <div className="mt-8">
+          <UnsentMessagesBox />
         </div>
 
         {/* Legacy Notes */}
