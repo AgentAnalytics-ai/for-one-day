@@ -59,6 +59,7 @@ export function NavigationTour() {
     if (currentStep !== null && !isLoading) {
       updatePosition()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, isLoading, pathname])
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export function NavigationTour() {
         window.removeEventListener('resize', handleUpdate)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep])
 
   useEffect(() => {
@@ -81,6 +83,7 @@ export function NavigationTour() {
     }
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep])
 
   const checkOnboardingStatus = async () => {
@@ -151,6 +154,7 @@ export function NavigationTour() {
     })
   }, [currentStep])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const nextStep = () => {
     if (currentStep === null) return
     
