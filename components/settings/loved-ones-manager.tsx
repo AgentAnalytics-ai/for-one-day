@@ -42,7 +42,15 @@ export function LovedOnesManager({ onLovedOneCreated, showCreateButton = true }:
         .select('id, recipient_name, email_address, photo_url, created_at')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        // If table doesn't exist, that's okay - just show empty list
+        if (error.message?.includes('does not exist') || error.code === '42P01') {
+          console.warn('loved_ones table does not exist yet. Run the SQL migration.')
+          setLovedOnes([])
+          return
+        }
+        throw error
+      }
       
       // Photos are now stored directly in loved_ones.photo_url
       // For backwards compatibility, check unsent_messages if photo_url is null
@@ -261,6 +269,10 @@ export function LovedOnesManager({ onLovedOneCreated, showCreateButton = true }:
 
       if (error) {
         console.error('Error creating loved one:', error)
+        // Check if table doesn't exist
+        if (error.message?.includes('does not exist') || error.code === '42P01') {
+          throw new Error('Database not set up yet. Please run the SQL migration in Supabase (see SETUP_LOVED_ONES.md)')
+        }
         throw error
       }
 
