@@ -212,21 +212,23 @@ export function LovedOnesManager({ onLovedOneCreated, showCreateButton = true }:
         return
       }
 
-      // Upload and crop photo if provided
+      // Upload and crop photo if provided (optional - won't block saving)
       let photoUrl: string | null = null
       if (formData.photo) {
         try {
           photoUrl = await cropAndUploadPhoto(formData.photo)
           if (!photoUrl) {
-            toast.error('Failed to upload photo. Check console for details. Make sure the "vault" bucket exists in Supabase Storage.')
-            setSubmitting(false)
-            return
+            // Photo upload failed, but continue without it
+            console.warn('Photo upload failed, but continuing without photo')
+            toast.error('Photo upload failed, but loved one will be saved without photo. Check console (F12) for details.')
+            // Don't return - allow saving without photo
+          } else {
+            toast.success('Photo uploaded successfully!')
           }
         } catch (error) {
           console.error('Photo upload exception:', error)
-          toast.error('Photo upload failed. Check browser console (F12) for details.')
-          setSubmitting(false)
-          return
+          // Continue without photo - it's optional
+          toast.error('Photo upload failed, but loved one will be saved without photo.')
         }
       }
 
