@@ -18,6 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_child_emails_user ON child_email_accounts(user_id
 ALTER TABLE child_email_accounts ENABLE ROW LEVEL SECURITY;
 
 -- Simple policy: users can only see their own
+DROP POLICY IF EXISTS "Users manage own child emails" ON child_email_accounts;
 CREATE POLICY "Users manage own child emails" ON child_email_accounts
   FOR ALL USING (user_id = auth.uid());
 
