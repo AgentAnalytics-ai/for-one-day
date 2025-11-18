@@ -13,11 +13,21 @@ import { toast } from '@/lib/toast'
 
 interface Profile {
   user_id: string
-  full_name?: string | null
+  full_name?: string
   avatar_url?: string | null
   plan: string
   created_at?: string
   updated_at?: string
+  emergency_contact_email?: string
+  emergency_contact_name?: string
+  emergency_contact_phone?: string
+  emergency_contact_relationship?: string
+  emergency_access_enabled?: boolean
+  emergency_access_notes?: string
+  executor_name?: string
+  executor_email?: string
+  executor_phone?: string
+  executor_relationship?: string
 }
 
 /**
