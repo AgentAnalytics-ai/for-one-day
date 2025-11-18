@@ -45,44 +45,44 @@ export default async function DashboardPage() {
 
       {/* Today's Invitation - Hero with Photo Background */}
       <div 
-        className="relative min-h-[600px] rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800"
+        className="relative min-h-[500px] sm:min-h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800"
       >
         
-        <div className="relative z-10 flex flex-col justify-between h-full py-8 px-6 md:px-8">
+        <div className="relative z-10 flex flex-col justify-between h-full py-6 sm:py-8 px-4 sm:px-6 md:px-8">
           {/* Top section - Title and verse */}
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/90 backdrop-blur rounded-full mb-6 shadow-lg">
-              <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white/90 backdrop-blur rounded-full mb-4 sm:mb-6 shadow-lg">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-serif font-medium text-white mb-6 drop-shadow-lg">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium text-white mb-4 sm:mb-6 drop-shadow-lg px-2">
               Today&apos;s Reflection
             </h2>
             
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-5 md:p-6 mb-6 border border-white/50 shadow-2xl">
-              <p className="text-base md:text-lg text-gray-800 italic mb-3 leading-relaxed">
+            <div className="bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-6 border border-white/50 shadow-2xl mx-2">
+              <p className="text-sm sm:text-base md:text-lg text-gray-800 italic mb-2 sm:mb-3 leading-relaxed">
                 &ldquo;{dailyVerse.text}&rdquo;
               </p>
-              <p className="text-xs md:text-sm text-gray-600 font-medium">{dailyVerse.reference}</p>
+              <p className="text-xs sm:text-xs md:text-sm text-gray-600 font-medium">{dailyVerse.reference}</p>
             </div>
             
-            <p className="text-lg md:text-xl text-white leading-relaxed drop-shadow-lg font-light">
+            <p className="text-base sm:text-lg md:text-xl text-white leading-relaxed drop-shadow-lg font-light px-2">
               {dailyVerse.prompt}
             </p>
           </div>
           
           {/* Bottom section - CTA button */}
-          <div className="text-center max-w-2xl mx-auto mt-8">
+          <div className="text-center max-w-2xl mx-auto mt-6 sm:mt-8">
             <Link
               href="/reflection"
-              className="inline-flex items-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-10 py-5 rounded-full text-lg font-semibold transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 hover:scale-105"
+              className="inline-flex items-center gap-2 sm:gap-3 bg-white hover:bg-gray-50 text-gray-900 px-6 sm:px-10 py-3 sm:py-5 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 hover:scale-105"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
-              Start Your Reflection
+              <span className="whitespace-nowrap">Start Your Reflection</span>
             </Link>
           </div>
         </div>
