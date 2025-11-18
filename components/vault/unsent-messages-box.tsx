@@ -294,6 +294,7 @@ export function UnsentMessagesBox() {
               </button>
             </div>
           </form>
+          )}
         </div>
       )}
 
