@@ -72,9 +72,10 @@ export function EmailAccountManager() {
       setFormData({ child_name: '', email_address: '', password: '' })
       setShowForm(false)
       loadAccounts()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error saving account:', error)
-      toast.error(error.message || 'Failed to save email account')
+      const message = error instanceof Error ? error.message : 'Failed to save email account'
+      toast.error(message)
     }
   }
 
@@ -92,9 +93,10 @@ export function EmailAccountManager() {
 
       toast.success('Email account deleted')
       loadAccounts()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error deleting account:', error)
-      toast.error(error.message || 'Failed to delete email account')
+      const message = error instanceof Error ? error.message : 'Failed to delete email account'
+      toast.error(message)
     }
   }
 
@@ -114,7 +116,7 @@ export function EmailAccountManager() {
       
       // Show in prompt (in production, use a secure modal)
       alert(`Password: ${password}\n\nPlease write this down securely.`)
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error retrieving password:', error)
       toast.error('Failed to retrieve password')
     }
