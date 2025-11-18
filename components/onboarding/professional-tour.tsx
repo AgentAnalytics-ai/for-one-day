@@ -13,16 +13,9 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    id: 'vault',
-    title: 'Your Legacy Vault',
-    description: 'This is where you store letters, videos, and important documents. Everything is encrypted and secure.',
-    target: '[data-tour="vault"]',
-    position: 'bottom'
-  },
-  {
     id: 'create',
-    title: 'Create Your First Letter',
-    description: 'Click here to write your first legacy letter. Choose from professional templates or write your own.',
+    title: 'Get Started',
+    description: 'Click "Create New Note" to write your first legacy letter. You can choose from templates or write your own.',
     target: '[data-tour="create"]',
     position: 'top'
   }
@@ -152,21 +145,6 @@ export function ProfessionalTour() {
       inline: 'nearest'
     })
   }, [currentStep])
-
-  const nextStep = () => {
-    if (currentStep === null) return
-    
-    if (currentStep < TOUR_STEPS.length - 1) {
-      setCurrentStep(currentStep + 1)
-    } else {
-      completeTour()
-    }
-  }
-
-  const previousStep = () => {
-    if (currentStep === null || currentStep === 0) return
-    setCurrentStep(currentStep - 1)
-  }
 
   const skipTour = () => {
     completeTour()
@@ -340,53 +318,21 @@ export function ProfessionalTour() {
             {step.description}
           </p>
 
-          {/* Progress indicator */}
-          <div className="flex items-center gap-1.5 mb-6">
-            {TOUR_STEPS.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === currentStep
-                    ? 'bg-blue-600 w-8'
-                    : i < currentStep
-                    ? 'bg-blue-300 w-4'
-                    : 'bg-gray-200 w-1.5'
-                }`}
-              />
-            ))}
-          </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-end gap-3">
             <button
               onClick={skipTour}
               className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors px-3 py-1.5"
             >
-              Skip tour
+              Skip
             </button>
-            <div className="flex items-center gap-2">
-              {currentStep > 0 && (
-                <button
-                  onClick={previousStep}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                >
-                  Back
-                </button>
-              )}
-              <button
-                onClick={nextStep}
-                className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow"
-              >
-                {currentStep === TOUR_STEPS.length - 1 ? 'Get started' : 'Next'}
-              </button>
-            </div>
-          </div>
-
-          {/* Step counter */}
-          <div className="mt-4 text-center">
-            <span className="text-xs text-gray-400">
-              Step {currentStep + 1} of {TOUR_STEPS.length}
-            </span>
+            <button
+              onClick={completeTour}
+              className="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow"
+            >
+              Got it
+            </button>
           </div>
         </div>
       </div>
