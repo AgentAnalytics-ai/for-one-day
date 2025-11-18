@@ -97,18 +97,21 @@ export function NavigationTour() {
       }
 
       // Start tour on dashboard
-      if (!data || data.onboarding_completed === false || data.onboarding_completed === null) {
+      // Only show tour on dashboard (first page) - not on other pages
+      const pathname = window.location.pathname
+      if ((!data || data.onboarding_completed === false || data.onboarding_completed === null) && pathname === '/dashboard') {
         setTimeout(() => {
           const firstStep = TOUR_STEPS[0]
           const targetElement = document.querySelector(firstStep.target)
           if (targetElement) {
             setCurrentStep(0)
           } else {
+            // If target not found, mark as completed to prevent retries
             setCurrentStep(null)
             setCompleted(true)
             markTourCompleted()
           }
-        }, 2000)
+        }, 3000) // Longer delay to let user see the page first
       }
     } catch (error) {
       console.error('Error checking onboarding:', error)
