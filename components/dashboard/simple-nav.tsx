@@ -74,7 +74,7 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
   ]
 
   return (
-    <nav className="sticky top-4 md:top-6 z-50 bg-white border-b border-gray-200/60 shadow-sm">
+    <nav className="sticky top-4 md:top-6 z-50 bg-white/100 backdrop-blur-none border-b border-gray-200/60 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center h-20 relative">
           {/* Centered Brand Name - Expert-Designed with Color Psychology */}
