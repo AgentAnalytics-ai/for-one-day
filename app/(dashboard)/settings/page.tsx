@@ -8,8 +8,17 @@ import { SubscriptionManagement } from '@/components/settings/subscription-manag
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
 import { EmailAccountManager } from '@/components/settings/email-account-manager'
-import { ToastContainer } from '@/components/ui/toast'
+import { ToastContainer, Toast } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
+
+interface Profile {
+  user_id: string
+  full_name?: string | null
+  avatar_url?: string | null
+  plan: string
+  created_at?: string
+  updated_at?: string
+}
 
 /**
  * ⚙️ Settings Page - User Profile & Emergency Contact
@@ -17,15 +26,9 @@ import { toast } from '@/lib/toast'
  */
 export default function SettingsPage() {
   const router = useRouter()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [toasts, setToasts] = useState<any[]>([])
-
-  useEffect(() => {
-    loadProfile()
-    const unsubscribe = toast.subscribe(setToasts)
-    return unsubscribe
-  }, [])
+  const [toasts, setToasts] = useState<Toast[]>([])
 
   const loadProfile = async () => {
     try {
@@ -51,6 +54,13 @@ export default function SettingsPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadProfile()
+    const unsubscribe = toast.subscribe(setToasts)
+    return unsubscribe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (

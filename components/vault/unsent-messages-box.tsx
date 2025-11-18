@@ -27,7 +27,6 @@ export function UnsentMessagesBox() {
   const [emailAccounts, setEmailAccounts] = useState<EmailAccount[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [selectedAccount, setSelectedAccount] = useState<string>('')
   const [formData, setFormData] = useState({
     child_name: '',
     message_title: '',
@@ -314,6 +313,7 @@ export function UnsentMessagesBox() {
                 <div className="flex items-start gap-4 mb-4">
                   {message.child_photo_url ? (
                     <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={message.child_photo_url}
                         alt={message.child_name}
