@@ -26,40 +26,40 @@ export default async function SettingsPage() {
     .single()
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-light text-gray-900 mb-2">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-serif font-light text-gray-900 mb-2">
           Account Settings
         </h1>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600">
           Manage your profile and emergency contact information
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <ProfileSettingsForm profile={profile} />
       </div>
 
       {/* Subscription Management */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4">Subscription Management</h2>
+      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4">Subscription Management</h2>
         <SubscriptionManagement />
       </div>
 
       {/* Email Accounts for Future Delivery */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <EmailAccountManager />
       </div>
 
       {/* Account Management */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4">Account Management</h2>
+      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4">Account Management</h2>
         <AccountManagement profile={profile} />
       </div>
 
       {/* Support Contact - Redesigned */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4">Support</h2>
+      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4">Support</h2>
         
         <div className="space-y-4">
           {/* Priority Support */}
@@ -106,7 +106,7 @@ export default async function SettingsPage() {
       </div>
 
       {/* Emergency Contact Info */}
-      <div className="mt-8 bg-blue-50 rounded-lg border border-blue-200 p-6">
+      <div className="mt-6 sm:mt-8 bg-blue-50 rounded-lg border border-blue-200 p-4 sm:p-6">
         <div className="flex items-start">
           <div className="flex-shrink-0">
             <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
