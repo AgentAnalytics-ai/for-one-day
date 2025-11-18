@@ -33,6 +33,13 @@ const TOUR_STEPS: TourStep[] = [
     description: 'Store legacy letters, videos, and important documents for your family.',
     target: 'a[href="/vault"]',
     href: '/vault'
+  },
+  {
+    id: 'settings-email',
+    title: 'Create Email Accounts',
+    description: 'Go to Settings to create email accounts for your children. This lets you send them messages in the future.',
+    target: 'a[href="/settings"]',
+    href: '/settings'
   }
 ]
 
