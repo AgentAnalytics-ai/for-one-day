@@ -52,6 +52,7 @@ export function NavigationTour() {
 
   useEffect(() => {
     checkOnboardingStatus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

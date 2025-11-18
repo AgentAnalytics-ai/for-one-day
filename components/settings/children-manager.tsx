@@ -216,7 +216,13 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       // Create child email account with photo URL
       const passwordEncrypted = btoa(formData.password)
 
-      const insertData: any = {
+      const insertData: {
+        user_id: string
+        child_name: string
+        email_address: string
+        password_encrypted: string
+        photo_url?: string
+      } = {
         user_id: user.id,
         child_name: formData.child_name.trim(),
         email_address: formData.email_address.trim().toLowerCase(),
