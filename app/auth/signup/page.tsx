@@ -27,17 +27,18 @@ export default async function SignUpPage({
   const inviteRole = resolvedSearchParams.role || 'spouse'
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
+    <main className="min-h-screen bg-white flex flex-col">
       <Header />
       
-      <div className="flex-1 flex items-center justify-center py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="w-full sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-gray-900 mb-3 sm:mb-4 leading-tight">
+      <div className="flex-1 flex items-start sm:items-center justify-center pt-8 sm:pt-12 pb-12 sm:pb-16 px-4 sm:px-6">
+        <div className="w-full max-w-md">
+          {/* Hero Section - More spacing */}
+          <div className="text-center mb-10 sm:mb-12">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-light text-gray-900 mb-4 sm:mb-5 leading-tight tracking-tight">
               {inviteFamilyId ? 'Join your family' : 'Start your legacy journey'}
-            </h2>
+            </h1>
             
-            <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-md mx-auto">
+            <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-sm mx-auto font-light">
               {inviteFamilyId 
                 ? 'You\'ve been invited to join a family on For One Day.'
                 : 'Join thousands documenting their life story.'
@@ -45,7 +46,8 @@ export default async function SignUpPage({
             </p>
           </div>
 
-          <div className="bg-white py-8 sm:py-10 px-6 sm:px-8 md:px-10 shadow-xl rounded-2xl border border-gray-200/50">
+          {/* Form Card - Professional spacing */}
+          <div className="bg-white py-10 sm:py-12 px-6 sm:px-8 rounded-3xl border border-gray-200 shadow-lg">
           
           {/* Error Message */}
           {error && (
@@ -66,7 +68,7 @@ export default async function SignUpPage({
           {/* Direct to Email Signup */}
 
           {/* Email Signup Form */}
-          <form action={signUp} className="space-y-5 sm:space-y-6">
+          <form action={signUp} className="space-y-6">
             {/* Hidden fields for invitation */}
             {inviteFamilyId && (
               <>
@@ -76,7 +78,7 @@ export default async function SignUpPage({
             )}
             
             <div>
-              <label htmlFor="full-name" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="full-name" className="block text-sm font-medium text-gray-900 mb-2.5">
                 Full name
               </label>
               <input
@@ -85,13 +87,13 @@ export default async function SignUpPage({
                 type="text"
                 autoComplete="name"
                 required
-                className="appearance-none block w-full px-4 py-3.5 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-white"
+                className="appearance-none block w-full px-5 py-4 border-2 border-gray-200 rounded-2xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-gray-50 focus:bg-white"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2.5">
                 Email address
               </label>
               <input
@@ -100,13 +102,13 @@ export default async function SignUpPage({
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none block w-full px-4 py-3.5 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-white"
+                className="appearance-none block w-full px-5 py-4 border-2 border-gray-200 rounded-2xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-gray-50 focus:bg-white"
                 placeholder="Enter your email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2.5">
                 Password
               </label>
               <input
@@ -115,32 +117,31 @@ export default async function SignUpPage({
                 type="password"
                 autoComplete="new-password"
                 required
-                className="appearance-none block w-full px-4 py-3.5 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-white"
+                className="appearance-none block w-full px-5 py-4 border-2 border-gray-200 rounded-2xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base bg-gray-50 focus:bg-white"
                 placeholder="Create a strong password"
               />
-              <div className="mt-2">
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-                  <span>At least 8 characters</span>
-                </div>
+              <div className="mt-2.5">
+                <p className="text-xs text-gray-500 font-medium">
+                  At least 8 characters
+                </p>
               </div>
             </div>
 
-            <div className="flex items-start pt-1">
+            <div className="flex items-start pt-2">
               <input
                 id="terms"
                 name="terms"
                 type="checkbox"
                 required
-                className="h-4 w-4 mt-0.5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
+                className="h-5 w-5 mt-0.5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded-md flex-shrink-0"
               />
               <label htmlFor="terms" className="ml-3 block text-sm text-gray-700 leading-relaxed">
                 I agree to the{' '}
-                <Link href="/terms" className="text-blue-600 hover:text-blue-700 font-medium underline">
+                <Link href="/terms" className="text-blue-600 hover:text-blue-700 font-semibold">
                   Terms of Service
                 </Link>
                 {' '}and{' '}
-                <Link href="/privacy" className="text-blue-600 hover:text-blue-700 font-medium underline">
+                <Link href="/privacy" className="text-blue-600 hover:text-blue-700 font-semibold">
                   Privacy Policy
                 </Link>
               </label>
@@ -148,27 +149,27 @@ export default async function SignUpPage({
 
             <button
               type="submit"
-              className="w-full flex justify-center items-center py-4 px-6 border border-transparent rounded-xl shadow-lg text-base font-semibold text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full flex justify-center items-center py-4.5 px-6 border border-transparent rounded-2xl shadow-lg text-base font-bold text-white bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 mt-2"
             >
               Start Free Today
             </button>
           </form>
 
           {/* Sign In Link */}
-          <div className="mt-8 sm:mt-10">
+          <div className="mt-10">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white text-gray-500">Already have an account?</span>
+                <span className="px-4 bg-white text-gray-500 font-medium">Already have an account?</span>
               </div>
             </div>
 
             <div className="mt-6">
               <Link
                 href="/auth/login"
-                className="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                className="w-full flex justify-center py-3.5 px-4 border-2 border-gray-200 rounded-2xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
               >
                 Sign in instead
               </Link>
@@ -176,9 +177,9 @@ export default async function SignUpPage({
           </div>
           
           {/* Trust Elements */}
-          <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500 leading-relaxed">
-              🔒 Secure authentication · 🚀 Fast & lightweight · 💝 Your personal legacy vault
+          <div className="mt-10 text-center">
+            <p className="text-xs text-gray-500 leading-relaxed font-medium">
+              🔒 Secure · 🚀 Fast · 💝 Your legacy vault
             </p>
           </div>
           </div>

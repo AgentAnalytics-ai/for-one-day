@@ -16,29 +16,29 @@ export function Header() {
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
   return (
-    <header className="sticky top-0 z-50 bg-white/98 backdrop-blur-md shadow-sm border-b border-gray-100">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-20 sm:h-24 relative py-3 sm:py-4">
-          {/* Centered Brand Name - Professional spacing */}
+        <div className="flex items-center justify-between h-16 sm:h-20 py-4 sm:py-5">
+          {/* Left - Brand Name - Simplified for mobile */}
           <Link 
             href={isDashboard ? "/dashboard" : "/"} 
-            className="absolute left-1/2 transform -translate-x-1/2 group"
+            className="group"
           >
-            <div className={`relative rounded-full bg-gradient-to-br from-slate-900 to-gray-800 border border-slate-700/50 shadow-lg group-hover:from-slate-800 group-hover:to-gray-700 group-hover:shadow-xl transition-all duration-300 ${
-              isDashboard ? 'px-5 sm:px-6 py-2 sm:py-2.5' : 'px-6 sm:px-8 py-2.5 sm:py-3'
+            <div className={`relative rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200 ${
+              isDashboard ? 'px-4 sm:px-5 py-1.5 sm:py-2' : 'px-5 sm:px-6 py-2 sm:py-2.5'
             }`}>
-              <h1 className={`font-serif font-light text-white tracking-wide ${
+              <h1 className={`font-serif font-light text-white tracking-tight ${
                 isDashboard 
-                  ? 'text-xl sm:text-2xl md:text-3xl' 
-                  : 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl'
+                  ? 'text-lg sm:text-xl md:text-2xl' 
+                  : 'text-xl sm:text-2xl md:text-3xl'
               }`}>
                 For One Day
               </h1>
             </div>
           </Link>
 
-          {/* Right-side Navigation - Minimal & Clean */}
-          <nav className="ml-auto flex items-center gap-2 sm:gap-4">
+          {/* Right-side Navigation - Clean */}
+          <nav className="flex items-center gap-3 sm:gap-4">
             {isLandingPage ? (
               <>
                 <Link
