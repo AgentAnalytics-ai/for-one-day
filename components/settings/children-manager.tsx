@@ -162,10 +162,20 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
 
             if (error) {
               console.error('Upload error:', error)
+              console.error('Error details:', JSON.stringify(error, null, 2))
+              // More specific error message
+              if (error.message?.includes('Bucket not found')) {
+                console.error('❌ The "vault" bucket does not exist in Supabase Storage. Please create it in the Supabase dashboard.')
+              } else if (error.message?.includes('new row violates row-level security')) {
+                console.error('❌ Storage RLS policy is blocking upload. Check bucket policies in Supabase.')
+              }
               resolve(null)
               return
             }
 
+            // For private buckets, we need to use getPublicUrl (works if bucket has public access)
+            // OR createSignedUrl for private buckets (requires service role)
+            // Let's try public URL first, if bucket is private this will still return a URL but it won't be accessible
             const { data: { publicUrl } } = supabase.storage
               .from('vault')
               .getPublicUrl(data.path)
@@ -205,9 +215,16 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       // Upload and crop photo if provided
       let photoUrl: string | null = null
       if (formData.photo) {
-        photoUrl = await cropAndUploadPhoto(formData.photo)
-        if (!photoUrl) {
-          toast.error('Failed to upload photo. Please try again.')
+        try {
+          photoUrl = await cropAndUploadPhoto(formData.photo)
+          if (!photoUrl) {
+            toast.error('Failed to upload photo. Check console for details. Make sure the "vault" bucket exists in Supabase Storage.')
+            setSubmitting(false)
+            return
+          }
+        } catch (error) {
+          console.error('Photo upload exception:', error)
+          toast.error('Photo upload failed. Check browser console (F12) for details.')
           setSubmitting(false)
           return
         }
