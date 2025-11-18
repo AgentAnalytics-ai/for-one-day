@@ -4,6 +4,7 @@ import { ProfileSettingsForm } from '@/components/settings/profile-settings-form
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
+import { EmailAccountManager } from '@/components/settings/email-account-manager'
 
 /**
  * ⚙️ Settings Page - User Profile & Emergency Contact
@@ -43,6 +44,11 @@ export default async function SettingsPage() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-medium text-gray-900 mb-4">Subscription Management</h2>
         <SubscriptionManagement />
+      </div>
+
+      {/* Email Accounts for Future Delivery */}
+      <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <EmailAccountManager />
       </div>
 
       {/* Account Management */}

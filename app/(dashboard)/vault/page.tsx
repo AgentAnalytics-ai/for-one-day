@@ -10,6 +10,7 @@ import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { SimpleTour } from '@/components/onboarding/simple-tour'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -178,6 +179,7 @@ export default function VaultPage() {
 
   return (
     <>
+      <SimpleTour />
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       
       <div className="max-w-6xl mx-auto space-y-8">
@@ -241,7 +243,7 @@ export default function VaultPage() {
         )}
 
         {/* Create New Note */}
-        <PremiumCard className="p-8">
+        <PremiumCard className="p-8" data-tour="create">
           <div className="text-center">
             <h2 className="text-2xl font-medium text-gray-900 mb-4">
               Create a Legacy Note
@@ -323,7 +325,7 @@ export default function VaultPage() {
         </div>
 
         {/* Legacy Notes */}
-        <div>
+        <div data-tour="vault">
           <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Legacy Notes</h2>
           {vaultItems && vaultItems.length === 0 ? (
             <PremiumCard className="p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -370,6 +372,7 @@ export default function VaultPage() {
                 onClick={() => setShowCreateModal(true)}
                 size="lg"
                 className="px-10 py-4 text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
+                data-tour="create"
               >
                 Write Your First Letter (5 minutes)
               </PremiumButton>
