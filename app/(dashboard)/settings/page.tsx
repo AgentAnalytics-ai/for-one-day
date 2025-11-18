@@ -7,7 +7,7 @@ import { ProfileSettingsForm } from '@/components/settings/profile-settings-form
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
-import { ChildrenManager } from '@/components/settings/children-manager'
+import { LovedOnesManager } from '@/components/settings/loved-ones-manager'
 import { ToastContainer, Toast } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 
@@ -102,9 +102,9 @@ export default function SettingsPage() {
         <SubscriptionManagement />
       </div>
 
-      {/* Children Profiles */}
+      {/* Loved Ones */}
       <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <ChildrenManager />
+        <LovedOnesManager />
       </div>
 
       {/* Account Management */}

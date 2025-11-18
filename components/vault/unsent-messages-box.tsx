@@ -3,28 +3,28 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from '@/lib/toast'
-import { ChildrenManager, Child } from '@/components/settings/children-manager'
+import { LovedOnesManager, LovedOne } from '@/components/settings/loved-ones-manager'
 
 interface UnsentMessage {
   id: string
-  child_name: string
-  child_photo_url: string | null
+  recipient_name: string
+  recipient_photo_url: string | null
   message_content: string
   message_title: string | null
   scheduled_send_date: string | null
   status: 'draft' | 'scheduled' | 'sent'
-  child_email_account_id: string | null
+  loved_one_id: string | null
   created_at: string
 }
 
 export function UnsentMessagesBox() {
   const [messages, setMessages] = useState<UnsentMessage[]>([])
-  const [children, setChildren] = useState<Child[]>([])
+  const [lovedOnes, setLovedOnes] = useState<LovedOne[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [showChildrenManager, setShowChildrenManager] = useState(false)
+  const [showLovedOnesManager, setShowLovedOnesManager] = useState(false)
   const [formData, setFormData] = useState({
-    child_id: '',
+    loved_one_id: '',
     message_title: '',
     message_content: ''
   })
@@ -44,51 +44,51 @@ export function UnsentMessagesBox() {
         .eq('status', 'draft')
         .order('created_at', { ascending: false })
 
-      // Load children with photos (photos now stored directly in child_email_accounts)
-      const { data: childrenData } = await supabase
-        .from('child_email_accounts')
-        .select('id, child_name, email_address, photo_url, created_at')
+      // Load loved ones with photos (photos now stored directly in loved_ones)
+      const { data: lovedOnesData } = await supabase
+        .from('loved_ones')
+        .select('id, recipient_name, email_address, photo_url, created_at')
         .order('created_at', { ascending: false })
 
       // For backwards compatibility, check unsent_messages if photo_url is null
-      const childrenWithPhotos = await Promise.all(
-        (childrenData || []).map(async (child) => {
-          let photoUrl = child.photo_url || null
+      const lovedOnesWithPhotos = await Promise.all(
+        (lovedOnesData || []).map(async (lovedOne) => {
+          let photoUrl = lovedOne.photo_url || null
           
           // Backwards compatibility: if no photo_url, check unsent_messages
           if (!photoUrl) {
             const { data: messageData } = await supabase
               .from('unsent_messages')
-              .select('child_photo_url')
-              .eq('child_email_account_id', child.id)
-              .not('child_photo_url', 'is', null)
+              .select('recipient_photo_url')
+              .eq('loved_one_id', lovedOne.id)
+              .not('recipient_photo_url', 'is', null)
               .order('created_at', { ascending: false })
               .limit(1)
               .maybeSingle()
             
-            photoUrl = messageData?.child_photo_url || null
+            photoUrl = messageData?.recipient_photo_url || null
             
-            // If found in messages, update the child record
+            // If found in messages, update the loved one record
             if (photoUrl) {
               await supabase
-                .from('child_email_accounts')
+                .from('loved_ones')
                 .update({ photo_url: photoUrl })
-                .eq('id', child.id)
+                .eq('id', lovedOne.id)
             }
           }
           
           return {
-            id: child.id,
-            child_name: child.child_name,
-            email_address: child.email_address,
+            id: lovedOne.id,
+            recipient_name: lovedOne.recipient_name,
+            email_address: lovedOne.email_address,
             photo_url: photoUrl,
-            created_at: child.created_at
+            created_at: lovedOne.created_at
           }
         })
       )
 
       setMessages(messagesData || [])
-      setChildren(childrenWithPhotos)
+      setLovedOnes(lovedOnesWithPhotos)
     } catch (error) {
       console.error('Error loading data:', error)
     } finally {
@@ -99,8 +99,8 @@ export function UnsentMessagesBox() {
   const handleCreateMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.child_id || !formData.message_content) {
-      toast.error('Please select a child and write a message')
+    if (!formData.loved_one_id || !formData.message_content) {
+      toast.error('Please select a loved one and write a message')
       return
     }
 
@@ -109,9 +109,9 @@ export function UnsentMessagesBox() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const selectedChild = children.find(c => c.id === formData.child_id)
-      if (!selectedChild) {
-        toast.error('Selected child not found')
+      const selectedLovedOne = lovedOnes.find(l => l.id === formData.loved_one_id)
+      if (!selectedLovedOne) {
+        toast.error('Selected loved one not found')
         return
       }
 
@@ -119,18 +119,18 @@ export function UnsentMessagesBox() {
         .from('unsent_messages')
         .insert({
           user_id: user.id,
-          child_email_account_id: selectedChild.id,
-          child_name: selectedChild.child_name,
-          child_photo_url: selectedChild.photo_url, // Use photo from child profile
+          loved_one_id: selectedLovedOne.id,
+          recipient_name: selectedLovedOne.recipient_name,
+          recipient_photo_url: selectedLovedOne.photo_url, // Use photo from loved one profile
           message_content: formData.message_content,
-          message_title: formData.message_title || `A Letter for ${selectedChild.child_name}`,
+          message_title: formData.message_title || `A Letter for ${selectedLovedOne.recipient_name}`,
           status: 'draft'
         })
 
       if (error) throw error
 
       toast.success('Message saved! You can send it when ready.')
-      setFormData({ child_id: '', message_title: '', message_content: '' })
+      setFormData({ loved_one_id: '', message_title: '', message_content: '' })
       setShowCreateForm(false)
       loadData()
     } catch (error) {
@@ -196,19 +196,19 @@ export function UnsentMessagesBox() {
             Unsent Messages
           </h2>
           <p className="text-sm text-gray-600">
-            Write messages to your children. Send them when ready via their email accounts.
+            Write messages to your loved ones (spouse, children, family, friends). Send them when ready via their email accounts.
           </p>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setShowChildrenManager(!showChildrenManager)}
+            onClick={() => setShowLovedOnesManager(!showLovedOnesManager)}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
           >
-            {showChildrenManager ? 'Hide' : 'Manage'} Children
+            {showLovedOnesManager ? 'Hide' : 'Manage'} Loved Ones
           </button>
           <button
             onClick={() => setShowCreateForm(true)}
-            disabled={children.length === 0}
+            disabled={lovedOnes.length === 0}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             + New Message
@@ -216,13 +216,13 @@ export function UnsentMessagesBox() {
         </div>
       </div>
 
-      {/* Children Manager */}
-      {showChildrenManager && (
+      {/* Loved Ones Manager */}
+      {showLovedOnesManager && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <ChildrenManager 
-            onChildCreated={() => {
+          <LovedOnesManager 
+            onLovedOneCreated={() => {
               loadData()
-              setShowChildrenManager(false)
+              setShowLovedOnesManager(false)
             }}
           />
         </div>
@@ -231,35 +231,35 @@ export function UnsentMessagesBox() {
       {/* Create Form */}
       {showCreateForm && (
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
-          {children.length === 0 ? (
+          {lovedOnes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-600 mb-4">No children added yet.</p>
+              <p className="text-gray-600 mb-4">No loved ones added yet.</p>
               <button
                 onClick={() => {
                   setShowCreateForm(false)
-                  setShowChildrenManager(true)
+                  setShowLovedOnesManager(true)
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                Add Your First Child
+                Add Your First Loved One
               </button>
             </div>
           ) : (
             <form onSubmit={handleCreateMessage} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Child *
+                  Select Loved One *
                 </label>
                 <select
-                  value={formData.child_id}
-                  onChange={(e) => setFormData({ ...formData, child_id: e.target.value })}
+                  value={formData.loved_one_id}
+                  onChange={(e) => setFormData({ ...formData, loved_one_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
-                  <option value="">Choose a child...</option>
-                  {children.map((child) => (
-                    <option key={child.id} value={child.id}>
-                      {child.child_name} {child.email_address ? `(${child.email_address})` : ''}
+                  <option value="">Choose a loved one...</option>
+                  {lovedOnes.map((lovedOne) => (
+                    <option key={lovedOne.id} value={lovedOne.id}>
+                      {lovedOne.recipient_name} {lovedOne.email_address ? `(${lovedOne.email_address})` : ''}
                     </option>
                   ))}
                 </select>
@@ -296,7 +296,7 @@ export function UnsentMessagesBox() {
                 type="button"
                 onClick={() => {
                   setShowCreateForm(false)
-                  setFormData({ child_id: '', message_title: '', message_content: '' })
+                  setFormData({ loved_one_id: '', message_title: '', message_content: '' })
                 }}
                 className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
@@ -323,7 +323,7 @@ export function UnsentMessagesBox() {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No Unsent Messages</h3>
-          <p className="text-gray-600 mb-4">Create your first message to a child</p>
+          <p className="text-gray-600 mb-4">Create your first message to a loved one</p>
           <button
             onClick={() => setShowCreateForm(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -334,8 +334,8 @@ export function UnsentMessagesBox() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {messages.map((message) => {
-            const child = children.find(c => c.id === message.child_email_account_id)
-            const hasEmail = !!child
+            const lovedOne = lovedOnes.find(l => l.id === message.loved_one_id)
+            const hasEmail = !!lovedOne
 
             return (
               <div
@@ -344,25 +344,25 @@ export function UnsentMessagesBox() {
               >
                 {/* Header with Photo */}
                 <div className="flex items-start gap-4 mb-4">
-                  {message.child_photo_url ? (
+                  {message.recipient_photo_url ? (
                     <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={message.child_photo_url}
-                        alt={message.child_name}
+                        src={message.recipient_photo_url}
+                        alt={message.recipient_name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-xl font-semibold">
-                        {message.child_name.charAt(0).toUpperCase()}
+                        {message.recipient_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900 truncate">
-                      {message.child_name}
+                      {message.recipient_name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
                       {hasEmail ? (
@@ -371,7 +371,7 @@ export function UnsentMessagesBox() {
                             ✓ Email Created
                           </span>
                           <span className="text-xs text-gray-500">
-                            {child?.email_address}
+                            {lovedOne?.email_address}
                           </span>
                         </>
                       ) : (
@@ -386,7 +386,7 @@ export function UnsentMessagesBox() {
                 {/* Message Preview */}
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    {message.message_title || `A Letter for ${message.child_name}`}
+                    {message.message_title || `A Letter for ${message.recipient_name}`}
                   </h4>
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <p className="text-sm text-gray-700 line-clamp-4">
@@ -398,7 +398,7 @@ export function UnsentMessagesBox() {
                 {/* Preview Badge */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                   <p className="text-xs text-blue-800 font-medium">
-                    ✉️ This will be sent to {hasEmail ? child?.email_address : 'their email (add child profile first)'}
+                    ✉️ This will be sent to {hasEmail ? lovedOne?.email_address : 'their email (add loved one profile first)'}
                   </p>
                 </div>
 

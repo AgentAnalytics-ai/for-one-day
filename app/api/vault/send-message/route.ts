@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     // Get the message
     const { data: message, error: messageError } = await supabase
       .from('unsent_messages')
-      .select('*, child_email_accounts(email_address)')
+      .select('*, loved_ones(email_address)')
       .eq('id', messageId)
       .eq('user_id', user.id)
       .eq('status', 'draft')
@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
     // Get email address
     let recipientEmail: string | null = null
 
-    if (message.child_email_account_id) {
+    if (message.loved_one_id) {
       const { data: account } = await supabase
-        .from('child_email_accounts')
+        .from('loved_ones')
         .select('email_address')
-        .eq('id', message.child_email_account_id)
+        .eq('id', message.loved_one_id)
         .single()
 
       recipientEmail = account?.email_address || null
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     if (!recipientEmail) {
       return NextResponse.json({ 
-        error: 'No email account found for this child. Please create one in Settings.' 
+        error: 'No email account found for this loved one. Please create one in Settings.' 
       }, { status: 400 })
     }
 
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
             <p style="color: #6b7280;">From ${senderName}</p>
           </div>
           
-          <h2 style="color: #1f2937; margin-bottom: 20px;">${message.message_title || `A Letter for ${message.child_name}`}</h2>
+          <h2 style="color: #1f2937; margin-bottom: 20px;">${message.message_title || `A Letter for ${message.recipient_name}`}</h2>
           
           <div class="content">
 ${message.message_content}
@@ -150,7 +150,7 @@ ${message.message_content}
     try {
       await sendEmail({
         to: recipientEmail,
-        subject: message.message_title || `A Message for ${message.child_name}`,
+        subject: message.message_title || `A Message for ${message.recipient_name}`,
         html: emailHtml
       })
 

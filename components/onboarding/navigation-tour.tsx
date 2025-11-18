@@ -37,7 +37,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 'settings-email',
     title: 'Create Email Accounts',
-    description: 'Go to Settings to create email accounts for your children. This lets you send them messages in the future.',
+    description: 'Go to Settings to create email accounts for your loved ones (spouse, children, family, friends). This lets you send them messages in the future.',
     target: 'a[href="/settings"]',
     href: '/settings'
   }
