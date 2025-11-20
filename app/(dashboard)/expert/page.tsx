@@ -43,7 +43,7 @@ export default function ExpertPage() {
             loadAnalysis()
             return
           }
-        } catch (e) {
+        } catch {
           // Invalid cache, continue to load fresh
         }
       }
@@ -99,8 +99,8 @@ export default function ExpertPage() {
         data: data.analysis,
         timestamp: Date.now()
       }))
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') {
         return // Request was cancelled, ignore
       }
       console.error('Error loading expert analysis:', err)
