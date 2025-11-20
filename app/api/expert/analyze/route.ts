@@ -6,10 +6,10 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateExpertAnalysis } from '@/lib/ai'
+import { generateExpertAnalysis, type ExpertAnalysis } from '@/lib/ai'
 
 // Simple in-memory cache (24 hours) - Cost optimization
-const cache = new Map<string, { data: any; timestamp: number }>()
+const cache = new Map<string, { data: ExpertAnalysis; timestamp: number }>()
 const CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
 function getCacheKey(question?: string): string {
