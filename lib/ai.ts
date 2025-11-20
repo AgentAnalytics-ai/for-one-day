@@ -46,12 +46,12 @@ CREATE THESE 7 CARDS:
 4. A "Guess" card where family guesses who wrote which entry
 5. A "Guess" card about which day something happened
 6. A "Verse Recall" card with a fill-in-the-blank from scripture (keep it simple)
-7. A "Blessing" card - a 2-3 sentence blessing the father can read over the family
+7. A "Blessing" card - a 2-3 sentence blessing that can be read over the family (inclusive, not gender-specific)
 
 Return ONLY valid JSON array with NO additional text:
 [
   {"type": "prompt", "text": "What was the best part of your week?", "category": "reflection"},
-  {"type": "guess", "text": "Who wrote: 'I felt...'", "options": ["Dad", "Mom", "Sarah"], "answer": "Dad"},
+  {"type": "guess", "text": "Who wrote: 'I felt...'", "options": ["Parent 1", "Parent 2", "Sarah"], "answer": "Parent 1"},
   {"type": "verse", "text": "'Be strong and ___' - Joshua 1:9", "answer": "courageous"},
   {"type": "blessing", "text": "Your blessing here..."}
 ]`
@@ -154,7 +154,7 @@ export async function generateDevotional(params: {
   const selectedTheme = themes[themeIndex]
   const selectedScripture = scriptures[scriptureIndex]
 
-  const prompt = `Create a daily devotional for fathers focused on ${selectedTheme}.
+  const prompt = `Create a daily devotional focused on ${selectedTheme}. This is for an inclusive app used by people of all backgrounds (not gender-specific).
 
 Scripture: ${selectedScripture.text} (${selectedScripture.ref})
 
@@ -165,9 +165,10 @@ Create:
 
 Each prompt should be:
 - Personal and introspective
-- Relevant to fatherhood and family
+- Relevant to family, relationships, and legacy (inclusive, not gender-specific)
 - 1-2 sentences long
 - Encouraging and thought-provoking
+- Accessible to all users regardless of gender or family structure
 
 Return as JSON:
 {
@@ -202,11 +203,11 @@ Return as JSON:
       description: parsed.description || `A devotional on ${selectedTheme}`,
       scripture: selectedScripture,
       day_prompts: parsed.day_prompts || [
-        'What does this scripture mean to you as a father?',
-        'How can you apply this truth in your family today?',
+        'What does this scripture mean to you personally?',
+        'How can you apply this truth in your relationships today?',
         'What challenges does this address in your life?',
         'How has God shown this truth to you recently?',
-        'What would you want your children to learn from this?',
+        'What would you want your loved ones to learn from this?',
         'How does this scripture encourage you for tomorrow?'
       ]
     }
@@ -227,16 +228,16 @@ export async function generateDevotionalReflection(
     throw new Error('OpenAI API key not configured')
   }
 
-  const prompt = `Create a brief daily devotional for fathers.
+  const prompt = `Create a brief daily devotional. This is for an inclusive app used by people of all backgrounds (not gender-specific).
 
 Theme: ${theme}
 Scripture: ${scripture.text} (${scripture.ref})
 
 Write:
-1. A 200-word reflection connecting the scripture to fatherhood, family, and legacy
+1. A 200-word reflection connecting the scripture to family, relationships, and legacy (inclusive, not gender-specific)
 2. One thoughtful journal prompt question
 
-Use a gentle, purposeful, fatherly tone. Return as JSON:
+Use a gentle, purposeful, encouraging tone that is accessible to all users. Return as JSON:
 {"reflection": "...", "prompt": "..."}`
 
   const completion = await openai.chat.completions.create({
@@ -252,6 +253,149 @@ Use a gentle, purposeful, fatherly tone. Return as JSON:
   return {
     reflection: parsed.reflection || '',
     prompt: parsed.prompt || '',
+  }
+}
+
+/**
+ * Expert Analysis - 2026 AI, Web Apps, and UX Best Practices
+ * Analyzes codebase and provides expert recommendations
+ */
+export interface ExpertAnalysis {
+  aiRecommendations: {
+    title: string
+    description: string
+    priority: 'high' | 'medium' | 'low'
+    actionable: string[]
+  }[]
+  webAppRecommendations: {
+    title: string
+    description: string
+    priority: 'high' | 'medium' | 'low'
+    actionable: string[]
+  }[]
+  uxRecommendations: {
+    title: string
+    description: string
+    priority: 'high' | 'medium' | 'low'
+    actionable: string[]
+  }[]
+  codebaseInsights: {
+    strengths: string[]
+    opportunities: string[]
+    nextSteps: string[]
+  }
+}
+
+export async function generateExpertAnalysis(
+  codebaseContext: string,
+  userQuestion?: string
+): Promise<ExpertAnalysis> {
+  if (!openai) {
+    throw new Error('OpenAI API key not configured')
+  }
+
+  const basePrompt = `You are an expert advisor on 2026 AI trends, modern web application architecture, and exceptional user experience design.
+
+CODEBASE CONTEXT:
+${codebaseContext}
+
+TECH STACK:
+- Next.js 15 (App Router, React 19, Server Components)
+- Supabase (Postgres, Auth, Storage, RLS)
+- TypeScript + Zod
+- Tailwind CSS
+- OpenAI (gpt-4o-mini)
+- Resend (email)
+- Stripe (payments)
+- Vercel (deployment)
+
+Provide a comprehensive expert analysis covering:
+
+1. **2026 AI AGENDA** - Latest AI trends, best practices, and opportunities:
+   - Agentic AI and autonomous workflows
+   - Multimodal AI capabilities
+   - AI safety and ethical considerations
+   - Cost optimization strategies
+   - Real-time AI features
+   - Personalization at scale
+
+2. **WEB APP BEST PRACTICES** - Modern architecture and performance:
+   - Next.js 15 App Router optimization
+   - Server Components vs Client Components strategy
+   - Edge computing opportunities
+   - Database query optimization
+   - Caching strategies
+   - Security hardening
+   - Scalability patterns
+
+3. **EXCEPTIONAL USER EXPERIENCE** - 2026 UX principles:
+   - Micro-interactions and delight
+   - Accessibility (WCAG 2.2)
+   - Performance perception
+   - Progressive enhancement
+   - Mobile-first excellence
+   - Emotional design
+   - Onboarding flows
+   - Error handling and recovery
+
+4. **CODEBASE-SPECIFIC INSIGHTS**:
+   - Current strengths to maintain
+   - Opportunities for improvement
+   - Concrete next steps
+
+Return as JSON with this structure:
+{
+  "aiRecommendations": [
+    {
+      "title": "Recommendation title",
+      "description": "Detailed explanation",
+      "priority": "high|medium|low",
+      "actionable": ["Action 1", "Action 2"]
+    }
+  ],
+  "webAppRecommendations": [...],
+  "uxRecommendations": [...],
+  "codebaseInsights": {
+    "strengths": ["Strength 1", "Strength 2"],
+    "opportunities": ["Opportunity 1", "Opportunity 2"],
+    "nextSteps": ["Step 1", "Step 2"]
+  }
+}`
+
+  const prompt = userQuestion 
+    ? `${basePrompt}\n\nUSER QUESTION: ${userQuestion}\n\nPlease focus your analysis on answering this specific question while still providing comprehensive insights.`
+    : basePrompt
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a world-class expert in AI, web development, and UX design. Provide actionable, specific, and forward-thinking recommendations based on 2026 best practices.'
+      },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.7,
+    response_format: { type: 'json_object' },
+  })
+
+  try {
+    const content = completion.choices[0].message.content || '{}'
+    const parsed = JSON.parse(content)
+    
+    return {
+      aiRecommendations: parsed.aiRecommendations || [],
+      webAppRecommendations: parsed.webAppRecommendations || [],
+      uxRecommendations: parsed.uxRecommendations || [],
+      codebaseInsights: parsed.codebaseInsights || {
+        strengths: [],
+        opportunities: [],
+        nextSteps: []
+      }
+    }
+  } catch (error) {
+    console.error('Failed to parse expert analysis:', error)
+    throw new Error('Failed to generate expert analysis')
   }
 }
 

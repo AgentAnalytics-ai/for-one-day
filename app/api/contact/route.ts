@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     } catch (emailError) {
       console.error('Failed to send contact email:', emailError)
       return NextResponse.json(
-        { success: false, error: 'Failed to send message. Please call (405) 535-7750 instead.' },
+        { success: false, error: 'Failed to send message. Please try again or use the contact form.' },
         { status: 500 }
       )
     }
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Contact form error:', error)
     return NextResponse.json(
-      { success: false, error: 'An unexpected error occurred. Please call (405) 535-7750 for immediate assistance.' },
+      { success: false, error: 'An unexpected error occurred. Please try again.' },
       { status: 500 }
     )
   }

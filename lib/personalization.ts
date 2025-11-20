@@ -52,7 +52,7 @@ export function getPersonalizedContent(preferences: UserPreferences): Personaliz
       ...content,
       greeting: "Lead your family's legacy",
       callToAction: "Build a foundation that lasts generations",
-      templates: ["Leadership Lessons", "Wedding Day", "Financial Wisdom", "Family Values", "Father's Wisdom"],
+      templates: ["Leadership Lessons", "Wedding Day", "Financial Wisdom", "Family Values", "Wisdom & Legacy"],
       messaging: {
         primary: "Your leadership and wisdom will guide your family for generations",
         secondary: "As a man, you have the power to shape your family's future",
@@ -151,25 +151,25 @@ With love,
   // Add gender-specific templates
   if (gender === 'male') {
     baseTemplates.push({
-      id: 'fathers-wisdom',
-      name: "Father's Wisdom",
-      description: 'Share your wisdom as a father and leader',
+      id: 'wisdom-legacy',
+      name: "Wisdom & Legacy",
+      description: 'Share your wisdom and life lessons as a leader and guide',
       category: 'wisdom',
       template_content: `My Dear [Name],
 
-As your father, I want to share with you the wisdom I've gained about being a man, a leader, and a provider.
+I want to share with you the wisdom I've gained about leadership, responsibility, and building a meaningful life.
 
-Being a man means:
+What I've learned about being a person of character:
 - Taking responsibility for your actions
-- Protecting and providing for your family
+- Protecting and providing for those you care about
 - Leading with integrity and compassion
 - Being strong enough to be gentle
 
-Remember, true strength comes from character, not just physical power.
+Remember, true strength comes from character, not just physical power or position.
 
 With love and pride,
-Dad`,
-      placeholders: ['Name']
+[Your Name]`,
+      placeholders: ['Name', 'Your Name']
     })
   }
 

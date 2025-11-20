@@ -43,7 +43,7 @@ Congratulations on becoming a parent! This is one of life's greatest adventures 
 
 I remember the day you were born - the overwhelming love, the fear of not being good enough, the joy of holding you for the first time. You're about to experience all of that and more.
 
-Here's what I learned about being a father:
+Here's what I learned about being a parent:
 
 1. You'll make mistakes - that's okay, just learn from them
 2. Your child will teach you as much as you teach them
@@ -195,7 +195,7 @@ Don't give up. Don't lose hope. This is just one chapter in your story, not the 
 I believe in you, and more importantly, God believes in you. He has a plan for your life, even when you can't see it.
 
 With love and prayers,
-Dad`,
+[Your Name]`,
       category: 'wisdom',
       tags: ['failure', 'encouragement', 'hope', 'perseverance']
     }
@@ -409,7 +409,7 @@ Faith is a journey, not a destination. There will be times of doubt and struggle
 Keep seeking Him, keep praying, keep reading His Word. He will meet you where you are.
 
 With love and prayers,
-Dad`,
+[Your Name]`,
       category: 'spiritual',
       tags: ['faith', 'spiritual journey', 'testimony', 'God']
     },
