@@ -277,7 +277,7 @@ export function addPersonalizationHooks(content: string, userProfile: {
     personalizedContent = personalizedContent.replace(/\[Your Name\]/g, userProfile.name)
   }
   
-  if (userProfile.familyStage === 'new-dad') {
+  if (userProfile.familyStage === 'new-parent') {
     personalizedContent = personalizedContent.replace(/family/g, 'your growing family')
   }
   

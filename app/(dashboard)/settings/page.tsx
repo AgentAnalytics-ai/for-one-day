@@ -123,14 +123,9 @@ export default function SettingsPage() {
               <p className="font-medium text-gray-900 mb-1">
                 For urgent family access requests
               </p>
-              <a 
-                href="tel:+14055357750"
-                className="text-blue-600 hover:text-blue-700 font-semibold text-lg"
-              >
-                (405) 535-7750
-              </a>
+              <SupportContactButton />
               <p className="text-xs text-gray-600 mt-1">
-                Mon-Fri 9am-6pm CST • Founder direct line
+                Mon-Fri 9am-6pm CST • Response within 24 hours
               </p>
             </div>
           </div>

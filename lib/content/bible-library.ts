@@ -68,7 +68,7 @@ export const RECOMMENDED_BOOKS: BibleBook[] = [
     testament: 'old',
     category: 'wisdom',
     chapters: 150,
-    description: 'Prayers, praises, and honest conversations with God that speak to every father\'s heart.',
+    description: 'Prayers, praises, and honest conversations with God that speak to every heart seeking connection.',
     recommended: true,
     difficulty: 'beginner',
     familyFriendly: true,
@@ -94,7 +94,7 @@ export const RECOMMENDED_BOOKS: BibleBook[] = [
     testament: 'old',
     category: 'wisdom',
     chapters: 31,
-    description: 'Practical wisdom for daily life, perfect for fathers seeking guidance.',
+    description: 'Practical wisdom for daily life, perfect for anyone seeking guidance.',
     recommended: true,
     difficulty: 'intermediate',
     familyFriendly: true,
@@ -145,7 +145,7 @@ export const LEARNING_PATHS = {
   'new-to-faith': ['genesis', 'psalms', 'matthew', 'proverbs'],
   'family-focus': ['psalms', 'proverbs', 'ephesians', 'matthew'],
   'deep-study': ['genesis', 'romans', 'ephesians', 'revelation'],
-  'quick-wins': ['psalms', 'proverbs', 'ephesians'] // Shorter books for busy dads
+  'quick-wins': ['psalms', 'proverbs', 'ephesians'] // Shorter books for busy schedules
 } as const
 
 export type LearningPath = keyof typeof LEARNING_PATHS
@@ -174,7 +174,7 @@ export function getQuickReadBooks(): BibleBook[] {
 export function getPersonalizedRecommendations(userProfile: {
   experience: 'new' | 'growing' | 'mature'
   timeAvailable: 'short' | 'medium' | 'long'
-  familyStage: 'new-dad' | 'young-kids' | 'teens' | 'empty-nest'
+  familyStage: 'new-parent' | 'young-kids' | 'teens' | 'empty-nest'
   interests: string[]
 }): BibleBook[] {
   let recommendations = [...RECOMMENDED_BOOKS]
@@ -192,7 +192,7 @@ export function getPersonalizedRecommendations(userProfile: {
   }
   
   // Filter by family stage
-  if (userProfile.familyStage === 'new-dad') {
+  if (userProfile.familyStage === 'new-parent') {
     recommendations = recommendations.filter(book => 
       book.id === 'psalms' || book.id === 'proverbs' || book.id === 'ephesians'
     )

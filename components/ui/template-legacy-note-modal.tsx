@@ -178,7 +178,7 @@ export function TemplateLegacyNoteModal({ isOpen, onClose, onSuccess, template }
       'PERSONAL_NOTE': 'Add a personal note...',
       'SPOUSE_NAME': 'e.g., Emily, John',
       'FUTURE_HOPES': 'Share your hopes for their future...',
-      'YOUR_NAME': 'e.g., Dad, Your Father',
+      'YOUR_NAME': 'e.g., Your Name, Parent, Guardian',
       'AGE': 'e.g., 18, 21, 30'
     }
     return placeholders[placeholder] || `Enter ${placeholder.toLowerCase()}...`

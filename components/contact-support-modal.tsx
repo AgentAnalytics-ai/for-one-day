@@ -47,7 +47,7 @@ export function ContactSupportModal({ isOpen, onClose }: ContactSupportModalProp
       }
     } catch (error) {
       console.error('Contact form error:', error)
-      toast.error('Failed to send message. Please try calling instead.')
+      toast.error('Failed to send message. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -75,7 +75,7 @@ export function ContactSupportModal({ isOpen, onClose }: ContactSupportModalProp
           {/* Info Box */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-blue-800">
-              <strong>For emergencies:</strong> Call (405) 535-7750 for immediate assistance.
+              <strong>For emergencies:</strong> Use this form for immediate assistance.
             </p>
             <p className="text-xs text-blue-600 mt-1">
               General questions typically answered within 24 hours.
