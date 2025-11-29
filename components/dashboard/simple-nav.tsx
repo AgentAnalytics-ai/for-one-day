@@ -12,8 +12,8 @@ interface Profile {
 }
 
 /**
- * 🧭 Simple Navigation - Clean 3-tab layout
- * Focus on core devotional-to-legacy flow
+ * 🧭 Simple Navigation - Meta/Instagram Style
+ * Bottom tab bar on mobile, centered logo on desktop
  */
 export function SimpleNav({ profile }: { profile: Profile | null }) {
   const pathname = usePathname()
@@ -33,12 +33,13 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
   const navItems = [
     {
       name: 'Today',
       href: '/dashboard',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
       )
@@ -47,7 +48,7 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       name: 'Reflection',
       href: '/reflection',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       )
@@ -56,7 +57,7 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       name: 'Vault',
       href: '/vault',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
       )
@@ -65,7 +66,7 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       name: 'Settings',
       href: '/settings',
       icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
@@ -73,124 +74,189 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
     },
   ]
 
+  // Shared dropdown menu component
+  const DropdownMenu = () => (
+    <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+      <div className="px-4 py-3 border-b border-gray-100">
+        <p className="text-sm font-medium text-gray-900">{profile?.full_name || 'User'}</p>
+        <p className="text-xs text-gray-500">
+          {profile?.plan === 'pro' || profile?.plan === 'lifetime' ? 'Pro Member' : 'Free Member'}
+        </p>
+      </div>
+      
+      <div className="py-1">
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          onClick={() => setIsDropdownOpen(false)}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Settings
+        </Link>
+        
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          onClick={() => setIsDropdownOpen(false)}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          Subscription Management
+        </Link>
+      </div>
+      
+      <div className="border-t border-gray-100 py-1">
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Sign out
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+
   return (
     <>
       {/* Spacer for top offset */}
       <div className="h-4 md:h-6"></div>
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md" style={{ backgroundColor: '#ffffff' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-20 relative">
-          {/* Centered Brand Name - Expert-Designed with Color Psychology */}
-          <Link 
-            href="/dashboard" 
-            className="absolute left-1/2 transform -translate-x-1/2 group"
-          >
-            <div className="relative px-5 sm:px-6 py-2 sm:py-2.5 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-white tracking-tight">
-                For One Day
-              </h1>
-            </div>
-          </Link>
+      
+      {/* MOBILE: Top bar with logo + user menu */}
+      <nav className="md:hidden sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-14">
+            {/* Compact Logo on Left */}
+            <Link href="/dashboard" className="group flex-shrink-0">
+              <div className="px-3 py-1 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-sm group-hover:shadow-md transition-all duration-200">
+                <h1 className="text-base font-serif font-light text-white tracking-tight whitespace-nowrap">
+                  For One Day
+                </h1>
+              </div>
+            </Link>
+            
+            {/* User Menu on Right */}
+            <div className="relative flex-shrink-0" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm font-medium text-gray-700">
+                    {(profile?.full_name || 'User').charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              </button>
 
-          {/* Left-side Navigation */}
-          <div className="flex items-center space-x-2 mr-auto">
+              {isDropdownOpen && <DropdownMenu />}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* MOBILE: Bottom Tab Bar - Meta/Instagram Style */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-inset-bottom">
+        <div className="max-w-7xl mx-auto px-2">
+          <div className="flex items-center justify-around h-16">
             {navItems.map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex flex-col items-center justify-center gap-1 flex-1 px-2 py-1 transition-colors ${
                     isActive 
-                      ? 'text-gray-900 bg-gray-100' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'text-blue-600' 
+                      : 'text-gray-500'
                   }`}
                 >
-                  {item.icon}
-                  <span className="hidden sm:inline">{item.name}</span>
+                  <div className={`${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+                    {item.icon}
+                  </div>
+                  <span className={`text-xs font-medium ${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
+                    {item.name}
+                  </span>
                 </Link>
               )
             })}
           </div>
+        </div>
+      </nav>
 
-          {/* Right-side User menu with dropdown */}
-          <div className="relative ml-auto" ref={dropdownRef}>
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+      {/* DESKTOP: Original centered logo design */}
+      <nav className="hidden md:block sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md" style={{ backgroundColor: '#ffffff' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-20 relative">
+            {/* Centered Brand Name */}
+            <Link 
+              href="/dashboard" 
+              className="absolute left-1/2 transform -translate-x-1/2 group"
             >
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-xs sm:text-sm font-medium text-gray-700">
-                  {(profile?.full_name || 'User').charAt(0).toUpperCase()}
-                </span>
+              <div className="relative px-5 sm:px-6 py-2 sm:py-2.5 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-white tracking-tight">
+                  For One Day
+                </h1>
               </div>
-              <span className="hidden sm:inline text-sm font-medium text-gray-700 truncate max-w-[120px]">
-                {profile?.full_name || 'User'}
-              </span>
-              <svg 
-                className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+            </Link>
 
-            {/* Dropdown menu */}
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">{profile?.full_name || 'User'}</p>
-                  <p className="text-xs text-gray-500">
-                    {profile?.plan === 'pro' || profile?.plan === 'lifetime' ? 'Pro Member' : 'Free Member'}
-                  </p>
-                </div>
-                
-                <div className="py-1">
+            {/* Left-side Navigation */}
+            <div className="flex items-center space-x-2 mr-auto">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
                   <Link
-                    href="/settings"
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsDropdownOpen(false)}
+                    key={item.name}
+                    href={item.href}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isActive 
+                        ? 'text-gray-900 bg-gray-100' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
+                    {item.icon}
+                    <span className="hidden sm:inline">{item.name}</span>
                   </Link>
-                  
-                  <Link
-                    href="/settings"
-                    className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    Subscription Management
-                  </Link>
+                )
+              })}
+            </div>
+
+            {/* Right-side User menu with dropdown */}
+            <div className="relative ml-auto" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
+                    {(profile?.full_name || 'User').charAt(0).toUpperCase()}
+                  </span>
                 </div>
-                
-                <div className="border-t border-gray-100 py-1">
-                  <form action={signOut}>
-                    <button
-                      type="submit"
-                      className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      Sign out
-                    </button>
-                  </form>
-                </div>
-              </div>
-            )}
+                <span className="hidden sm:inline text-sm font-medium text-gray-700 truncate max-w-[120px]">
+                  {profile?.full_name || 'User'}
+                </span>
+                <svg 
+                  className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isDropdownOpen && <DropdownMenu />}
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
     </>
   )
 }
