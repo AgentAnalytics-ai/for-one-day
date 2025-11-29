@@ -75,25 +75,25 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50 rounded-2xl p-6 md:p-8 border-2 border-orange-200 shadow-xl">
+    <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50 rounded-2xl p-5 md:p-6 border-2 border-orange-200 shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={`
-            w-14 h-14 rounded-full flex items-center justify-center
+            w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center
             ${reflectionStreak > 0 
               ? 'bg-gradient-to-br from-orange-500 to-red-500 shadow-lg animate-pulse' 
               : 'bg-gray-300'
             }
             transition-all duration-300
           `}>
-            <Flame className={`w-7 h-7 ${reflectionStreak > 0 ? 'text-white' : 'text-gray-500'}`} />
+            <Flame className={`w-6 h-6 md:w-7 md:h-7 ${reflectionStreak > 0 ? 'text-white' : 'text-gray-500'}`} />
           </div>
           <div>
-            <h3 className="text-2xl font-serif font-bold text-gray-900">
+            <h3 className="text-xl md:text-2xl font-serif font-bold text-gray-900">
               {reflectionStreak} Day{reflectionStreak !== 1 ? 's' : ''} Streak!
             </h3>
-            <p className="text-sm text-gray-600">{getStreakMessage()}</p>
+            <p className="text-xs md:text-sm text-gray-600">{getStreakMessage()}</p>
           </div>
         </div>
         
@@ -110,16 +110,16 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
 
       {/* Progress Bar to Next Milestone */}
       {nextMilestone && reflectionStreak > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-medium text-gray-700">
               {nextMilestone - reflectionStreak} days to {nextMilestone}-day badge
             </span>
-            <span className="text-sm font-bold text-orange-600">
+            <span className="text-xs font-bold text-orange-600">
               {Math.round(progressToNext)}%
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-500 ease-out shadow-inner"
               style={{ width: `${progressToNext}%` }}
@@ -128,13 +128,13 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
         </div>
       )}
 
-      {/* 30-Day Calendar Grid - Duolingo Style */}
-      <div className="mb-6">
-        <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4" />
+      {/* 30-Day Calendar Grid - Compact Duolingo Style */}
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1.5">
+          <Calendar className="w-3.5 h-3.5" />
           Last 30 Days
         </h4>
-        <div className="grid grid-cols-7 gap-1.5">
+        <div className="grid grid-cols-7 gap-1">
           {Array.from({ length: 30 }, (_, i) => {
             const date = new Date()
             date.setDate(date.getDate() - (29 - i))
@@ -146,30 +146,27 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
               <div
                 key={dateStr}
                 className={`
-                  aspect-square rounded-lg flex items-center justify-center
+                  aspect-square rounded-md flex items-center justify-center
                   transition-all duration-200
                   ${hasReflection
-                    ? 'bg-gradient-to-br from-orange-500 to-red-500 shadow-md'
+                    ? 'bg-gradient-to-br from-orange-500 to-red-500 shadow-sm'
                     : 'bg-gray-200'
                   }
                   ${isToday && hasReflection 
-                    ? 'ring-2 ring-orange-400 ring-offset-2' 
+                    ? 'ring-1 ring-orange-400' 
                     : ''
                   }
                   ${isToday && !hasReflection
-                    ? 'ring-2 ring-gray-400 ring-offset-2 border-2 border-dashed border-gray-400'
+                    ? 'ring-1 ring-gray-400 border border-dashed border-gray-400'
                     : ''
                   }
                 `}
                 title={dateStr}
               >
                 {hasReflection && (
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
-                )}
-                {isToday && !hasReflection && (
-                  <span className="text-xs text-gray-500 font-bold">Today</span>
                 )}
               </div>
             )
