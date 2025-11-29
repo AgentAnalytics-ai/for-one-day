@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     const occasion = formData.get('occasion') as string
     const templateId = formData.get('template_id') as string
     const sharingSettings = formData.get('sharing_settings') as string
+    const attachmentsJson = formData.get('attachments') as string // JSON array of attachment objects
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
@@ -40,6 +41,16 @@ export async function POST(request: NextRequest) {
         parsedSharingSettings = JSON.parse(sharingSettings)
       } catch (e) {
         console.error('Error parsing sharing settings:', e)
+      }
+    }
+
+    // Parse attachments (array of { storage_path, type, url, etc. })
+    let attachments = []
+    if (attachmentsJson) {
+      try {
+        attachments = JSON.parse(attachmentsJson)
+      } catch (e) {
+        console.error('Error parsing attachments:', e)
       }
     }
 
@@ -57,7 +68,8 @@ export async function POST(request: NextRequest) {
           occasion,
           template_id: templateId,
           content: content,
-          is_shared: Object.keys(parsedSharingSettings).length > 0
+          is_shared: Object.keys(parsedSharingSettings).length > 0,
+          attachments: attachments.length > 0 ? attachments : undefined // Only include if attachments exist
         }
       })
       .select()

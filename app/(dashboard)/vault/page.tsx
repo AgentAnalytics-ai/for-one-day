@@ -10,11 +10,21 @@ import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
   { ssr: false }
 )
+
+interface Attachment {
+  storage_path: string
+  url?: string
+  type: 'image' | 'video'
+  mime_type: string
+  file_size_bytes: number
+  filename?: string
+}
 
 interface VaultItem {
   id: string
@@ -27,6 +37,11 @@ interface VaultItem {
     recipient_name?: string
     recipient_email?: string
     is_shared?: boolean
+    attachments?: Attachment[]
+    // Allow for backward compatibility with other metadata structures
+    recipient?: string
+    occasion?: string
+    template_id?: string
   }
   created_at: string
 }
@@ -481,7 +496,7 @@ export default function VaultPage() {
           }}
           onSuccess={handleCreateSuccess}
           selectedTemplate={selectedTemplate}
-          editingItem={selectedLetter}
+          editingItem={selectedLetter || null}
         />
       )}
 
@@ -507,6 +522,45 @@ function LetterModal({
   onClose: () => void
   letter: VaultItem
 }) {
+  const [attachments, setAttachments] = useState<Array<Attachment & { signedUrl?: string }>>([])
+  const [loadingAttachments, setLoadingAttachments] = useState(false)
+
+  useEffect(() => {
+    if (isOpen && letter.metadata?.attachments && letter.metadata.attachments.length > 0) {
+      setLoadingAttachments(true)
+      
+      // Generate signed URLs for attachments
+      async function loadSignedUrls() {
+        const supabase = createClient()
+        const attachmentPromises = letter.metadata!.attachments!.map(async (attachment: Attachment) => {
+          try {
+            const { data } = await supabase.storage
+              .from('vault')
+              .createSignedUrl(attachment.storage_path, 3600) // 1 hour expiry
+            const signedUrl = data?.signedUrl || undefined
+            if (!signedUrl) return null
+            return {
+              ...attachment,
+              signedUrl
+            }
+          } catch (error) {
+            console.error('Error generating signed URL:', error)
+            return null
+          }
+        })
+
+        const attachmentsWithUrls = await Promise.all(attachmentPromises)
+        const validAttachments = attachmentsWithUrls.filter((a): a is Attachment & { signedUrl: string } => a !== null && !!a.signedUrl)
+        setAttachments(validAttachments)
+        setLoadingAttachments(false)
+      }
+
+      loadSignedUrls()
+    } else {
+      setAttachments([])
+    }
+  }, [isOpen, letter])
+
   if (!isOpen) return null
 
   return (
@@ -533,7 +587,9 @@ function LetterModal({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   For
                 </label>
-                <p className="text-gray-900">{letter.metadata.recipient_name}</p>
+                <p className="text-gray-900 capitalize">
+                  {letter.metadata.recipient_name}
+                </p>
               </div>
             )}
 
@@ -547,6 +603,50 @@ function LetterModal({
                 </p>
               </div>
             </div>
+
+            {/* Attachments Gallery */}
+            {attachments.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Attachments
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {attachments.map((attachment, index) => (
+                    <div
+                      key={attachment.storage_path || index}
+                      className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group"
+                    >
+                      {attachment.type === 'image' && attachment.signedUrl ? (
+                        <img
+                          src={attachment.signedUrl}
+                          alt={`Attachment ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : attachment.type === 'video' && attachment.signedUrl ? (
+                        <video
+                          src={attachment.signedUrl}
+                          className="w-full h-full object-cover"
+                          controls
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <span className="text-xs text-gray-500">Loading...</span>
+                        </div>
+                      )}
+                      
+                      {/* Video badge */}
+                      {attachment.type === 'video' && (
+                        <div className="absolute top-2 left-2 bg-black/50 rounded px-2 py-1">
+                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

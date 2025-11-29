@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { X, Heart, User, Users, Mic, MicOff, Play, Pause } from 'lucide-react'
+import { X, Heart, User, Users, Mic, MicOff, Play, Pause, Image as ImageIcon, Video, Trash2, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { UpgradeModal } from './upgrade-modal'
+import Image from 'next/image'
 
 interface LegacyTemplate {
   id: string
@@ -14,6 +15,17 @@ interface LegacyTemplate {
   placeholders: string[]
 }
 
+interface Attachment {
+  storage_path: string
+  url?: string  // Make url optional to match vault page
+  type: 'image' | 'video'
+  mime_type: string
+  file_size_bytes: number
+  filename?: string
+  uploading?: boolean
+  error?: string
+}
+
 interface VaultItem {
   id: string
   title: string
@@ -21,9 +33,14 @@ interface VaultItem {
   kind: string
   metadata?: {
     content?: string
-    recipient?: string
+    recipient_name?: string  // Use recipient_name to match vault page
+    recipient_email?: string
+    template_type?: string  // Use template_type to match vault page
+    is_shared?: boolean
+    recipient?: string  // Keep for backward compatibility
     occasion?: string
-    template_id?: string
+    template_id?: string  // Keep for backward compatibility
+    attachments?: Attachment[]
   }
 }
 
@@ -50,6 +67,8 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const imageInputRef = useRef<HTMLInputElement | null>(null)
+  const videoInputRef = useRef<HTMLInputElement | null>(null)
   
   const [formData, setFormData] = useState({
     title: '',
@@ -57,6 +76,10 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     recipient: 'family',
     occasion: ''
   })
+  
+  // Attachment state
+  const [attachments, setAttachments] = useState<Attachment[]>([])
+  const [uploadingAttachments, setUploadingAttachments] = useState(false)
 
   // Fetch user plan and legacy note count
   useEffect(() => {
@@ -119,6 +142,10 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         recipient: editingItem.metadata?.recipient || 'family',
         occasion: editingItem.metadata?.occasion || ''
       })
+      // Load existing attachments
+      if (editingItem.metadata?.attachments) {
+        setAttachments(editingItem.metadata.attachments as Attachment[])
+      }
     } else if (selectedTemplate) {
       setFormData(prev => ({
         ...prev,
@@ -235,6 +262,106 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Handle file upload
+  const handleFileSelect = async (file: File, isVideo: boolean) => {
+    // Check if user can add attachments
+    const currentCount = attachments.filter(a => !a.uploading).length
+    const canAddVideo = userPlan === 'pro' || userPlan === 'lifetime'
+    
+    if (isVideo && !canAddVideo) {
+      setShowUpgradeModal(true)
+      return
+    }
+    
+    if (userPlan === 'free' && currentCount >= 3) {
+      alert('Free users can add up to 3 attachments per letter. Upgrade to Pro for unlimited attachments.')
+      setShowUpgradeModal(true)
+      return
+    }
+
+    // Create temporary attachment object for preview
+    const tempId = `temp-${Date.now()}`
+    const tempUrl = URL.createObjectURL(file)
+    const tempAttachment: Attachment = {
+      storage_path: tempId, // Use temp ID as identifier
+      url: tempUrl,
+      type: isVideo ? 'video' : 'image',
+      mime_type: file.type,
+      file_size_bytes: file.size,
+      filename: file.name,
+      uploading: true
+    }
+
+    setAttachments(prev => [...prev, tempAttachment])
+    setUploadingAttachments(true)
+
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+      if (editingItem?.id) {
+        uploadFormData.append('vault_item_id', editingItem.id)
+      }
+
+      const response = await fetch('/api/vault/upload-attachment', {
+        method: 'POST',
+        body: uploadFormData
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (data.upgradeRequired) {
+          setShowUpgradeModal(true)
+          setAttachments(prev => prev.filter(a => a.storage_path !== tempId))
+          URL.revokeObjectURL(tempUrl)
+          return
+        }
+        throw new Error(data.error || 'Failed to upload file')
+      }
+
+      // Revoke temp URL and update attachment with server response
+      URL.revokeObjectURL(tempUrl)
+      setAttachments(prev => prev.map(a => 
+        a.storage_path === tempId
+          ? { ...data.attachment, uploading: false }
+          : a
+      ))
+    } catch (error) {
+      console.error('Error uploading attachment:', error)
+      alert(error instanceof Error ? error.message : 'Failed to upload file. Please try again.')
+      setAttachments(prev => prev.filter(a => a.storage_path !== tempId))
+      URL.revokeObjectURL(tempUrl)
+    } finally {
+      setUploadingAttachments(false)
+    }
+  }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleFileSelect(file, false)
+    }
+    // Reset input
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ''
+    }
+  }
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleFileSelect(file, true)
+    }
+    // Reset input
+    if (videoInputRef.current) {
+      videoInputRef.current.value = ''
+    }
+  }
+
+  const removeAttachment = (storagePath: string) => {
+    setAttachments(prev => prev.filter(a => a.storage_path !== storagePath))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -274,6 +401,11 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         }
       } else if (editingItem) {
         // Update existing note
+        // Filter out uploading attachments and prepare final list
+        const finalAttachments = attachments
+          .filter(a => !a.uploading && a.storage_path)
+          .map(({ uploading, error, ...rest }) => rest)
+
         const response = await fetch(`/api/vault/items/${editingItem.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -282,7 +414,8 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             content: formData.content,
             recipient: formData.recipient,
             occasion: formData.occasion,
-            sharing_settings: sharingSettings
+            sharing_settings: sharingSettings,
+            attachments: finalAttachments
           })
         })
 
@@ -301,12 +434,20 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         }
       } else {
         // Create new text note using API
+        // Filter out uploading attachments and prepare final list
+        const finalAttachments = attachments
+          .filter(a => !a.uploading && a.storage_path)
+          .map(({ uploading, error, ...rest }) => rest)
+
         const form = new FormData()
         form.append('title', formData.title)
         form.append('content', formData.content)
         form.append('recipient', formData.recipient)
         form.append('occasion', formData.occasion)
         form.append('sharing_settings', JSON.stringify(sharingSettings))
+        if (finalAttachments.length > 0) {
+          form.append('attachments', JSON.stringify(finalAttachments))
+        }
 
         const response = await fetch('/api/vault/save-legacy-note', {
           method: 'POST',
@@ -352,6 +493,8 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     setRecordingTime(0)
     setIsRecording(false)
     setIsPlaying(false)
+    setAttachments([])
+    setUploadingAttachments(false)
   }
 
   const recipientOptions = [
@@ -654,6 +797,130 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
               </div>
             )}
 
+            {/* Attachments Section - Instagram-style */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add Photos or Videos
+              </label>
+              
+              {/* Upload Buttons */}
+              <div className="flex gap-3 mb-4">
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoSelect}
+                  className="hidden"
+                />
+                
+                <button
+                  type="button"
+                  onClick={() => imageInputRef.current?.click()}
+                  disabled={uploadingAttachments || (userPlan === 'free' && attachments.length >= 3)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ImageIcon className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Add Photo</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (userPlan === 'free') {
+                      setShowUpgradeModal(true)
+                    } else {
+                      videoInputRef.current?.click()
+                    }
+                  }}
+                  disabled={uploadingAttachments}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all relative disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Video className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Add Video</span>
+                  {userPlan === 'free' && (
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      PRO
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Attachment Limit Display */}
+              {userPlan === 'free' && (
+                <p className="text-xs text-gray-500 mb-3">
+                  {attachments.filter(a => !a.uploading).length} / 3 attachments added
+                </p>
+              )}
+
+              {/* Preview Gallery - Instagram-style grid */}
+              {attachments.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {attachments.map((attachment, index) => (
+                    <div
+                      key={attachment.storage_path || index}
+                      className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group"
+                    >
+                      {attachment.uploading ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                          <Loader2 className="w-6 h-6 text-purple-600 animate-spin" />
+                        </div>
+                      ) : attachment.type === 'image' && attachment.url ? (
+                        <Image
+                          src={attachment.url}
+                          alt={`Attachment ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      ) : attachment.type === 'video' && attachment.url ? (
+                        <video
+                          src={attachment.url}
+                          className="w-full h-full object-cover"
+                          controls={false}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <span className="text-gray-500 text-sm">No preview</span>
+                        </div>
+                      )}
+                      
+                      {/* Video badge */}
+                      {attachment.type === 'video' && !attachment.uploading && (
+                        <div className="absolute top-2 left-2 bg-black/50 rounded px-2 py-1">
+                          <Video className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                      
+                      {/* Delete button */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!attachment.uploading) {
+                            removeAttachment(attachment.storage_path)
+                            // Revoke object URL if it's a temp upload
+                            if (attachment.storage_path.startsWith('temp-') && attachment.url) {
+                              URL.revokeObjectURL(attachment.url)
+                            }
+                          }
+                        }}
+                        disabled={attachment.uploading}
+                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30"
+                      >
+                        <Trash2 className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Footer */}
             <div className="flex items-center justify-between pt-6 border-t border-gray-100">
               <button
@@ -665,7 +932,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !formData.title.trim() || !formData.content.trim()}
+                disabled={isSubmitting || !formData.title.trim() || !formData.content.trim() || uploadingAttachments}
                 className="px-8 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
               >
                 {isSubmitting ? (
@@ -689,7 +956,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        feature="Voice Recordings"
+        feature={userPlan === 'free' && attachments.length >= 3 ? "Unlimited Attachments" : attachments.some(a => a.type === 'video') ? "Video Attachments" : "Voice Recordings"}
       />
     </div>
   )

@@ -1,7 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ReflectionForm } from '@/components/reflection/reflection-form'
+import { MemoryCard } from '@/components/reflection/memory-card'
+import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 import { getTodaysVerse } from '@/lib/daily-verses'
+import Image from 'next/image'
 
 /**
  * 📖 Daily Reflection Page
@@ -29,18 +32,34 @@ export default async function ReflectionPage() {
   // Get today's verse (rotates daily based on day of year)
   const dailyVerse = getTodaysVerse()
 
+  // Generate signed URLs for media attachments if they exist
+  let mediaUrls: string[] = []
+  if (existingReflection?.media_urls && existingReflection.media_urls.length > 0) {
+    const signedUrlPromises = existingReflection.media_urls.map(async (storagePath: string) => {
+      const { data } = await supabase.storage
+        .from('media')
+        .createSignedUrl(storagePath, 3600) // 1 hour expiry
+      return data?.signedUrl || null
+    })
+    
+    const signedUrls = await Promise.all(signedUrlPromises)
+    mediaUrls = signedUrls.filter((url): url is string => url !== null)
+  }
+
   const reflectionData = existingReflection ? {
     day: new Date().getDay(),
     date: today,
     verse: dailyVerse,
     completed: true,
-    userReflection: existingReflection.reflection
+    userReflection: existingReflection.reflection,
+    mediaUrls: mediaUrls
   } : {
     day: new Date().getDay(),
     date: today,
     verse: dailyVerse,
     completed: false,
-    userReflection: null
+    userReflection: null,
+    mediaUrls: []
   }
 
   return (
@@ -94,14 +113,44 @@ export default async function ReflectionPage() {
                 </svg>
                 <span className="text-green-800 font-medium text-lg">Reflection completed!</span>
               </div>
-              <div className="bg-white p-4 rounded-lg border border-green-100">
+              <div className="bg-white p-4 rounded-lg border border-green-100 mb-4">
                 <p className="text-gray-800 italic">&ldquo;{reflectionData.userReflection}&rdquo;</p>
               </div>
+              
+              {/* Display Images */}
+              {reflectionData.mediaUrls && reflectionData.mediaUrls.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
+                  {reflectionData.mediaUrls.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                    >
+                      <Image
+                        src={url}
+                        alt={`Reflection image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <ReflectionForm />
           )}
         </div>
+      </div>
+
+      {/* Weekly Review Card - Instagram Stories Style */}
+      <div className="mt-8">
+        <WeeklyReviewCard userId={user.id} />
+      </div>
+
+      {/* This Time Last Year Card */}
+      <div className="mt-8">
+        <MemoryCard targetDate={today} />
       </div>
     </div>
   )
