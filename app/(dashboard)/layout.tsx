@@ -54,7 +54,8 @@ export default async function DashboardLayout({
         <SimpleNav profile={profile} />
       </div>
       
-      <main className="flex-1 w-full py-4 sm:py-8">
+      {/* Add bottom padding on mobile for bottom nav */}
+      <main className="flex-1 w-full py-4 sm:py-8 pb-20 md:pb-4">
         {children}
       </main>
       
