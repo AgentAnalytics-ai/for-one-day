@@ -55,6 +55,20 @@ export async function GET() {
       })
     }
 
+    // Generate signed URLs for media attachments if they exist
+    let mediaUrls: string[] = []
+    if (existingReflection.media_urls && existingReflection.media_urls.length > 0) {
+      const signedUrlPromises = existingReflection.media_urls.map(async (storagePath: string) => {
+        const { data } = await supabase.storage
+          .from('media')
+          .createSignedUrl(storagePath, 3600) // 1 hour expiry
+        return data?.signedUrl || null
+      })
+      
+      const signedUrls = await Promise.all(signedUrlPromises)
+      mediaUrls = signedUrls.filter((url): url is string => url !== null)
+    }
+
     return NextResponse.json({
       success: true,
       reflection: {
@@ -62,7 +76,8 @@ export async function GET() {
         date: today,
         question: "What are you most grateful for today?",
         completed: true,
-        userReflection: existingReflection.reflection
+        userReflection: existingReflection.reflection,
+        mediaUrls: mediaUrls // Include signed URLs for images
       }
     })
 
@@ -85,7 +100,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { reflection } = await request.json()
+    const { reflection, media_urls } = await request.json()
 
     if (!reflection?.trim()) {
       return NextResponse.json({ error: 'Reflection is required' }, { status: 400 })
@@ -93,13 +108,14 @@ export async function POST(request: NextRequest) {
 
     const today = new Date().toISOString().split('T')[0]
 
-    // Upsert the reflection
+    // Upsert the reflection with optional media URLs
     const { data, error } = await supabase
       .from('daily_reflections')
       .upsert({
         user_id: user.id,
         date: today,
-        reflection: reflection.trim()
+        reflection: reflection.trim(),
+        media_urls: media_urls && Array.isArray(media_urls) ? media_urls : []
       }, {
         onConflict: 'user_id,date'
       })
@@ -108,7 +124,23 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error saving reflection:', error)
-      return NextResponse.json({ error: 'Failed to save reflection' }, { status: 500 })
+      // Provide more detailed error message
+      if (error.code === '42P01') {
+        return NextResponse.json({ 
+          error: 'Database table missing. Please run the daily_reflections table migration in Supabase.',
+          errorCode: 'TABLE_MISSING'
+        }, { status: 500 })
+      }
+      if (error.code === '42703') {
+        return NextResponse.json({ 
+          error: 'Database column missing. Please run the media_urls column migration in Supabase.',
+          errorCode: 'COLUMN_MISSING'
+        }, { status: 500 })
+      }
+      return NextResponse.json({ 
+        error: error.message || 'Failed to save reflection',
+        errorDetails: error
+      }, { status: 500 })
     }
 
     // Update user stats - increment total reflections

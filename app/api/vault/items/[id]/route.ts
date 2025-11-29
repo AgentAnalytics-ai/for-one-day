@@ -16,7 +16,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { title, content, recipient, occasion, sharing_settings } = body
+    const { title, content, recipient, occasion, sharing_settings, attachments } = body
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
@@ -25,7 +25,7 @@ export async function PATCH(
     // Verify user owns this item
     const { data: existingItem, error: fetchError } = await supabase
       .from('vault_items')
-      .select('owner_id')
+      .select('owner_id, metadata')
       .eq('id', id)
       .single()
 
@@ -37,6 +37,17 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
+    // Merge existing metadata with updates
+    const existingMetadata = existingItem.metadata || {}
+    const updatedMetadata = {
+      ...existingMetadata,
+      recipient: recipient !== undefined ? recipient : existingMetadata.recipient,
+      occasion: occasion !== undefined ? occasion : existingMetadata.occasion,
+      content: content,
+      is_shared: Object.keys(sharing_settings || {}).length > 0,
+      attachments: attachments !== undefined ? attachments : existingMetadata.attachments
+    }
+
     // Update vault item
     const { data: vaultItem, error: updateError } = await supabase
       .from('vault_items')
@@ -44,12 +55,7 @@ export async function PATCH(
         title,
         description: content.substring(0, 200) + (content.length > 200 ? '...' : ''),
         sharing_settings,
-        metadata: {
-          recipient,
-          occasion,
-          content,
-          is_shared: Object.keys(sharing_settings || {}).length > 0
-        }
+        metadata: updatedMetadata
       })
       .eq('id', id)
       .select()

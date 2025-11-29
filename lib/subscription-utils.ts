@@ -48,15 +48,18 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
   const isActive = subscription?.status === 'active' || plan === 'lifetime'
 
   // Define limits based on plan
+  // Legacy letter attachments: Free = 3 images per letter, Pro = unlimited (images + videos)
+  // Reflection images: Free = unlimited (drives daily engagement)
+  // Videos: Pro-only feature
   const limits = {
     free: {
-      legacyNotes: 3,
+      legacyNotes: 3, // 3 legacy letters total
       familyConnections: 10,
       reflections: -1, // unlimited
       voiceRecordings: 0 // Pro only
     },
     pro: {
-      legacyNotes: -1, // unlimited
+      legacyNotes: -1, // unlimited legacy letters
       familyConnections: -1, // unlimited
       reflections: -1, // unlimited
       voiceRecordings: -1 // unlimited
@@ -189,6 +192,42 @@ export async function checkVoiceRecordingLimit(userId: string): Promise<FeatureL
     limit: 0,
     canCreate: false,
     message: 'Voice recordings are available for Pro members. Upgrade to Pro to record and save voice messages.'
+  }
+}
+
+/**
+ * Check legacy letter attachment limits
+ * Free: 3 attachments per letter (images only)
+ * Pro: Unlimited attachments (images + videos)
+ */
+export async function checkLegacyLetterAttachmentLimit(
+  userId: string, 
+  currentAttachmentCount: number,
+  isVideo: boolean = false
+): Promise<{ canAdd: boolean; message?: string; upgradeRequired?: boolean }> {
+  const subscription = await getUserSubscriptionStatus(userId)
+  
+  // Videos are Pro-only
+  if (isVideo && subscription.limits.legacyNotes !== -1) {
+    return {
+      canAdd: false,
+      message: 'Video attachments are available for Pro members. Upgrade to Pro to add videos to your legacy letters.',
+      upgradeRequired: true
+    }
+  }
+  
+  // Free users: max 3 attachments per letter
+  if (subscription.plan === 'free' && currentAttachmentCount >= 3) {
+    return {
+      canAdd: false,
+      message: `You've reached the limit of 3 attachments per letter. Upgrade to Pro for unlimited attachments.`,
+      upgradeRequired: true
+    }
+  }
+  
+  // Pro/Lifetime: unlimited
+  return {
+    canAdd: true
   }
 }
 
