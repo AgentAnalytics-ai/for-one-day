@@ -10,12 +10,24 @@ interface ReflectionImage {
   url: string
   storage_path: string
   uploading?: boolean
+  isExisting?: boolean // Track if this is an existing saved image
 }
 
-export function ReflectionForm() {
-  const [reflection, setReflection] = useState('')
+interface ReflectionFormProps {
+  initialReflection?: string
+  initialImages?: Array<{ url: string; storage_path: string }>
+}
+
+export function ReflectionForm({ 
+  initialReflection = '', 
+  initialImages = []
+}: ReflectionFormProps = {}) {
+  const [reflection, setReflection] = useState(initialReflection)
   const [saving, setSaving] = useState(false)
-  const [images, setImages] = useState<ReflectionImage[]>([])
+  const [images, setImages] = useState<ReflectionImage[]>(() => 
+    initialImages.map(img => ({ ...img, isExisting: true }))
+  )
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]) // Track images to delete
   const [uploadingImages, setUploadingImages] = useState(false)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -104,9 +116,16 @@ export function ReflectionForm() {
 
   const removeImage = (storagePath: string) => {
     const image = images.find(img => img.storage_path === storagePath)
-    if (image && image.storage_path.startsWith('temp-')) {
+    
+    // If it's an existing image, mark it for deletion
+    if (image?.isExisting) {
+      setImagesToDelete(prev => [...prev, storagePath])
+    } else if (image && image.storage_path.startsWith('temp-')) {
+      // Clean up temp URLs
       URL.revokeObjectURL(image.url)
     }
+    
+    // Remove from display
     setImages(prev => prev.filter(img => img.storage_path !== storagePath))
   }
 
@@ -128,6 +147,30 @@ export function ReflectionForm() {
     setSaving(true)
 
     try {
+      // Delete images that were removed
+      if (imagesToDelete.length > 0) {
+        const deletePromises = imagesToDelete.map(async (storagePath) => {
+          try {
+            const response = await fetch('/api/reflection/delete-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ storage_path: storagePath })
+            })
+            
+            if (!response.ok) {
+              const data = await response.json()
+              throw new Error(data.error || 'Failed to delete image')
+            }
+          } catch (error) {
+            console.error('Error deleting image:', error)
+            // Don't fail the whole save if one image deletion fails
+            toast.error(`Failed to delete one image: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          }
+        })
+        
+        await Promise.all(deletePromises)
+      }
+
       // Get final storage paths (filter out uploading ones and temp uploads)
       const storagePaths = images
         .filter(img => !img.uploading && img.storage_path && !img.storage_path.startsWith('temp-'))
@@ -224,7 +267,9 @@ export function ReflectionForm() {
           className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ImageIcon className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Add Photo{images.length > 0 ? ' (More)' : ''}</span>
+          <span className="text-sm font-medium text-gray-700">
+            {images.length > 0 ? 'Add More Photos' : 'Add Photo'}
+          </span>
         </button>
 
         {/* Image Preview Grid - WhatsApp-style */}
