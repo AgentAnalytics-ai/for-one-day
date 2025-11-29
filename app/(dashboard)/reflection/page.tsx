@@ -5,18 +5,27 @@ import { MemoryCard } from '@/components/reflection/memory-card'
 import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 import { getTodaysVerse } from '@/lib/daily-verses'
 import Image from 'next/image'
+import { EditButton } from '@/components/reflection/edit-button'
 
 /**
  * 📖 Daily Reflection Page
  * Server component for stability
  */
-export default async function ReflectionPage() {
+export default async function ReflectionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ edit?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
     redirect('/auth/login')
   }
+
+  // Get search params (Next.js 15 makes this a Promise)
+  const params = await searchParams
+  const isEditMode = params?.edit === 'true'
 
   // Get today's date
   const today = new Date().toISOString().split('T')[0]
@@ -105,13 +114,16 @@ export default async function ReflectionPage() {
             </p>
           </div>
 
-          {reflectionData.completed ? (
+          {reflectionData.completed && !isEditMode ? (
             <div className="bg-green-50 p-6 rounded-xl mb-6 border border-green-200">
-              <div className="flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-green-800 font-medium text-lg">Reflection completed!</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <svg className="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-green-800 font-medium text-lg">Reflection completed!</span>
+                </div>
+                <EditButton />
               </div>
               <div className="bg-white p-4 rounded-lg border border-green-100 mb-4">
                 <p className="text-gray-800 italic">&ldquo;{reflectionData.userReflection}&rdquo;</p>
@@ -138,7 +150,13 @@ export default async function ReflectionPage() {
               )}
             </div>
           ) : (
-            <ReflectionForm />
+            <ReflectionForm 
+              initialReflection={reflectionData.userReflection || ''}
+              initialImages={existingReflection?.media_urls?.map((storagePath: string, index: number) => ({
+                url: mediaUrls[index] || '',
+                storage_path: storagePath
+              })) || []}
+            />
           )}
         </div>
       </div>
