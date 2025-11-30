@@ -138,6 +138,11 @@ Return ONLY valid JSON (no markdown, no code blocks):
     }
   } catch (error) {
     console.error('Error enhancing verse:', error)
+    // Log more details for debugging
+    if (error instanceof Error) {
+      console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
+    }
     return null
   }
 }
