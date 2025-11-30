@@ -74,20 +74,26 @@ export async function POST(request: NextRequest) {
 
     // Create email HTML
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://foroneday.app'
+    const unsubscribeUrl = `${siteUrl}/unsubscribe?email=${encodeURIComponent(recipient_email)}`
     const emailHtml = createShareEmailTemplate({
       senderName,
       letterTitle: vaultItem.title,
       letterContent: vaultItem.metadata?.content || vaultItem.description || '',
       attachmentLinks,
-      siteUrl
+      siteUrl,
+      recipientEmail: recipient_email
     })
 
-    // Send email
+    // Send email with unsubscribe headers for better deliverability
     try {
       const emailResult = await sendEmail({
         to: recipient_email,
         subject: `${senderName} shared a legacy note with you`,
-        html: emailHtml
+        html: emailHtml,
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
+        }
       })
       
       // Check if email was actually sent (Resend might not be configured)
@@ -148,13 +154,15 @@ function createShareEmailTemplate({
   letterTitle,
   letterContent,
   attachmentLinks,
-  siteUrl
+  siteUrl,
+  recipientEmail
 }: {
   senderName: string
   letterTitle: string
   letterContent: string
   attachmentLinks: Array<{ url: string; type: string }>
   siteUrl: string
+  recipientEmail: string
 }) {
   return `
     <!DOCTYPE html>
@@ -293,6 +301,11 @@ ${letterContent}
             <p style="margin-bottom: 20px;">Want to create your own legacy letters for the people you love?</p>
             <a href="${siteUrl}" class="cta-button">Sign up for For One Day</a>
             <p style="margin-top: 20px; font-size: 12px; color: #9ca3af;">
+              <a href="${siteUrl}/unsubscribe?email=${encodeURIComponent(recipientEmail)}" style="color: #9ca3af; text-decoration: underline;">
+                Unsubscribe from these emails
+              </a>
+            </p>
+            <p style="margin-top: 10px; font-size: 12px; color: #9ca3af;">
               Live today. Prepare for the day that matters most.
             </p>
           </div>
