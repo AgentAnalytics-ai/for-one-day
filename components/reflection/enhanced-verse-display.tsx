@@ -51,8 +51,9 @@ export function EnhancedVerseDisplay({
   const [showExplanation, setShowExplanation] = useState(true)
   const [selectedPrompt, setSelectedPrompt] = useState<string>(defaultPrompt)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const [expandedKeyword, setExpandedKeyword] = useState<string | null>(null)
-  const [expandedVerse, setExpandedVerse] = useState<string | null>(null)
+  const [showKeyWords, setShowKeyWords] = useState(false)
+  const [showRelatedVerses, setShowRelatedVerses] = useState(false)
+  const [showReflectionPrompts, setShowReflectionPrompts] = useState(false)
 
   useEffect(() => {
     console.log('EnhancedVerseDisplay - isPro:', isPro, 'verse:', verse.reference)
@@ -307,208 +308,222 @@ export function EnhancedVerseDisplay({
           </div>
         </div>
 
-        {/* Right Column - Interactive Elements (1/3 width on desktop) */}
-        <div className="lg:col-span-1 space-y-4">
-          {/* Key Words - Floating Tags */}
+        {/* Right Column - Collapsible Dropdowns (1/3 width on desktop) */}
+        <div className="lg:col-span-1 space-y-3">
+          {/* Key Words - Collapsible Dropdown */}
           {enhanced.explanation.keyWords.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-md rounded-xl p-5 border border-gray-200/50 shadow-sm">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                Key Words
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {enhanced.explanation.keyWords.map((word, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setExpandedKeyword(expandedKeyword === word ? null : word)}
-                    className="group relative px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-full text-xs font-medium text-blue-700 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 hover:scale-105 active:scale-95"
-                  >
-                    {word}
-                    {expandedKeyword === word && (
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-3 bg-white rounded-lg shadow-lg border border-gray-200 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div className="flex items-start justify-between mb-1">
-                          <p className="text-xs font-semibold text-gray-900">{word}</p>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setExpandedKeyword(null)
-                            }}
-                            className="text-gray-400 hover:text-gray-600"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-600">
-                          This word is central to understanding the verse&apos;s message.
-                        </p>
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
+            <div className="bg-white/90 backdrop-blur-md rounded-xl border border-gray-200/50 shadow-sm overflow-hidden">
+              <button
+                onClick={() => setShowKeyWords(!showKeyWords)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span className="text-sm font-medium text-gray-700">Key Words</span>
+                  <span className="text-xs text-gray-400">({enhanced.explanation.keyWords.length})</span>
+                </div>
+                {showKeyWords ? (
+                  <ChevronUp className="w-4 h-4 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                )}
+              </button>
+              {showKeyWords && (
+                <div className="px-4 pb-4 pt-0 animate-in slide-in-from-top-2 duration-200">
+                  <div className="flex flex-wrap gap-2">
+                    {enhanced.explanation.keyWords.map((word, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-full text-xs font-medium text-blue-700"
+                      >
+                        {word}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Related Verses - Floating Tags */}
+          {/* Related Verses - Collapsible Dropdown */}
           {enhanced.explanation.crossReferences && enhanced.explanation.crossReferences.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-md rounded-xl p-5 border border-gray-200/50 shadow-sm">
-              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                Related Verses
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {enhanced.explanation.crossReferences.map((ref, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setExpandedVerse(expandedVerse === ref ? null : ref)}
-                    className="group relative px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 rounded-full text-xs font-medium text-indigo-700 hover:from-indigo-100 hover:to-purple-100 hover:border-indigo-300 transition-all duration-200 hover:scale-105 active:scale-95"
-                  >
-                    {ref}
-                    {expandedVerse === ref && (
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div className="flex items-start justify-between mb-1">
-                          <p className="text-xs font-semibold text-gray-900">{ref}</p>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setExpandedVerse(null)
-                            }}
-                            className="text-gray-400 hover:text-gray-600"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-600">
-                          This verse relates to today&apos;s passage and can deepen your understanding.
-                        </p>
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
+            <div className="bg-white/90 backdrop-blur-md rounded-xl border border-gray-200/50 shadow-sm overflow-hidden">
+              <button
+                onClick={() => setShowRelatedVerses(!showRelatedVerses)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                  <span className="text-sm font-medium text-gray-700">Related Verses</span>
+                  <span className="text-xs text-gray-400">({enhanced.explanation.crossReferences.length})</span>
+                </div>
+                {showRelatedVerses ? (
+                  <ChevronUp className="w-4 h-4 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                )}
+              </button>
+              {showRelatedVerses && (
+                <div className="px-4 pb-4 pt-0 animate-in slide-in-from-top-2 duration-200">
+                  <div className="flex flex-wrap gap-2">
+                    {enhanced.explanation.crossReferences.map((ref, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 rounded-full text-xs font-medium text-indigo-700"
+                      >
+                        {ref}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Reflection Prompts - Clean Card Design */}
-      <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 border border-white/50 shadow-lg">
-        <h3 className="text-lg font-semibold text-gray-900 mb-5">
-          Choose Your Reflection Focus
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-          {/* Understanding */}
-          <button
-            onClick={() => {
-              setSelectedPrompt(enhanced.prompts.understanding)
-              onPromptChange?.(enhanced.prompts.understanding)
-            }}
-            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-              selectedPrompt === enhanced.prompts.understanding
-                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-            }`}
-          >
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Understanding</p>
-            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.understanding}</p>
-          </button>
-
-          {/* Application */}
-          <button
-            onClick={() => {
-              setSelectedPrompt(enhanced.prompts.application)
-              onPromptChange?.(enhanced.prompts.application)
-            }}
-            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-              selectedPrompt === enhanced.prompts.application
-                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-            }`}
-          >
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Application</p>
-            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.application}</p>
-          </button>
-
-          {/* Reflection */}
-          <button
-            onClick={() => {
-              setSelectedPrompt(enhanced.prompts.reflection)
-              onPromptChange?.(enhanced.prompts.reflection)
-            }}
-            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-              selectedPrompt === enhanced.prompts.reflection
-                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-            }`}
-          >
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Reflection</p>
-            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.reflection}</p>
-          </button>
-
-          {/* Gratitude (if available) */}
-          {enhanced.prompts.gratitude && (
+      {/* Reflection Prompts - Compact & Collapsible */}
+      <div className="bg-white/90 backdrop-blur-md rounded-xl border border-white/50 shadow-lg overflow-hidden">
+        {/* Header - Always Visible */}
+        <div className="p-4 border-b border-gray-200/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900 mb-1">
+                Your Reflection Prompt
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {selectedPrompt}
+              </p>
+              <p className="text-xs text-gray-500 capitalize mt-2">
+                Theme: {enhanced.theme}
+              </p>
+            </div>
             <button
-              onClick={() => {
-                setSelectedPrompt(enhanced.prompts.gratitude!)
-                onPromptChange?.(enhanced.prompts.gratitude!)
-              }}
-              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                selectedPrompt === enhanced.prompts.gratitude
-                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-              }`}
+              onClick={() => setShowReflectionPrompts(!showReflectionPrompts)}
+              className="ml-4 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
             >
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Gratitude</p>
-              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.gratitude}</p>
+              {showReflectionPrompts ? 'Hide Options' : 'Change Prompt'}
             </button>
-          )}
-
-          {/* Action (if available) */}
-          {enhanced.prompts.action && (
-            <button
-              onClick={() => {
-                setSelectedPrompt(enhanced.prompts.action!)
-                onPromptChange?.(enhanced.prompts.action!)
-              }}
-              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                selectedPrompt === enhanced.prompts.action
-                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-              }`}
-            >
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Action</p>
-              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.action}</p>
-            </button>
-          )}
-
-          {/* Quick (if available) */}
-          {enhanced.prompts.quick && (
-            <button
-              onClick={() => {
-                setSelectedPrompt(enhanced.prompts.quick!)
-                onPromptChange?.(enhanced.prompts.quick!)
-              }}
-              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                selectedPrompt === enhanced.prompts.quick
-                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
-                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-              }`}
-            >
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Quick Reflection</p>
-              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.quick}</p>
-            </button>
-          )}
+          </div>
         </div>
 
-        {/* Selected Prompt Display */}
-        <div className="mt-6 pt-6 border-t border-gray-200 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Your Reflection Prompt</p>
-          <p className="text-lg text-gray-900 font-medium leading-relaxed">
-            {selectedPrompt}
-          </p>
-          <p className="text-xs text-gray-500 capitalize mt-3">
-            Theme: {enhanced.theme}
-          </p>
-        </div>
+        {/* Prompts Grid - Collapsible */}
+        {showReflectionPrompts && (
+          <div className="p-4 bg-gray-50/50 animate-in slide-in-from-top-2 duration-200">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Choose a Different Focus
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {/* Understanding */}
+              <button
+                onClick={() => {
+                  setSelectedPrompt(enhanced.prompts.understanding)
+                  onPromptChange?.(enhanced.prompts.understanding)
+                  setShowReflectionPrompts(false)
+                }}
+                className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                  selectedPrompt === enhanced.prompts.understanding
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                }`}
+              >
+                <p className="text-xs font-medium text-gray-500 mb-1">Understanding</p>
+                <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.understanding}</p>
+              </button>
+
+              {/* Application */}
+              <button
+                onClick={() => {
+                  setSelectedPrompt(enhanced.prompts.application)
+                  onPromptChange?.(enhanced.prompts.application)
+                  setShowReflectionPrompts(false)
+                }}
+                className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                  selectedPrompt === enhanced.prompts.application
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                }`}
+              >
+                <p className="text-xs font-medium text-gray-500 mb-1">Application</p>
+                <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.application}</p>
+              </button>
+
+              {/* Reflection */}
+              <button
+                onClick={() => {
+                  setSelectedPrompt(enhanced.prompts.reflection)
+                  onPromptChange?.(enhanced.prompts.reflection)
+                  setShowReflectionPrompts(false)
+                }}
+                className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                  selectedPrompt === enhanced.prompts.reflection
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                }`}
+              >
+                <p className="text-xs font-medium text-gray-500 mb-1">Reflection</p>
+                <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.reflection}</p>
+              </button>
+
+              {/* Gratitude (if available) */}
+              {enhanced.prompts.gratitude && (
+                <button
+                  onClick={() => {
+                    setSelectedPrompt(enhanced.prompts.gratitude!)
+                    onPromptChange?.(enhanced.prompts.gratitude!)
+                    setShowReflectionPrompts(false)
+                  }}
+                  className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                    selectedPrompt === enhanced.prompts.gratitude
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                  }`}
+                >
+                  <p className="text-xs font-medium text-gray-500 mb-1">Gratitude</p>
+                  <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.gratitude}</p>
+                </button>
+              )}
+
+              {/* Action (if available) */}
+              {enhanced.prompts.action && (
+                <button
+                  onClick={() => {
+                    setSelectedPrompt(enhanced.prompts.action!)
+                    onPromptChange?.(enhanced.prompts.action!)
+                    setShowReflectionPrompts(false)
+                  }}
+                  className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                    selectedPrompt === enhanced.prompts.action
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                  }`}
+                >
+                  <p className="text-xs font-medium text-gray-500 mb-1">Action</p>
+                  <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.action}</p>
+                </button>
+              )}
+
+              {/* Quick (if available) */}
+              {enhanced.prompts.quick && (
+                <button
+                  onClick={() => {
+                    setSelectedPrompt(enhanced.prompts.quick!)
+                    onPromptChange?.(enhanced.prompts.quick!)
+                    setShowReflectionPrompts(false)
+                  }}
+                  className={`text-left p-3 rounded-lg border transition-all duration-200 ${
+                    selectedPrompt === enhanced.prompts.quick
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                  }`}
+                >
+                  <p className="text-xs font-medium text-gray-500 mb-1">Quick Reflection</p>
+                  <p className="text-xs text-gray-700 leading-snug">{enhanced.prompts.quick}</p>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
