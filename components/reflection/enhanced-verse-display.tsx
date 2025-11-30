@@ -56,11 +56,14 @@ export function EnhancedVerseDisplay({
   const [showReflectionPrompts, setShowReflectionPrompts] = useState(false)
   const [showProInsights, setShowProInsights] = useState(false)
   const [isGeneratingInsights, setIsGeneratingInsights] = useState(false)
+  const [showProEnhancedContent, setShowProEnhancedContent] = useState(false)
+  const [isGeneratingProContent, setIsGeneratingProContent] = useState(false)
 
   useEffect(() => {
     console.log('EnhancedVerseDisplay - isPro:', isPro, 'verse:', verse.reference)
     if (isPro) {
-      console.log('Loading enhanced verse for Pro user...')
+      console.log('Pro user - loading enhanced verse data in background...')
+      // Load data in background but don't show until user clicks "Want more insight?"
       loadEnhancedVerse()
     } else {
       console.log('User is not Pro, showing basic version')
@@ -204,9 +207,86 @@ export function EnhancedVerseDisplay({
     )
   }
 
-  // Pro users see enhanced version
-  // Show loading state while fetching
-  if (loading) {
+  // Pro users - Start clean, reveal insights on demand
+  if (isPro) {
+    const handleWantMoreInsight = async () => {
+      if (!enhanced) {
+        // If data not loaded yet, wait for it
+        if (loading) {
+          return // Still loading, wait
+        }
+        // Trigger load if not started
+        await loadEnhancedVerse()
+      }
+      
+      // Show AI generation animation
+      setIsGeneratingProContent(true)
+      // Brief spin (< 1 second) to show AI is working
+      await new Promise(resolve => setTimeout(resolve, 800))
+      setShowProEnhancedContent(true)
+      setIsGeneratingProContent(false)
+    }
+
+    // Initial state - Clean verse and prompt only
+    if (!showProEnhancedContent) {
+      return (
+        <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
+          {/* Verse - Clean */}
+          <div className="mb-6">
+            <div className="flex items-start justify-between mb-3">
+              <p className="text-xl text-blue-600 font-medium">
+                {verse.reference}
+              </p>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
+                <Sparkles className="w-3.5 h-3.5" />
+                Enhanced
+              </span>
+            </div>
+            <p className="text-lg text-gray-700 italic leading-relaxed">
+              &ldquo;{verse.text}&rdquo;
+            </p>
+          </div>
+
+          {/* Reflection Prompt - Clean */}
+          <div className="border-t border-gray-200 pt-6">
+            <p className="text-lg text-gray-800 font-medium mb-2">
+              {defaultPrompt}
+            </p>
+            <p className="text-xs text-gray-500 capitalize">
+              Theme: {verse.theme}
+            </p>
+          </div>
+
+          {/* "Want more insight?" Button - Subtle, Next to Prompt */}
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1"></div>
+              <button
+                onClick={handleWantMoreInsight}
+                disabled={isGeneratingProContent || loading}
+                className="group flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200/50 rounded-lg transition-all duration-200 hover:shadow-sm disabled:opacity-50"
+              >
+                {isGeneratingProContent ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm font-medium text-blue-700">Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium text-blue-700">Want more insight?</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
+  // Show loading state while fetching (only if we're showing enhanced content)
+  if (loading && isPro && showProEnhancedContent) {
     return (
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
         <div className="animate-pulse space-y-4">
