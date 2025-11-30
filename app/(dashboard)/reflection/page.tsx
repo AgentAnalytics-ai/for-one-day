@@ -4,6 +4,7 @@ import { ReflectionForm } from '@/components/reflection/reflection-form'
 import { MemoryCard } from '@/components/reflection/memory-card'
 import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 import { getTodaysVerse } from '@/lib/daily-verses'
+import { getStylePrompt, getStyleContext, type ReflectionStyle } from '@/lib/reflection-styles'
 import Image from 'next/image'
 import { EditButton } from '@/components/reflection/edit-button'
 import { ReflectionImages } from '@/components/reflection/reflection-images'
@@ -39,8 +40,21 @@ export default async function ReflectionPage({
     .eq('date', today)
     .single()
 
+  // Get user's reflection style preference
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('reflection_style')
+    .eq('user_id', user.id)
+    .single()
+
+  const reflectionStyle: ReflectionStyle = (profile?.reflection_style as ReflectionStyle) || 'auto'
+
   // Get today's verse (rotates daily based on day of year)
   const dailyVerse = getTodaysVerse()
+
+  // Get style-specific prompt (stays Christian, just different approach)
+  const stylePrompt = getStylePrompt(dailyVerse, reflectionStyle)
+  const styleContext = getStyleContext(dailyVerse, reflectionStyle)
 
   // Generate signed URLs for media attachments if they exist
   let mediaUrls: string[] = []
@@ -60,6 +74,8 @@ export default async function ReflectionPage({
     day: new Date().getDay(),
     date: today,
     verse: dailyVerse,
+    prompt: stylePrompt,
+    context: styleContext,
     completed: true,
     userReflection: existingReflection.reflection,
     mediaUrls: mediaUrls
@@ -67,6 +83,8 @@ export default async function ReflectionPage({
     day: new Date().getDay(),
     date: today,
     verse: dailyVerse,
+    prompt: stylePrompt,
+    context: styleContext,
     completed: false,
     userReflection: null,
     mediaUrls: []
@@ -110,8 +128,13 @@ export default async function ReflectionPage({
               </p>
             </div>
             <div className="border-t border-gray-200 pt-4">
+              {reflectionData.context && (
+                <p className="text-sm text-gray-600 italic mb-3">
+                  {reflectionData.context}
+                </p>
+              )}
               <p className="text-lg text-gray-800 font-medium mb-2">
-                {reflectionData.verse.prompt}
+                {reflectionData.prompt}
               </p>
               <p className="text-xs text-gray-500 capitalize">
                 Theme: {reflectionData.verse.theme}
