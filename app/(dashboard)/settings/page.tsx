@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ProfileSettingsForm } from '@/components/settings/profile-settings-form'
+import { ProfileSettingsView } from '@/components/settings/profile-settings-view'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
@@ -92,7 +92,10 @@ export default function SettingsPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <ProfileSettingsForm profile={profile} />
+        <ProfileSettingsView 
+          profile={profile} 
+          onUpdate={loadProfile}
+        />
       </div>
 
       {/* Subscription Management */}
