@@ -11,6 +11,7 @@ import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ShareLegacyNoteModal } from '@/components/vault/share-legacy-note-modal'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -74,6 +75,8 @@ export default function VaultPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<LegacyTemplate | null>(null)
   const [selectedLetter, setSelectedLetter] = useState<VaultItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [itemToShare, setItemToShare] = useState<VaultItem | null>(null)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
   const [usage, setUsage] = useState<{ current: number; limit: number }>({ current: 0, limit: -1 })
   const [statsLoading, setStatsLoading] = useState(true)
@@ -215,7 +218,7 @@ export default function VaultPage() {
         </div>
 
         {/* Stats - Fixed height to prevent layout shift */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
             <div className="text-3xl font-bold text-blue-600 mb-2 min-h-[40px] flex items-center justify-center">
               {statsLoading ? (
@@ -225,16 +228,6 @@ export default function VaultPage() {
               )}
             </div>
             <div className="text-sm text-gray-600">Legacy Notes</div>
-          </PremiumCard>
-          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
-            <div className="text-3xl font-bold text-green-600 mb-2 min-h-[40px] flex items-center justify-center">
-              {statsLoading ? (
-                <div className="w-12 h-8 bg-gray-200 rounded animate-pulse"></div>
-              ) : (
-                vaultItems?.filter(item => item.metadata?.is_shared).length || 0
-              )}
-            </div>
-            <div className="text-sm text-gray-600">Shared with Family</div>
           </PremiumCard>
           <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
             <div className="text-3xl font-bold text-purple-600 mb-2 min-h-[40px] flex items-center justify-center">
@@ -466,7 +459,14 @@ export default function VaultPage() {
                       Edit
                     </PremiumButton>
                     {!item.metadata?.is_shared && (
-                      <PremiumButton size="sm" variant="secondary">
+                      <PremiumButton 
+                        size="sm" 
+                        variant="secondary"
+                        onClick={() => {
+                          setItemToShare(item)
+                          setShareModalOpen(true)
+                        }}
+                      >
                         Share
                       </PremiumButton>
                     )}
@@ -506,6 +506,18 @@ export default function VaultPage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           letter={selectedLetter}
+        />
+      )}
+
+      {/* Share Modal */}
+      {shareModalOpen && itemToShare && (
+        <ShareLegacyNoteModal
+          isOpen={shareModalOpen}
+          onClose={() => {
+            setShareModalOpen(false)
+            setItemToShare(null)
+          }}
+          vaultItem={itemToShare}
         />
       )}
     </>
