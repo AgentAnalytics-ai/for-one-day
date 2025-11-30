@@ -5,6 +5,8 @@ import { MemoryCard } from '@/components/reflection/memory-card'
 import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 import { getTodaysVerse } from '@/lib/daily-verses'
 import { getStylePrompt, getStyleContext, type ReflectionStyle } from '@/lib/reflection-styles'
+import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
+import { EnhancedVerseDisplay } from '@/components/reflection/enhanced-verse-display'
 import Image from 'next/image'
 import { EditButton } from '@/components/reflection/edit-button'
 import { ReflectionImages } from '@/components/reflection/reflection-images'
@@ -39,6 +41,10 @@ export default async function ReflectionPage({
     .eq('user_id', user.id)
     .eq('date', today)
     .single()
+
+  // Get user's subscription status
+  const subscription = await getUserSubscriptionStatus(user.id)
+  const isPro = subscription.plan === 'pro' || subscription.plan === 'lifetime'
 
   // Get user's reflection style preference
   const { data: profile } = await supabase
@@ -118,29 +124,12 @@ export default async function ReflectionPage({
             Today&apos;s Reflection Prompt
           </h2>
           
-          <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
-            <div className="mb-4">
-              <p className="text-lg text-blue-600 font-medium mb-2">
-                {reflectionData.verse.reference}
-              </p>
-              <p className="text-lg text-gray-700 italic mb-4">
-                &ldquo;{reflectionData.verse.text}&rdquo;
-              </p>
-            </div>
-            <div className="border-t border-gray-200 pt-4">
-              {reflectionData.context && (
-                <p className="text-sm text-gray-600 italic mb-3">
-                  {reflectionData.context}
-                </p>
-              )}
-              <p className="text-lg text-gray-800 font-medium mb-2">
-                {reflectionData.prompt}
-              </p>
-              <p className="text-xs text-gray-500 capitalize">
-                Theme: {reflectionData.verse.theme}
-              </p>
-            </div>
-          </div>
+          {/* Enhanced Verse Display (Pro) or Basic (Free) */}
+          <EnhancedVerseDisplay
+            verse={reflectionData.verse}
+            isPro={isPro}
+            defaultPrompt={reflectionData.prompt}
+          />
 
           {reflectionData.completed && !isEditMode ? (
             <div className="bg-green-50 p-6 rounded-xl mb-6 border-2 border-green-300 shadow-sm">
