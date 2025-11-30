@@ -55,7 +55,7 @@ export default async function DashboardLayout({
       </div>
       
       {/* Add bottom padding on mobile for bottom nav and footer - 2026 Meta-level spacing */}
-      <main className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-36 sm:pb-32 md:pb-12">
+      <main className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-20 sm:pb-16 md:pb-12">
         {children}
       </main>
       
