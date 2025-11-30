@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronUp, BookOpen, Sparkles, Lock } from 'lucide-react'
+import { ChevronDown, ChevronUp, BookOpen, Sparkles, Lock, X } from 'lucide-react'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { UpgradeModal } from '@/components/ui/upgrade-modal'
 
@@ -51,6 +51,8 @@ export function EnhancedVerseDisplay({
   const [showExplanation, setShowExplanation] = useState(true)
   const [selectedPrompt, setSelectedPrompt] = useState<string>(defaultPrompt)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [expandedKeyword, setExpandedKeyword] = useState<string | null>(null)
+  const [expandedVerse, setExpandedVerse] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('EnhancedVerseDisplay - isPro:', isPro, 'verse:', verse.reference)
@@ -81,7 +83,6 @@ export function EnhancedVerseDisplay({
       
       if (!response.ok) {
         console.error('API error:', data.error, 'Status:', response.status)
-        // If 403, user might not actually be Pro - show error
         if (response.status === 403) {
           console.warn('User marked as Pro but API returned 403 - subscription check may be failing')
         }
@@ -90,7 +91,6 @@ export function EnhancedVerseDisplay({
       
       if (data.enhanced) {
         setEnhanced(data.enhanced)
-        // Set default prompt based on user preference or use understanding
         const initialPrompt = data.enhanced.prompts.understanding || defaultPrompt
         setSelectedPrompt(initialPrompt)
         onPromptChange?.(initialPrompt)
@@ -217,7 +217,7 @@ export function EnhancedVerseDisplay({
     )
   }
 
-  // Fallback to basic if not Pro or enhancement fails
+  // Fallback to basic (shouldn't happen for Pro users, but just in case)
   if (!enhanced) {
     return (
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
@@ -243,119 +243,173 @@ export function EnhancedVerseDisplay({
 
   return (
     <div className="space-y-6">
-      {/* Verse Text */}
-      <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 border border-white/50 shadow-lg">
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-lg text-blue-600 font-medium">
-              {enhanced.reference}
-            </p>
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-              <Sparkles className="w-3 h-3" />
+      {/* Verse Text - Hero Section */}
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/50 shadow-lg relative overflow-hidden">
+        {/* Decorative gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/30 pointer-events-none"></div>
+        
+        <div className="relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <p className="text-xl md:text-2xl text-blue-600 font-medium mb-3">
+                {enhanced.reference}
+              </p>
+              <p className="text-lg md:text-xl text-gray-700 italic leading-relaxed">
+                &ldquo;{enhanced.text}&rdquo;
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm ml-4">
+              <Sparkles className="w-3.5 h-3.5" />
               Enhanced
             </span>
           </div>
-          <p className="text-lg text-gray-700 italic mb-4">
-            &ldquo;{enhanced.text}&rdquo;
-          </p>
         </div>
       </div>
 
-      {/* Explanation Section - Collapsible */}
-      <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-6 border border-indigo-100 shadow-sm">
-        <button
-          onClick={() => setShowExplanation(!showExplanation)}
-          className="w-full flex items-center justify-between text-left mb-2"
-        >
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-lg font-medium text-gray-900">
-              Understanding This Verse
-            </h3>
+      {/* Main Content - Side-by-Side Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Meaning & Context (2/3 width on desktop) */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Meaning - Prominent */}
+          <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-indigo-50 rounded-xl p-6 border border-indigo-100/50 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <BookOpen className="w-5 h-5 text-indigo-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Meaning</h3>
+            </div>
+            <p className="text-base text-gray-700 leading-relaxed">
+              {enhanced.explanation.meaning}
+            </p>
           </div>
-          {showExplanation ? (
-            <ChevronUp className="w-5 h-5 text-gray-500" />
-          ) : (
-            <ChevronDown className="w-5 h-5 text-gray-500" />
+
+          {/* Context - Collapsible */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm">
+            <button
+              onClick={() => setShowExplanation(!showExplanation)}
+              className="w-full flex items-center justify-between text-left p-4 hover:bg-gray-50/50 transition-colors rounded-xl"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                <span className="text-sm font-medium text-gray-700">Context</span>
+              </div>
+              {showExplanation ? (
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+            {showExplanation && (
+              <div className="px-4 pb-4 pt-0">
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {enhanced.explanation.context}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column - Interactive Elements (1/3 width on desktop) */}
+        <div className="lg:col-span-1 space-y-4">
+          {/* Key Words - Floating Tags */}
+          {enhanced.explanation.keyWords.length > 0 && (
+            <div className="bg-white/90 backdrop-blur-md rounded-xl p-5 border border-gray-200/50 shadow-sm">
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Key Words
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {enhanced.explanation.keyWords.map((word, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setExpandedKeyword(expandedKeyword === word ? null : word)}
+                    className="group relative px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-full text-xs font-medium text-blue-700 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 transition-all duration-200 hover:scale-105 active:scale-95"
+                  >
+                    {word}
+                    {expandedKeyword === word && (
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-3 bg-white rounded-lg shadow-lg border border-gray-200 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-start justify-between mb-1">
+                          <p className="text-xs font-semibold text-gray-900">{word}</p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setExpandedKeyword(null)
+                            }}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-600">
+                          This word is central to understanding the verse&apos;s message.
+                        </p>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
-        </button>
 
-        {showExplanation && (
-          <div className="space-y-4 mt-4">
-            {/* Context */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Context</p>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {enhanced.explanation.context}
-              </p>
-            </div>
-
-            {/* Meaning */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Meaning</p>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {enhanced.explanation.meaning}
-              </p>
-            </div>
-
-            {/* Key Words */}
-            {enhanced.explanation.keyWords.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">Key Words</p>
-                <div className="flex flex-wrap gap-2">
-                  {enhanced.explanation.keyWords.map((word, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-white border border-indigo-200 rounded-full text-xs font-medium text-indigo-700"
-                    >
-                      {word}
-                    </span>
-                  ))}
-                </div>
+          {/* Related Verses - Floating Tags */}
+          {enhanced.explanation.crossReferences && enhanced.explanation.crossReferences.length > 0 && (
+            <div className="bg-white/90 backdrop-blur-md rounded-xl p-5 border border-gray-200/50 shadow-sm">
+              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                Related Verses
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {enhanced.explanation.crossReferences.map((ref, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setExpandedVerse(expandedVerse === ref ? null : ref)}
+                    className="group relative px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200/50 rounded-full text-xs font-medium text-indigo-700 hover:from-indigo-100 hover:to-purple-100 hover:border-indigo-300 transition-all duration-200 hover:scale-105 active:scale-95"
+                  >
+                    {ref}
+                    {expandedVerse === ref && (
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 p-3 bg-white rounded-lg shadow-lg border border-gray-200 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-start justify-between mb-1">
+                          <p className="text-xs font-semibold text-gray-900">{ref}</p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setExpandedVerse(null)
+                            }}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-600">
+                          This verse relates to today&apos;s passage and can deepen your understanding.
+                        </p>
+                      </div>
+                    )}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {/* Cross References */}
-            {enhanced.explanation.crossReferences && enhanced.explanation.crossReferences.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">Related Verses</p>
-                <div className="flex flex-wrap gap-2">
-                  {enhanced.explanation.crossReferences.map((ref, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-white border border-indigo-200 rounded-full text-xs text-indigo-600"
-                    >
-                      {ref}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Reflection Prompts */}
+      {/* Reflection Prompts - Clean Card Design */}
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 border border-white/50 shadow-lg">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Reflection Questions
+        <h3 className="text-lg font-semibold text-gray-900 mb-5">
+          Choose Your Reflection Focus
         </h3>
         
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {/* Understanding */}
           <button
             onClick={() => {
               setSelectedPrompt(enhanced.prompts.understanding)
               onPromptChange?.(enhanced.prompts.understanding)
             }}
-            className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
               selectedPrompt === enhanced.prompts.understanding
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
             }`}
           >
-            <p className="text-xs font-medium text-gray-500 mb-1">Understanding</p>
-            <p className="text-sm text-gray-800">{enhanced.prompts.understanding}</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Understanding</p>
+            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.understanding}</p>
           </button>
 
           {/* Application */}
@@ -364,14 +418,14 @@ export function EnhancedVerseDisplay({
               setSelectedPrompt(enhanced.prompts.application)
               onPromptChange?.(enhanced.prompts.application)
             }}
-            className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
               selectedPrompt === enhanced.prompts.application
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
             }`}
           >
-            <p className="text-xs font-medium text-gray-500 mb-1">Application</p>
-            <p className="text-sm text-gray-800">{enhanced.prompts.application}</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Application</p>
+            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.application}</p>
           </button>
 
           {/* Reflection */}
@@ -380,14 +434,14 @@ export function EnhancedVerseDisplay({
               setSelectedPrompt(enhanced.prompts.reflection)
               onPromptChange?.(enhanced.prompts.reflection)
             }}
-            className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+            className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
               selectedPrompt === enhanced.prompts.reflection
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
             }`}
           >
-            <p className="text-xs font-medium text-gray-500 mb-1">Reflection</p>
-            <p className="text-sm text-gray-800">{enhanced.prompts.reflection}</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Reflection</p>
+            <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.reflection}</p>
           </button>
 
           {/* Gratitude (if available) */}
@@ -397,14 +451,14 @@ export function EnhancedVerseDisplay({
                 setSelectedPrompt(enhanced.prompts.gratitude!)
                 onPromptChange?.(enhanced.prompts.gratitude!)
               }}
-              className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                 selectedPrompt === enhanced.prompts.gratitude
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
               }`}
             >
-              <p className="text-xs font-medium text-gray-500 mb-1">Gratitude</p>
-              <p className="text-sm text-gray-800">{enhanced.prompts.gratitude}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Gratitude</p>
+              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.gratitude}</p>
             </button>
           )}
 
@@ -415,14 +469,14 @@ export function EnhancedVerseDisplay({
                 setSelectedPrompt(enhanced.prompts.action!)
                 onPromptChange?.(enhanced.prompts.action!)
               }}
-              className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                 selectedPrompt === enhanced.prompts.action
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
               }`}
             >
-              <p className="text-xs font-medium text-gray-500 mb-1">Action</p>
-              <p className="text-sm text-gray-800">{enhanced.prompts.action}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Action</p>
+              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.action}</p>
             </button>
           )}
 
@@ -433,25 +487,25 @@ export function EnhancedVerseDisplay({
                 setSelectedPrompt(enhanced.prompts.quick!)
                 onPromptChange?.(enhanced.prompts.quick!)
               }}
-              className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+              className={`group text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                 selectedPrompt === enhanced.prompts.quick
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.02]'
+                  : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
               }`}
             >
-              <p className="text-xs font-medium text-gray-500 mb-1">Quick Reflection</p>
-              <p className="text-sm text-gray-800">{enhanced.prompts.quick}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Quick Reflection</p>
+              <p className="text-sm text-gray-800 leading-snug">{enhanced.prompts.quick}</p>
             </button>
           )}
         </div>
 
         {/* Selected Prompt Display */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs font-medium text-gray-500 mb-2">Your Reflection Prompt</p>
-          <p className="text-lg text-gray-800 font-medium">
+        <div className="mt-6 pt-6 border-t border-gray-200 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-lg p-4">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Your Reflection Prompt</p>
+          <p className="text-lg text-gray-900 font-medium leading-relaxed">
             {selectedPrompt}
           </p>
-          <p className="text-xs text-gray-500 capitalize mt-2">
+          <p className="text-xs text-gray-500 capitalize mt-3">
             Theme: {enhanced.theme}
           </p>
         </div>
@@ -459,4 +513,3 @@ export function EnhancedVerseDisplay({
     </div>
   )
 }
-
