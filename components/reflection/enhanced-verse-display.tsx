@@ -227,21 +227,15 @@ export function EnhancedVerseDisplay({
       setIsGeneratingProContent(false)
     }
 
-    // Initial state - Clean verse and prompt only
+    // Initial state - Clean verse and prompt only (no "Enhanced" badge yet)
     if (!showProEnhancedContent) {
       return (
         <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
-          {/* Verse - Clean */}
+          {/* Verse - Clean (no badge until enhanced content is shown) */}
           <div className="mb-6">
-            <div className="flex items-start justify-between mb-3">
-              <p className="text-xl text-blue-600 font-medium">
-                {verse.reference}
-              </p>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
-                <Sparkles className="w-3.5 h-3.5" />
-                Enhanced
-              </span>
-            </div>
+            <p className="text-xl text-blue-600 font-medium mb-3">
+              {verse.reference}
+            </p>
             <p className="text-lg text-gray-700 italic leading-relaxed">
               &ldquo;{verse.text}&rdquo;
             </p>
@@ -366,9 +360,10 @@ export function EnhancedVerseDisplay({
     )
   }
 
+  // Pro users - Enhanced content revealed (after clicking "Want more insight?")
   return (
     <div className="space-y-6">
-      {/* Verse Text - Hero Section */}
+      {/* Verse Text - Hero Section (now with Enhanced badge since content is shown) */}
       <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/50 shadow-lg relative overflow-hidden">
         {/* Decorative gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/30 pointer-events-none"></div>
@@ -383,7 +378,7 @@ export function EnhancedVerseDisplay({
                 &ldquo;{enhanced.text}&rdquo;
               </p>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm ml-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-semibold rounded-full shadow-sm ml-4 animate-in fade-in slide-in-from-right-2 duration-300">
               <Sparkles className="w-3.5 h-3.5" />
               Enhanced
             </span>
