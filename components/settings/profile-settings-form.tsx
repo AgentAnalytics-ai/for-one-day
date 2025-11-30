@@ -20,9 +20,11 @@ interface Profile {
 
 interface ProfileSettingsFormProps {
   profile: Profile | null
+  onSave?: () => void
+  onCancel?: () => void
 }
 
-export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
+export function ProfileSettingsForm({ profile, onSave, onCancel }: ProfileSettingsFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
@@ -35,6 +37,10 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
       
       if (result.success) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' })
+        // Call onSave callback to switch back to view mode
+        setTimeout(() => {
+          onSave?.()
+        }, 500)
       } else {
         setMessage({ type: 'error', text: result.error || 'Failed to update profile' })
       }
@@ -274,12 +280,22 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
         </div>
       )}
 
-      {/* Submit Button */}
-      <div className="flex justify-end">
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3">
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isLoading}
+            className="px-6 py-2 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-full hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Cancel
+          </button>
+        )}
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2 bg-blue-600 text-white font-medium rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
         >
           {isLoading ? 'Saving...' : 'Save Changes'}
         </button>
