@@ -54,6 +54,8 @@ export function EnhancedVerseDisplay({
   const [showKeyWords, setShowKeyWords] = useState(false)
   const [showRelatedVerses, setShowRelatedVerses] = useState(false)
   const [showReflectionPrompts, setShowReflectionPrompts] = useState(false)
+  const [showProInsights, setShowProInsights] = useState(false)
+  const [isGeneratingInsights, setIsGeneratingInsights] = useState(false)
 
   useEffect(() => {
     console.log('EnhancedVerseDisplay - isPro:', isPro, 'verse:', verse.reference)
@@ -105,48 +107,90 @@ export function EnhancedVerseDisplay({
     }
   }
 
-  // Free users see basic version with upgrade CTA
+  // Free users - Clean, simple, with subtle "Get Pro Insights" reveal
   if (!isPro) {
+    const handleGetProInsights = async () => {
+      setIsGeneratingInsights(true)
+      // Simulate AI generation delay for better UX (feels live)
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      setShowProInsights(true)
+      setIsGeneratingInsights(false)
+    }
+
     return (
       <>
         <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
-          <div className="mb-4">
-            <p className="text-lg text-blue-600 font-medium mb-2">
+          {/* Verse - Always Visible */}
+          <div className="mb-6">
+            <p className="text-xl text-blue-600 font-medium mb-3">
               {verse.reference}
             </p>
-            <p className="text-lg text-gray-700 italic mb-4">
+            <p className="text-lg text-gray-700 italic leading-relaxed">
               &ldquo;{verse.text}&rdquo;
             </p>
           </div>
-          <div className="border-t border-gray-200 pt-4">
+
+          {/* Reflection Prompt - Always Visible */}
+          <div className="border-t border-gray-200 pt-6">
             <p className="text-lg text-gray-800 font-medium mb-2">
               {defaultPrompt}
             </p>
-            <p className="text-xs text-gray-500 capitalize mb-4">
+            <p className="text-xs text-gray-500 capitalize">
               Theme: {verse.theme}
             </p>
-            
-            {/* Upgrade CTA */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-              <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 mb-1">
-                    Unlock Deeper Understanding
-                  </p>
-                  <p className="text-xs text-gray-600 mb-3">
-                    Pro users get AI-powered verse explanations, context, and multiple reflection prompts to deepen your spiritual growth.
-                  </p>
-                  <PremiumButton
-                    size="sm"
-                    onClick={() => setShowUpgradeModal(true)}
-                  >
-                    Upgrade to Pro
-                  </PremiumButton>
+          </div>
+
+          {/* Get Pro Insights Button - Subtle, Not Pushy */}
+          {!showProInsights && (
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <button
+                onClick={handleGetProInsights}
+                disabled={isGeneratingInsights}
+                className="w-full group flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200/50 rounded-lg transition-all duration-200 hover:shadow-sm disabled:opacity-50"
+              >
+                {isGeneratingInsights ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm font-medium text-blue-700">Generating insights...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 text-blue-600 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm font-medium text-blue-700">Get Pro Insights</span>
+                  </>
+                )}
+              </button>
+              <p className="text-xs text-gray-500 text-center mt-2">
+                AI-powered explanations, context & multiple prompts
+              </p>
+            </div>
+          )}
+
+          {/* Pro Insights Reveal - Feels Like Live AI Generation */}
+          {showProInsights && (
+            <div className="mt-6 pt-6 border-t border-gray-200 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-lg p-4 border border-blue-100">
+                <div className="flex items-start gap-3 mb-4">
+                  <Sparkles className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900 mb-2">
+                      Pro Insights Available
+                    </p>
+                    <p className="text-xs text-gray-600 mb-4">
+                      Upgrade to Pro to unlock AI-powered verse explanations, historical context, key word analysis, related verses, and multiple reflection prompts tailored to your spiritual growth.
+                    </p>
+                    <PremiumButton
+                      size="sm"
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="w-full sm:w-auto"
+                    >
+                      Upgrade to Pro
+                    </PremiumButton>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
         
         {showUpgradeModal && (
