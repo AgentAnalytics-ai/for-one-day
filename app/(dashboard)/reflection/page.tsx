@@ -6,6 +6,7 @@ import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 import { getTodaysVerse } from '@/lib/daily-verses'
 import Image from 'next/image'
 import { EditButton } from '@/components/reflection/edit-button'
+import { ReflectionImages } from '@/components/reflection/reflection-images'
 
 /**
  * 📖 Daily Reflection Page
@@ -131,22 +132,7 @@ export default async function ReflectionPage({
               
               {/* Display Images */}
               {reflectionData.mediaUrls && reflectionData.mediaUrls.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
-                  {reflectionData.mediaUrls.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden"
-                    >
-                      <Image
-                        src={url}
-                        alt={`Reflection image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ))}
-                </div>
+                <ReflectionImages images={reflectionData.mediaUrls} />
               )}
             </div>
           ) : (
