@@ -48,14 +48,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 flex flex-col">
       <NavigationTour />
-      <div className="bg-white">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-40">
         <SimpleNav profile={profile} />
       </div>
       
-      {/* Add bottom padding on mobile for bottom nav */}
-      <main className="flex-1 w-full py-4 sm:py-8 pb-20 md:pb-4">
+      {/* Add bottom padding on mobile for bottom nav and footer - 2026 Meta-level spacing */}
+      <main className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-36 sm:pb-32 md:pb-12">
         {children}
       </main>
       

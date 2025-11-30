@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { EnhancedStreak } from './enhanced-streak'
+import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
 
 interface DynamicStatsProps {
   userId: string
@@ -21,30 +21,10 @@ export async function DynamicStats({ userId }: DynamicStatsProps) {
     .select('id')
     .eq('owner_id', userId)
 
-  // Calculate reflection streak (simple count for stats card)
-  let reflectionStreak = 0
-  if (reflections && reflections.length > 0) {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    for (let i = 0; i < reflections.length; i++) {
-      const reflectionDate = new Date(reflections[i].date)
-      reflectionDate.setHours(0, 0, 0, 0)
-      
-      const daysDiff = Math.floor((today.getTime() - reflectionDate.getTime()) / (1000 * 60 * 60 * 24))
-      
-      if (daysDiff === i) {
-        reflectionStreak++
-      } else {
-        break
-      }
-    }
-  }
-
   return (
     <div className="space-y-6">
-      {/* Enhanced Streak Display - Full Width */}
-      <EnhancedStreak userId={userId} />
+      {/* Weekly Review Card - Instagram Stories Style (Better than orange streak) */}
+      <WeeklyReviewCard userId={userId} />
       
       {/* Other Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
