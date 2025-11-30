@@ -60,6 +60,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [recordingTime, setRecordingTime] = useState(0)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [upgradeFeature, setUpgradeFeature] = useState<string>('')
   const [userPlan, setUserPlan] = useState<'free' | 'pro' | 'lifetime'>('free')
   const [legacyNoteCount, setLegacyNoteCount] = useState(0)
   const [familyMembers, setFamilyMembers] = useState<Array<{id: string, name: string, role: string}>>([])
@@ -269,12 +270,14 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     const canAddVideo = userPlan === 'pro' || userPlan === 'lifetime'
     
     if (isVideo && !canAddVideo) {
+      setUpgradeFeature('Video Attachments')
       setShowUpgradeModal(true)
       return
     }
     
     if (userPlan === 'free' && currentCount >= 3) {
       alert('Free users can add up to 3 attachments per letter. Upgrade to Pro for unlimited attachments.')
+      setUpgradeFeature('Unlimited Attachments')
       setShowUpgradeModal(true)
       return
     }
@@ -679,6 +682,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                   type="button"
                   onClick={() => {
                     if (userPlan === 'free') {
+                      setUpgradeFeature('Voice Recordings')
                       setShowUpgradeModal(true)
                     } else {
                       startRecording()
@@ -771,7 +775,10 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                     <span className="text-sm text-purple-700 font-medium">Voice recording is a Pro feature.</span>
                     <button
                       type="button"
-                      onClick={() => setShowUpgradeModal(true)}
+                      onClick={() => {
+                        setUpgradeFeature('Voice Recordings')
+                        setShowUpgradeModal(true)
+                      }}
                       className="px-3 py-1 text-sm bg-purple-600 text-white rounded-md hover:bg-purple-700"
                     >
                       Upgrade to Pro
@@ -834,6 +841,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                   type="button"
                   onClick={() => {
                     if (userPlan === 'free') {
+                      setUpgradeFeature('Video Attachments')
                       setShowUpgradeModal(true)
                     } else {
                       videoInputRef.current?.click()
@@ -955,8 +963,11 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
       {/* Upgrade Modal */}
       <UpgradeModal
         isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        feature={userPlan === 'free' && attachments.length >= 3 ? "Unlimited Attachments" : attachments.some(a => a.type === 'video') ? "Video Attachments" : "Voice Recordings"}
+        onClose={() => {
+          setShowUpgradeModal(false)
+          setUpgradeFeature('')
+        }}
+        feature={upgradeFeature || (userPlan === 'free' && attachments.length >= 3 ? "Unlimited Attachments" : attachments.some(a => a.type === 'video') ? "Video Attachments" : "Voice Recordings")}
       />
     </div>
   )
