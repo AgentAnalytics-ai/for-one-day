@@ -130,6 +130,13 @@ export default async function ReflectionPage({
             isPro={isPro}
             defaultPrompt={reflectionData.prompt}
           />
+          
+          {/* Debug info (remove in production) */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+              Debug: isPro={isPro ? 'true' : 'false'}, plan={subscription.plan}
+            </div>
+          )}
 
           {reflectionData.completed && !isEditMode ? (
             <div className="bg-green-50 p-6 rounded-xl mb-6 border-2 border-green-300 shadow-sm">
