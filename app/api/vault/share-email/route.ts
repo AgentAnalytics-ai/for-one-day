@@ -90,6 +90,15 @@ export async function POST(request: NextRequest) {
         html: emailHtml
       })
       
+      // Check if email was actually sent (Resend might not be configured)
+      if (!emailResult) {
+        console.error('Resend not configured - email not sent')
+        return NextResponse.json({ 
+          error: 'Email service not configured. Please contact support.',
+          details: 'RESEND_API_KEY is not set in environment variables'
+        }, { status: 500 })
+      }
+      
       // Log for debugging (remove in production if needed)
       console.log('Email sent successfully:', emailResult)
     } catch (emailError) {
