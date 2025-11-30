@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default async function UnsubscribePage({
   searchParams,
 }: {
@@ -37,19 +39,19 @@ export default async function UnsubscribePage({
         </p>
         
         <p className="text-sm text-gray-500 mb-6">
-          You won't receive any more emails from us.
+          You won&apos;t receive any more emails from us.
         </p>
 
         <div className="pt-6 border-t border-gray-200">
           <p className="text-sm text-gray-500 mb-4">
             Changed your mind?
           </p>
-          <a
+          <Link
             href="/"
             className="inline-block px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 underline"
           >
             Return to For One Day
-          </a>
+          </Link>
         </div>
       </div>
     </div>
