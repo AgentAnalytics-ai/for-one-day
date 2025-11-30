@@ -32,13 +32,13 @@ export const DAILY_VERSES: DailyVerse[] = [
   {
     reference: "Psalm 127:3-4",
     text: "Behold, children are a heritage from the Lord, the fruit of the womb a reward. Like arrows in the hand of a warrior are the children of one's youth.",
-    prompt: "How are you preparing those you influence to hit God's targets?",
+    prompt: "How are you preparing those you influence for their future?",
     theme: "legacy"
   },
   {
     reference: "1 Corinthians 16:13",
     text: "Be watchful, stand firm in the faith, act like men, be strong.",
-    prompt: "What spiritual threat do you need to be more watchful against?",
+    prompt: "What challenge or obstacle do you need to be more watchful against today?",
     theme: "strength"
   },
   {

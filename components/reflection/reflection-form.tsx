@@ -260,17 +260,26 @@ export function ReflectionForm({
           className="hidden"
         />
         
-        <button
-          type="button"
-          onClick={() => imageInputRef.current?.click()}
-          disabled={uploadingImages}
-          className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ImageIcon className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">
-            {images.length > 0 ? 'Add More Photos' : 'Add Photo'}
-          </span>
-        </button>
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => imageInputRef.current?.click()}
+            disabled={uploadingImages}
+            className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ImageIcon className="w-4 h-4 text-gray-600" />
+            <span className="text-sm font-medium text-gray-700">
+              {images.length > 0 ? 'Add More Photos' : 'Add Photo'}
+            </span>
+          </button>
+          
+          {/* Photo Suggestion - Meta-level UX guidance */}
+          {images.length === 0 && (
+            <p className="text-xs text-gray-500 italic pl-1">
+              💡 Tip: Not sure what to capture? Try taking a photo of today&apos;s verse with your thoughts written around it, or snap something that represents your reflection.
+            </p>
+          )}
+        </div>
 
         {/* Image Preview Grid - WhatsApp-style */}
         {images.length > 0 && (

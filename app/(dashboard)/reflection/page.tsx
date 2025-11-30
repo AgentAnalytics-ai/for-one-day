@@ -97,22 +97,26 @@ export default async function ReflectionPage({
           </div>
           
           <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 mb-4">
-            God is inviting you to...
+            Today&apos;s Reflection Prompt
           </h2>
           
           <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
-            <p className="text-lg text-blue-600 font-medium mb-3">
-              {reflectionData.verse.reference}
-            </p>
-            <p className="text-lg text-gray-700 italic mb-4">
-              &ldquo;{reflectionData.verse.text}&rdquo;
-            </p>
-            <p className="text-lg text-gray-800 font-medium">
-              {reflectionData.verse.prompt}
-            </p>
-            <p className="text-xs text-gray-500 mt-3 capitalize">
-              Theme: {reflectionData.verse.theme}
-            </p>
+            <div className="mb-4">
+              <p className="text-lg text-blue-600 font-medium mb-2">
+                {reflectionData.verse.reference}
+              </p>
+              <p className="text-lg text-gray-700 italic mb-4">
+                &ldquo;{reflectionData.verse.text}&rdquo;
+              </p>
+            </div>
+            <div className="border-t border-gray-200 pt-4">
+              <p className="text-lg text-gray-800 font-medium mb-2">
+                {reflectionData.verse.prompt}
+              </p>
+              <p className="text-xs text-gray-500 capitalize">
+                Theme: {reflectionData.verse.theme}
+              </p>
+            </div>
           </div>
 
           {reflectionData.completed && !isEditMode ? (
