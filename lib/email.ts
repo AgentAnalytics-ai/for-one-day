@@ -10,10 +10,12 @@ export async function sendEmail({
   to,
   subject,
   html,
+  headers,
 }: {
   to: string
   subject: string
   html: string
+  headers?: Record<string, string>
 }) {
   if (!resend) {
     console.warn('Resend not configured, skipping email')
@@ -37,6 +39,7 @@ export async function sendEmail({
       subject,
       html,
       replyTo: fromEmail,
+      headers: headers || {},
     })
     
     console.log('Resend response:', data)
