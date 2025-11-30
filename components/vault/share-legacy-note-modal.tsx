@@ -92,7 +92,10 @@ export function ShareLegacyNoteModal({ isOpen, onClose, vaultItem }: ShareLegacy
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send email')
+        // Show more detailed error message
+        const errorMsg = data.error || data.details || 'Failed to send email'
+        console.error('Share email error:', data)
+        throw new Error(errorMsg)
       }
 
       toast.success('Legacy note shared successfully!')
