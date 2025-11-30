@@ -22,6 +22,15 @@ export async function sendEmail({
 
   try {
     const fromEmail = process.env.FROM_EMAIL || 'hello@foroneday.app'
+    
+    // Log for debugging (in production, you might want to remove this)
+    console.log('Sending email via Resend:', {
+      to,
+      from: fromEmail,
+      subject,
+      hasApiKey: !!process.env.RESEND_API_KEY
+    })
+    
     const data = await resend.emails.send({
       from: `For One Day <${fromEmail}>`,
       to,
@@ -30,9 +39,15 @@ export async function sendEmail({
       replyTo: fromEmail,
     })
     
+    console.log('Resend response:', data)
     return data
   } catch (error) {
     console.error('Failed to send email:', error)
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error('Error message:', error.message)
+      console.error('Error stack:', error.stack)
+    }
     throw error
   }
 }

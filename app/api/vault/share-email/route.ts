@@ -84,15 +84,21 @@ export async function POST(request: NextRequest) {
 
     // Send email
     try {
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: recipient_email,
         subject: `${senderName} shared a legacy note with you`,
         html: emailHtml
       })
+      
+      // Log for debugging (remove in production if needed)
+      console.log('Email sent successfully:', emailResult)
     } catch (emailError) {
       console.error('Error sending email:', emailError)
+      // Return more detailed error for debugging
+      const errorMessage = emailError instanceof Error ? emailError.message : 'Unknown error'
       return NextResponse.json({ 
-        error: 'Failed to send email. Please try again.' 
+        error: `Failed to send email: ${errorMessage}`,
+        details: emailError instanceof Error ? emailError.stack : undefined
       }, { status: 500 })
     }
 
