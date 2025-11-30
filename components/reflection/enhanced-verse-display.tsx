@@ -53,13 +53,18 @@ export function EnhancedVerseDisplay({
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
+    console.log('EnhancedVerseDisplay - isPro:', isPro, 'verse:', verse.reference)
     if (isPro) {
+      console.log('Loading enhanced verse for Pro user...')
       loadEnhancedVerse()
+    } else {
+      console.log('User is not Pro, showing basic version')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPro, verse.reference])
 
   const loadEnhancedVerse = async () => {
+    console.log('loadEnhancedVerse called for:', verse.reference)
     setLoading(true)
     try {
       const response = await fetch('/api/verse/enhance', {
@@ -74,12 +79,23 @@ export function EnhancedVerseDisplay({
 
       const data = await response.json()
       
-      if (response.ok && data.enhanced) {
+      if (!response.ok) {
+        console.error('API error:', data.error, 'Status:', response.status)
+        // If 403, user might not actually be Pro - show error
+        if (response.status === 403) {
+          console.warn('User marked as Pro but API returned 403 - subscription check may be failing')
+        }
+        return
+      }
+      
+      if (data.enhanced) {
         setEnhanced(data.enhanced)
         // Set default prompt based on user preference or use understanding
         const initialPrompt = data.enhanced.prompts.understanding || defaultPrompt
         setSelectedPrompt(initialPrompt)
         onPromptChange?.(initialPrompt)
+      } else {
+        console.warn('API returned success but no enhanced data:', data)
       }
     } catch (error) {
       console.error('Error loading enhanced verse:', error)
@@ -144,20 +160,65 @@ export function EnhancedVerseDisplay({
   }
 
   // Pro users see enhanced version
+  // Show loading state while fetching
   if (loading) {
     return (
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
           <div className="h-4 bg-gray-200 rounded w-2/4"></div>
+        </div>
+        <p className="text-xs text-gray-500 mt-4 text-center">
+          Loading enhanced verse insights...
+        </p>
+      </div>
+    )
+  }
+
+  // If Pro user but no enhanced data after loading, show error state with retry
+  if (!enhanced && isPro) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 border border-white/50 shadow-lg">
+          <div className="mb-4">
+            <p className="text-lg text-blue-600 font-medium mb-2">
+              {verse.reference}
+            </p>
+            <p className="text-lg text-gray-700 italic mb-4">
+              &ldquo;{verse.text}&rdquo;
+            </p>
+          </div>
+          <div className="border-t border-gray-200 pt-4">
+            <p className="text-lg text-gray-800 font-medium mb-2">
+              {defaultPrompt}
+            </p>
+            <p className="text-xs text-gray-500 capitalize mb-3">
+              Theme: {verse.theme}
+            </p>
+          </div>
+        </div>
+        
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <p className="text-sm text-yellow-800 mb-3">
+            ⚠️ Enhanced verse insights are temporarily unavailable.
+          </p>
+          <button
+            onClick={loadEnhancedVerse}
+            className="text-sm text-yellow-700 underline hover:text-yellow-900 font-medium"
+          >
+            Try loading enhanced insights again
+          </button>
+          <p className="text-xs text-yellow-700 mt-2">
+            Check browser console (F12) for error details.
+          </p>
         </div>
       </div>
     )
   }
 
+  // Fallback to basic if not Pro or enhancement fails
   if (!enhanced) {
-    // Fallback to basic if enhancement fails
     return (
       <div className="bg-white/90 backdrop-blur-md rounded-xl p-6 mb-6 border border-white/50 shadow-lg">
         <div className="mb-4">
