@@ -12,6 +12,13 @@ export const metadata: Metadata = {
     template: '%s | For One Day'
   },
   description: 'Document your life, preserve your final wishes, and create your legacy. Secure personal vault for journaling, storing important documents, and scheduled delivery to loved ones.',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: 'cover', // For iPhone notch support
+  },
   keywords: [
     'personal legacy vault',
     'document final wishes',
