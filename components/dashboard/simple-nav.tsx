@@ -163,20 +163,22 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       </nav>
 
       {/* MOBILE: Bottom Tab Bar - Meta/Instagram Style */}
+      {/* Enhanced for Meta-level mobile UX: proper touch targets (min 44px), safe area support */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-inset-bottom">
-        <div className="max-w-7xl mx-auto px-2">
-          <div className="flex items-center justify-around h-16">
+        <div className="max-w-7xl mx-auto px-2 pb-safe">
+          <div className="flex items-center justify-around h-16 min-h-[64px]">
             {navItems.map((item) => {
               const isActive = pathname === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex flex-col items-center justify-center gap-1 flex-1 px-2 py-1 transition-colors ${
+                  className={`flex flex-col items-center justify-center gap-1 flex-1 min-h-[44px] px-2 py-2 transition-colors active:bg-gray-50 ${
                     isActive 
                       ? 'text-blue-600' 
                       : 'text-gray-500'
                   }`}
+                  aria-label={item.name}
                 >
                   <div className={`${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
                     {item.icon}

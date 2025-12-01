@@ -55,6 +55,42 @@
   .safe-area-inset-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+  
+  .pb-safe {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
+  
+  /* Minimum touch target size for mobile (44x44px) */
+  @media (max-width: 768px) {
+    button, a, input[type="button"], input[type="submit"], [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Exception for icons that are part of larger touch targets */
+    .touch-target-exception {
+      min-height: auto;
+      min-width: auto;
+    }
+  }
+  
+  /* Prevent text size adjustment on iOS */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Smooth scrolling for mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  
+  /* Better tap highlight for mobile */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
 
   /* Smooth transitions for Meta-level polish */
   .transition-smooth {
