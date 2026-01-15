@@ -10,6 +10,7 @@ import { EnhancedVerseDisplay } from '@/components/reflection/enhanced-verse-dis
 import Image from 'next/image'
 import { EditButton } from '@/components/reflection/edit-button'
 import { ReflectionImages } from '@/components/reflection/reflection-images'
+import { TurnThePageChallenge } from '@/components/reflection/turn-the-page-challenge'
 
 /**
  * 📖 Daily Reflection Page
@@ -156,6 +157,11 @@ export default async function ReflectionPage({
               {/* Display Images */}
               {reflectionData.mediaUrls && reflectionData.mediaUrls.length > 0 && (
                 <ReflectionImages images={reflectionData.mediaUrls} />
+              )}
+
+              {/* Turn the Page Challenge - AI Insights */}
+              {existingReflection?.turn_the_page_insights && (
+                <TurnThePageChallenge insights={existingReflection.turn_the_page_insights} />
               )}
             </div>
           ) : (
