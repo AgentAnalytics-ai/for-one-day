@@ -1,0 +1,96 @@
+import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
+import { QuickBiblePhoto } from './quick-bible-photo'
+import { BibleProgress } from './bible-progress'
+import { createClient } from '@/lib/supabase/server'
+
+/**
+ * 📖 Today's Bible Page Card
+ * Primary feature on dashboard - shows today's assignment + camera button
+ */
+export async function TodayBiblePage({ userId }: { userId: string }) {
+  const supabase = await createClient()
+  const today = getTodaysBibleReading()
+  
+  // Check if today's entry exists
+  const todayDate = new Date().toISOString().split('T')[0]
+  const { data: todayEntry } = await supabase
+    .from('daily_reflections')
+    .select('id, media_urls, quick_note')
+    .eq('user_id', userId)
+    .eq('date', todayDate)
+    .single()
+
+  // Get progress
+  const { data: allEntries } = await supabase
+    .from('daily_reflections')
+    .select('day_number')
+    .eq('user_id', userId)
+    .not('day_number', 'is', null)
+
+  const completedDays = allEntries?.map(e => e.day_number).filter(Boolean) as number[] || []
+  const progress = {
+    currentDay: today.dayNumber,
+    totalDays: 730,
+    percentage: Math.round((today.dayNumber / 730) * 100),
+    currentBook: today.book,
+    currentChapter: today.chapter,
+    daysRemaining: 730 - today.dayNumber
+  }
+
+  const isCompleted = !!todayEntry
+
+  return (
+    <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 rounded-2xl p-6 md:p-8 border border-purple-100 shadow-sm">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-purple-100 rounded-full mb-3">
+          <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        
+        <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 mb-2">
+          Turn the Page Challenge
+        </h2>
+        
+        <div className="text-lg md:text-xl text-gray-700 font-medium">
+          Day {today.dayNumber}: {today.book} {today.chapter}
+        </div>
+        
+        {isCompleted && (
+          <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Completed Today
+          </div>
+        )}
+      </div>
+
+      {/* Progress Bar */}
+      <BibleProgress progress={progress} />
+
+      {/* Photo Upload */}
+      {!isCompleted ? (
+        <div className="mt-6">
+          <QuickBiblePhoto
+            dayNumber={today.dayNumber}
+            book={today.book}
+            chapter={today.chapter}
+          />
+        </div>
+      ) : (
+        <div className="mt-6 p-4 bg-white rounded-lg border border-green-200">
+          <p className="text-center text-gray-600 text-sm">
+            ✅ You've completed today's reading!
+          </p>
+        </div>
+      )}
+
+      {/* Info */}
+      <div className="mt-4 text-center text-xs text-gray-500">
+        Read {today.book} {today.chapter} in your Bible, then take a photo
+      </div>
+    </div>
+  )
+}
