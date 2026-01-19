@@ -5,6 +5,7 @@ import { SupportFooter } from '@/components/support-footer'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
 import { MobileBottomNav } from '@/components/navigation/mobile-bottom-nav'
 import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts'
+import { SkipLink } from '@/components/ui/skip-link'
 
 /**
  * 🏠 Dashboard layout - Simplified
@@ -51,6 +52,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 flex flex-col">
+      <SkipLink />
       <KeyboardShortcuts />
       <NavigationTour />
       <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-40">
@@ -58,7 +60,7 @@ export default async function DashboardLayout({
       </div>
       
       {/* Add bottom padding on mobile for bottom nav and footer - 2026 Meta-level spacing */}
-      <main className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-20 sm:pb-16 md:pb-12">
+      <main id="main-content" className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-20 sm:pb-16 md:pb-12">
         {children}
       </main>
       

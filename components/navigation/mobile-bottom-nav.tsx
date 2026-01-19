@@ -50,6 +50,8 @@ export function MobileBottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={`Navigate to ${item.label}`}
+                aria-current={item.active ? 'page' : undefined}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 transition-all duration-200',
                   item.active

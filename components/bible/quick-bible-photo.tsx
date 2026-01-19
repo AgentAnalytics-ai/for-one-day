@@ -157,6 +157,8 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
       <button
         onClick={handleCameraClick}
         disabled={uploading || saved}
+        aria-label={saved ? 'Photo saved' : uploading ? 'Uploading photo' : 'Take photo of Bible page'}
+        aria-busy={uploading}
         className={`w-full min-h-[140px] py-8 px-6 rounded-2xl border-2 transition-all duration-300 shadow-lg ${
           saved
             ? 'bg-gradient-to-br from-secondary-50 to-secondary-100 border-secondary-400 text-secondary-700 shadow-secondary-200/50'
@@ -233,6 +235,8 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
           ) : (
             <button
               onClick={handleVoiceNote}
+              aria-label={isRecording ? 'Stop recording voice note' : 'Add quick voice note'}
+              aria-pressed={isRecording}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-900 border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 focus:ring-4 focus:ring-primary-300 focus:outline-none"
             >
               <Mic className={`w-5 h-5 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gray-600'}`} />
