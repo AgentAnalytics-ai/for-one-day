@@ -105,7 +105,7 @@ export function EnhancedBibleProgress({
           </span>
           {daysAhead > 0 && (
             <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-              🎉 {daysAhead} day{daysAhead > 1 ? 's' : ''} ahead!
+              {daysAhead} day{daysAhead > 1 ? 's' : ''} ahead!
             </span>
           )}
         </div>

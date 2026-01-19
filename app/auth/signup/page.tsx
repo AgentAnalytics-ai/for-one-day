@@ -179,7 +179,7 @@ export default async function SignUpPage({
           {/* Trust Elements */}
           <div className="mt-10 text-center">
             <p className="text-xs text-gray-500 leading-relaxed font-medium">
-              🔒 Secure · 🚀 Fast · 💝 Your legacy vault
+              Secure · Fast · Your legacy vault
             </p>
           </div>
           </div>

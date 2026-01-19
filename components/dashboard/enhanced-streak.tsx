@@ -71,7 +71,7 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
     if (reflectionStreak < 7) return `${7 - reflectionStreak} more days to your first milestone!`
     if (reflectionStreak < 30) return 'You\'re building an amazing habit!'
     if (reflectionStreak < 100) return 'Incredible consistency! Keep it up!'
-    return 'You\'re a reflection master! 🎉'
+    return 'You\'re a reflection master!'
   }
 
   return (

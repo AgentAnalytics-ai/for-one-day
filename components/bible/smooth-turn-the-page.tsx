@@ -99,7 +99,7 @@ export function SmoothTurnThePage({
 
       // Success!
       setSaved(true)
-      toast.success('Saved! ✅')
+      toast.success('Saved!')
       
       // Show insights after a moment
       setTimeout(() => {
@@ -177,7 +177,7 @@ export function SmoothTurnThePage({
               {saved ? (
                 <>
                   <CheckCircle2 className="w-12 h-12" />
-                  <span className="font-bold text-xl">Saved! ✅</span>
+                  <span className="font-bold text-xl">Saved!</span>
                   <span className="text-sm opacity-90">Day {dayNumber} complete</span>
                 </>
               ) : uploading ? (
@@ -246,7 +246,7 @@ export function SmoothTurnThePage({
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200 text-center">
           <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-3" />
           <h3 className="text-xl font-semibold text-green-900 mb-2">
-            Day {dayNumber} Complete! 🎉
+            Day {dayNumber} Complete!
           </h3>
           <p className="text-sm text-green-700 mb-4">
             Great job! You've completed today's reading.

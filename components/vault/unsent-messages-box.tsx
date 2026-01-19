@@ -155,7 +155,7 @@ export function UnsentMessagesBox() {
         throw new Error(data.error || 'Failed to send message')
       }
 
-      toast.success('Message sent! ✉️')
+      toast.success('Message sent!')
       loadData()
     } catch (error) {
       console.error('Error sending message:', error)
@@ -376,7 +376,7 @@ export function UnsentMessagesBox() {
                         </>
                       ) : (
                         <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                          ⚠ No Email Account
+                          No Email Account
                         </span>
                       )}
                     </div>
@@ -398,7 +398,7 @@ export function UnsentMessagesBox() {
                 {/* Preview Badge */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                   <p className="text-xs text-blue-800 font-medium">
-                    ✉️ This will be sent to {hasEmail ? lovedOne?.email_address : 'their email (add loved one profile first)'}
+                    This will be sent to {hasEmail ? lovedOne?.email_address : 'their email (add loved one profile first)'}
                   </p>
                 </div>
 
