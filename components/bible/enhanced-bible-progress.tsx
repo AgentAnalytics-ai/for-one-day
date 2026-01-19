@@ -90,12 +90,13 @@ export function EnhancedBibleProgress({
     <div className="space-y-4">
       {/* Main Progress Bar */}
       <div className="relative">
-        <div className="h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+        <div className="h-5 bg-gray-200 rounded-full overflow-hidden shadow-inner border border-gray-300/50">
           <div
-            className="h-full bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 transition-all duration-1000 ease-out relative"
+            className="h-full bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 transition-all duration-1000 ease-out relative shadow-md"
             style={{ width: `${animatedPercentage}%` }}
           >
             <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent to-white/30" />
           </div>
         </div>
         <div className="mt-2 flex items-center justify-between">
@@ -112,38 +113,38 @@ export function EnhancedBibleProgress({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white/60 backdrop-blur rounded-lg p-3 border border-purple-100">
-          <div className="flex items-center gap-2 mb-1">
-            <Calendar className="w-4 h-4 text-purple-600" />
-            <span className="text-xs text-gray-600">Days Done</span>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border-2 border-primary-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="w-4 h-4 text-primary-600" />
+            <span className="text-xs text-gray-600 font-semibold uppercase tracking-wide">Days Done</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">{progress.currentDay}</div>
+          <div className="text-3xl font-bold text-primary-900">{progress.currentDay}</div>
         </div>
         
-        <div className="bg-white/60 backdrop-blur rounded-lg p-3 border border-purple-100">
-          <div className="flex items-center gap-2 mb-1">
-            <Target className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs text-gray-600">Days Left</span>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border-2 border-primary-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="w-4 h-4 text-primary-600" />
+            <span className="text-xs text-gray-600 font-semibold uppercase tracking-wide">Days Left</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">{progress.daysRemaining}</div>
+          <div className="text-3xl font-bold text-primary-900">{progress.daysRemaining}</div>
         </div>
         
-        <div className="bg-white/60 backdrop-blur rounded-lg p-3 border border-purple-100">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-4 h-4 text-blue-600" />
-            <span className="text-xs text-gray-600">Total</span>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border-2 border-primary-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="w-4 h-4 text-primary-600" />
+            <span className="text-xs text-gray-600 font-semibold uppercase tracking-wide">Total</span>
           </div>
-          <div className="text-2xl font-bold text-gray-900">{progress.totalDays}</div>
+          <div className="text-3xl font-bold text-primary-900">{progress.totalDays}</div>
         </div>
       </div>
 
       {/* Completion Estimate */}
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-3 border border-purple-200">
-        <p className="text-xs text-gray-600 mb-1">Estimated Completion</p>
-        <p className="text-sm font-semibold text-gray-900">
+      <div className="bg-gradient-to-r from-primary-50 to-primary-100 rounded-xl p-4 border-2 border-primary-200 shadow-sm">
+        <p className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Estimated Completion</p>
+        <p className="text-base font-bold text-primary-900">
           {formattedDate}
           {daysAhead > 0 && (
-            <span className="ml-2 text-green-600 text-xs">
+            <span className="ml-2 text-secondary-600 text-sm font-semibold">
               (Early by {daysAhead} day{daysAhead > 1 ? 's' : ''}!)
             </span>
           )}

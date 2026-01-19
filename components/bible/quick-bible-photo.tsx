@@ -142,16 +142,16 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
 
   return (
     <div className="space-y-4">
-      {/* Big Camera Button */}
+      {/* Big Camera Button - Mobile Optimized */}
       <button
         onClick={handleCameraClick}
         disabled={uploading || saved}
-        className={`w-full py-6 px-6 rounded-2xl border-2 transition-all duration-200 ${
+        className={`w-full min-h-[140px] py-8 px-6 rounded-2xl border-2 transition-all duration-300 shadow-lg ${
           saved
-            ? 'bg-green-50 border-green-500 text-green-700'
+            ? 'bg-gradient-to-br from-secondary-50 to-secondary-100 border-secondary-400 text-secondary-700 shadow-secondary-200/50'
             : uploading
-            ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-white border-purple-500 text-purple-700 hover:bg-purple-50 hover:border-purple-600 active:scale-95'
+            ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+            : 'bg-gradient-to-br from-primary-50 to-primary-100 border-primary-500 text-primary-700 hover:bg-gradient-to-br hover:from-primary-100 hover:to-primary-200 hover:border-primary-600 hover:shadow-xl active:scale-[0.98] focus:ring-4 focus:ring-primary-300 focus:outline-none'
         }`}
       >
         <input
@@ -163,22 +163,32 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
           className="hidden"
         />
         
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-4">
           {saved ? (
             <>
-              <Check className="w-8 h-8" />
-              <span className="font-semibold text-lg">Saved!</span>
+              <div className="w-16 h-16 rounded-full bg-secondary-200 flex items-center justify-center shadow-md animate-in zoom-in duration-300">
+                <Check className="w-10 h-10 text-secondary-700" />
+              </div>
+              <span className="font-bold text-xl text-secondary-900">Saved! ✅</span>
+              <span className="text-sm text-secondary-700 font-medium">Your photo has been uploaded</span>
             </>
           ) : uploading ? (
             <>
-              <Loader2 className="w-8 h-8 animate-spin" />
-              <span className="font-semibold text-lg">Uploading...</span>
+              <div className="w-16 h-16 rounded-full bg-primary-200 flex items-center justify-center shadow-md">
+                <Loader2 className="w-10 h-10 text-primary-700 animate-spin" />
+              </div>
+              <span className="font-bold text-xl text-primary-900">Uploading...</span>
+              <span className="text-sm text-primary-700 font-medium">Please wait</span>
             </>
           ) : (
             <>
-              <Camera className="w-8 h-8" />
-              <span className="font-semibold text-lg">Take Photo</span>
-              <span className="text-sm opacity-75">Tap to capture your Bible page</span>
+              <div className="w-20 h-20 rounded-full bg-primary-500 flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300">
+                <Camera className="w-12 h-12 text-white" />
+              </div>
+              <div className="space-y-1">
+                <span className="font-bold text-xl text-primary-900 block">Take Photo</span>
+                <span className="text-sm text-primary-700 font-medium">Tap to capture your Bible page</span>
+              </div>
             </>
           )}
         </div>
@@ -193,8 +203,8 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
                 value={quickNote}
                 onChange={(e) => setQuickNote(e.target.value)}
                 placeholder="Add a quick note (optional)..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                rows={2}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl resize-none focus:ring-4 focus:ring-primary-300 focus:border-primary-500 focus:outline-none transition-all duration-200 shadow-sm"
+                rows={3}
                 maxLength={200}
               />
               <div className="flex gap-2">
@@ -212,18 +222,21 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
           ) : (
             <button
               onClick={handleVoiceNote}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-900 border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md active:scale-95 focus:ring-4 focus:ring-primary-300 focus:outline-none"
             >
-              <Mic className={`w-4 h-4 ${isRecording ? 'text-red-500 animate-pulse' : ''}`} />
-              <span>{isRecording ? 'Recording...' : 'Add Quick Note (Optional)'}</span>
+              <Mic className={`w-5 h-5 ${isRecording ? 'text-red-500 animate-pulse' : 'text-gray-600'}`} />
+              <span>{isRecording ? 'Recording... Tap to stop' : 'Add Quick Note (Optional)'}</span>
             </button>
           )}
         </div>
       )}
 
       {/* Today's Assignment Info */}
-      <div className="text-center text-sm text-gray-500">
-        Day {dayNumber}: {book} {chapter}
+      <div className="text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 rounded-full border border-primary-200">
+          <span className="text-xs font-semibold text-primary-700 uppercase tracking-wide">Today's Reading</span>
+          <span className="text-sm font-bold text-primary-900">Day {dayNumber}: {book} {chapter}</span>
+        </div>
       </div>
     </div>
   )
