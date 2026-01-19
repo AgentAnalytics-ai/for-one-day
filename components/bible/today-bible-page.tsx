@@ -1,6 +1,5 @@
 import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
-import { QuickBiblePhoto } from './quick-bible-photo'
-import { BibleProgress } from './bible-progress'
+import { SmoothTurnThePage } from './smooth-turn-the-page'
 import { createClient } from '@/lib/supabase/server'
 
 /**
@@ -20,7 +19,7 @@ export async function TodayBiblePage({ userId }: { userId: string }) {
     .eq('date', todayDate)
     .single()
 
-  // Get progress
+  // Get progress - use highest completed day, not just today
   const { data: allEntries } = await supabase
     .from('daily_reflections')
     .select('day_number')
@@ -28,13 +27,22 @@ export async function TodayBiblePage({ userId }: { userId: string }) {
     .not('day_number', 'is', null)
 
   const completedDays = allEntries?.map(e => e.day_number).filter(Boolean) as number[] || []
+  const highestCompletedDay = completedDays.length > 0 ? Math.max(...completedDays) : 0
+  
+  // Calculate progress based on highest completed day (smart progress)
+  // If user is ahead, use their highest day; otherwise use today's expected day
+  const currentDay = Math.max(highestCompletedDay, today.dayNumber)
+  const totalDays = 730
+  const percentage = Math.round((currentDay / totalDays) * 100)
+  const daysRemaining = Math.max(0, totalDays - currentDay)
+  
   const progress = {
-    currentDay: today.dayNumber,
-    totalDays: 730,
-    percentage: Math.round((today.dayNumber / 730) * 100),
+    currentDay,
+    totalDays,
+    percentage,
     currentBook: today.book,
     currentChapter: today.chapter,
-    daysRemaining: 730 - today.dayNumber
+    daysRemaining
   }
 
   const isCompleted = !!todayEntry
@@ -67,30 +75,15 @@ export async function TodayBiblePage({ userId }: { userId: string }) {
         )}
       </div>
 
-      {/* Progress Bar */}
-      <BibleProgress progress={progress} />
-
-      {/* Photo Upload */}
-      {!isCompleted ? (
-        <div className="mt-6">
-          <QuickBiblePhoto
-            dayNumber={today.dayNumber}
-            book={today.book}
-            chapter={today.chapter}
-          />
-        </div>
-      ) : (
-        <div className="mt-6 p-4 bg-white rounded-lg border border-green-200">
-          <p className="text-center text-gray-600 text-sm">
-            ✅ You've completed today's reading!
-          </p>
-        </div>
-      )}
-
-      {/* Info */}
-      <div className="mt-4 text-center text-xs text-gray-500">
-        Read {today.book} {today.chapter} in your Bible, then take a photo
-      </div>
+      {/* Smooth Turn the Page Experience */}
+      <SmoothTurnThePage
+        dayNumber={today.dayNumber}
+        book={today.book}
+        chapter={today.chapter}
+        progress={progress}
+        completedDays={completedDays}
+        isCompleted={isCompleted}
+      />
     </div>
   )
 }
