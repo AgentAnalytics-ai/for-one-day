@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { SimpleNav } from '@/components/dashboard/simple-nav'
 import { SupportFooter } from '@/components/support-footer'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
+import { MobileBottomNav } from '@/components/navigation/mobile-bottom-nav'
 
 /**
  * 🏠 Dashboard layout - Simplified
@@ -60,6 +61,9 @@ export default async function DashboardLayout({
       </main>
       
       <SupportFooter />
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   )
 }
