@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const recipient = formData.get('recipient') as string
+    const recipientName = formData.get('recipient_name') as string // NEW: Actual name
     const occasion = formData.get('occasion') as string
     const templateId = formData.get('template_id') as string
     const sharingSettings = formData.get('sharing_settings') as string
@@ -65,6 +66,8 @@ export async function POST(request: NextRequest) {
         sharing_settings: parsedSharingSettings,
         metadata: {
           recipient,
+          recipient_name: recipientName || null, // NEW: Store actual name
+          recipient_role: recipient, // Keep for backward compatibility
           occasion,
           template_id: templateId,
           content: content,
