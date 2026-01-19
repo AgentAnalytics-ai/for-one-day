@@ -412,7 +412,7 @@ export default function VaultPage() {
               </PremiumButton>
               
               <p className="text-sm text-gray-500 mt-4">
-                {usage.limit === -1 ? '✨ Unlimited letters with Pro' : `${usage.limit - usage.current} free letters remaining`}
+                {usage.limit === -1 ? 'Unlimited letters with Pro' : `${usage.limit - usage.current} free letters remaining`}
               </p>
             </PremiumCard>
           ) : (

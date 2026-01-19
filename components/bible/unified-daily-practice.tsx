@@ -127,7 +127,7 @@ export function UnifiedDailyPractice({ turnThePage, reflection }: UnifiedDailyPr
                   <CheckCircle2 className="w-10 h-10 text-secondary-700" />
                 </div>
                 <h4 className="text-xl font-serif font-bold text-secondary-900 mb-2">
-                  Day {turnThePage.dayNumber} Complete! 🎉
+                  Day {turnThePage.dayNumber} Complete!
                 </h4>
                 <p className="text-sm text-secondary-700 font-medium">
                   You've read {turnThePage.book} {turnThePage.chapter}
@@ -220,7 +220,7 @@ export function UnifiedDailyPractice({ turnThePage, reflection }: UnifiedDailyPr
               {/* Smart Contextual Suggestion */}
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 shadow-lg">
                 <p className="text-sm text-white/95 mb-4 font-medium leading-relaxed">
-                  💡 You just read <strong className="font-bold">{turnThePage.book} {turnThePage.chapter}</strong>. 
+                  You just read <strong className="font-bold">{turnThePage.book} {turnThePage.chapter}</strong>. 
                   Want to reflect on what you learned?
                 </p>
                 <Link
@@ -242,7 +242,7 @@ export function UnifiedDailyPractice({ turnThePage, reflection }: UnifiedDailyPr
         <div className="grid grid-cols-2 gap-6 text-center">
           <div className="space-y-2">
             <div className="text-3xl font-bold">
-              {turnThePage.isCompleted ? '✅' : '📖'}
+              {turnThePage.isCompleted ? 'Complete' : 'Pending'}
             </div>
             <div className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
               {turnThePage.isCompleted ? 'Reading Done' : 'Reading Pending'}
@@ -250,7 +250,7 @@ export function UnifiedDailyPractice({ turnThePage, reflection }: UnifiedDailyPr
           </div>
           <div className="space-y-2">
             <div className="text-3xl font-bold">
-              {reflection.isCompleted ? '✅' : '✍️'}
+              {reflection.isCompleted ? 'Complete' : 'Pending'}
             </div>
             <div className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
               {reflection.isCompleted ? 'Reflection Done' : 'Reflection Pending'}

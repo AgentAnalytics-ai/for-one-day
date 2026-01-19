@@ -82,7 +82,7 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
       }
 
       setSaved(true)
-      toast.success('Saved! ✅')
+      toast.success('Saved!')
       
       // Reset after 2 seconds and refresh page
       setTimeout(() => {
@@ -169,7 +169,7 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
               <div className="w-16 h-16 rounded-full bg-secondary-200 flex items-center justify-center shadow-md animate-in zoom-in duration-300">
                 <Check className="w-10 h-10 text-secondary-700" />
               </div>
-              <span className="font-bold text-xl text-secondary-900">Saved! ✅</span>
+              <span className="font-bold text-xl text-secondary-900">Saved!</span>
               <span className="text-sm text-secondary-700 font-medium">Your photo has been uploaded</span>
             </>
           ) : uploading ? (

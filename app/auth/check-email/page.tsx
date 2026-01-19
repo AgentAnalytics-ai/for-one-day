@@ -74,10 +74,10 @@ export default async function CheckEmailPage({
             </h4>
             
             <div className="space-y-2 text-sm text-gray-600">
-              <p>✅ Your account will be fully activated</p>
-              <p>✅ You&apos;ll get access to your dashboard</p>
-              <p>✅ Start your first devotion journey</p>
-              <p>✅ Begin building your family legacy</p>
+              <p>Your account will be fully activated</p>
+              <p>You&apos;ll get access to your dashboard</p>
+              <p>Start your first devotion journey</p>
+              <p>Begin building your family legacy</p>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default async function CheckEmailPage({
           {/* Trust Elements */}
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              🔒 Secure verification · ⚡ Link expires in 24 hours · 💝 Your personal legacy vault
+              Secure verification · Link expires in 24 hours · Your personal legacy vault
             </p>
           </div>
             </div>

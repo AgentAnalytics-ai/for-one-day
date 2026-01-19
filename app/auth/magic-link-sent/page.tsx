@@ -110,7 +110,7 @@ export default async function MagicLinkSentPage({
           {/* Trust Elements */}
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
-              🔒 Secure magic link · ⚡ Expires in 1 hour · 💝 Your personal legacy vault
+              Secure magic link · Expires in 1 hour · Your personal legacy vault
             </p>
           </div>
             </div>

@@ -276,7 +276,7 @@ export function ReflectionForm({
           {/* Photo Suggestion - Meta-level UX guidance */}
           {images.length === 0 && (
             <p className="text-xs text-gray-500 italic pl-1">
-              💡 Tip: Not sure what to capture? Try taking a photo of today&apos;s verse with your thoughts written around it, or snap something that represents your reflection.
+              Tip: Not sure what to capture? Try taking a photo of today&apos;s verse with your thoughts written around it, or snap something that represents your reflection.
             </p>
           )}
         </div>

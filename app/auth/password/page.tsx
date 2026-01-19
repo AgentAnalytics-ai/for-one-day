@@ -127,7 +127,7 @@ export default async function PasswordLoginPage() {
           {/* Trust Elements */}
           <div className="mt-6 sm:mt-8 text-center">
             <p className="text-xs text-gray-500 leading-relaxed px-2">
-              🔒 Secure authentication · 🚀 Fast & lightweight · 💝 Your personal legacy vault
+              Secure authentication · Fast & lightweight · Your personal legacy vault
             </p>
           </div>
             </div>
