@@ -75,6 +75,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     title: '',
     content: '',
     recipient: 'family',
+    recipientName: '', // NEW: Actual name (e.g., "Sarah")
     occasion: ''
   })
   
@@ -141,6 +142,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         title: editingItem.title,
         content: editingItem.metadata?.content || editingItem.description,
         recipient: editingItem.metadata?.recipient || 'family',
+        recipientName: editingItem.metadata?.recipient_name || '',
         occasion: editingItem.metadata?.occasion || ''
       })
       // Load existing attachments
@@ -416,6 +418,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             title: formData.title,
             content: formData.content,
             recipient: formData.recipient,
+            recipient_name: formData.recipientName.trim() || undefined,
             occasion: formData.occasion,
             sharing_settings: sharingSettings,
             attachments: finalAttachments
@@ -446,6 +449,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
         form.append('title', formData.title)
         form.append('content', formData.content)
         form.append('recipient', formData.recipient)
+        if (formData.recipientName.trim()) {
+          form.append('recipient_name', formData.recipientName.trim())
+        }
         form.append('occasion', formData.occasion)
         form.append('sharing_settings', JSON.stringify(sharingSettings))
         if (finalAttachments.length > 0) {
@@ -488,6 +494,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
       title: '',
       content: '',
       recipient: 'family',
+      recipientName: '',
       occasion: ''
     })
     setSharingSettings({})
@@ -608,6 +615,26 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 ))}
               </div>
             </div>
+
+            {/* Recipient Name - Show only if specific person selected */}
+            {formData.recipient !== 'family' && (
+              <div>
+                <label htmlFor="recipientName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Their Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="recipientName"
+                  value={formData.recipientName}
+                  onChange={(e) => setFormData(prev => ({ ...prev, recipientName: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="e.g., Sarah, Emily, John"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Add their name to organize notes by person
+                </p>
+              </div>
+            )}
 
             {/* Occasion */}
             <div>
