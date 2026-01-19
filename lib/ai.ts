@@ -256,4 +256,149 @@ Use a gentle, purposeful, encouraging tone that is accessible to all users. Retu
   }
 }
 
+/**
+ * 📖 Turn the Page Challenge - AI-Powered Bible Photo Analysis
+ * Analyzes Bible photos, extracts text, and connects verse + photo + reflection
+ * Uses OpenAI Vision API (gpt-4o) for expert-level analysis
+ */
+export interface TurnThePageAnalysis {
+  // Text extracted from photo
+  extractedText: {
+    bibleVerse?: string  // Verse text found in photo
+    handwrittenNotes?: string  // Handwritten notes/jottings
+    printedText?: string  // Any other printed text
+  }
+  
+  // AI insights connecting everything
+  insights: {
+    summary: string  // "On this day, you took a photo of [verse] and jotted down [notes]..."
+    connections: string  // How verse + photo + reflection connect
+    themes: string[]  // Key themes identified
+    personalGrowth: string  // Growth insights
+  }
+  
+  // Visual analysis
+  photoDescription: string  // What's in the photo
+  verseMatch: {
+    found: boolean
+    confidence: number
+    matchedVerse?: string
+  }
+}
+
+export async function analyzeTurnThePagePhoto(params: {
+  imageUrl: string  // Signed URL or base64
+  verse: { ref: string; text: string }  // Today's verse
+  reflection: string  // User's written reflection
+}): Promise<TurnThePageAnalysis | null> {
+  if (!openai) {
+    console.warn('OpenAI not configured, cannot analyze Bible photo')
+    return null
+  }
+
+  try {
+    const prompt = `You are analyzing a photo of a Bible page for the "Turn the Page Challenge" - a daily habit where users photograph Bible pages and reflect on them.
+
+CONTEXT:
+- Today's Verse: "${params.verse.text}" (${params.verse.ref})
+- User's Reflection: "${params.reflection}"
+
+TASKS:
+1. Extract ALL text from the photo:
+   - Bible verse text (printed in Bible)
+   - Handwritten notes/jottings (if any)
+   - Any other printed text
+
+2. Analyze the connection:
+   - Does the photo show today's verse or a related verse?
+   - What did the user write/note in the photo?
+   - How does the photo connect to their written reflection?
+   - What themes emerge from verse + photo + reflection?
+
+3. Generate insights:
+   - A summary: "On this day, you took a photo of [verse] and jotted down [notes]. Based on what you read and what you wrote..."
+   - Connections between verse, photo, and reflection
+   - Key themes
+   - Personal growth insights
+
+Return as JSON:
+{
+  "extractedText": {
+    "bibleVerse": "Verse text found in photo (if any)",
+    "handwrittenNotes": "Handwritten notes/jottings (if any)",
+    "printedText": "Other printed text (if any)"
+  },
+  "insights": {
+    "summary": "On this day, you took a photo of [verse] and jotted down [notes]. Based on what you read and what you wrote, [insight]...",
+    "connections": "How the verse, photo, and reflection connect...",
+    "themes": ["theme1", "theme2"],
+    "personalGrowth": "Growth insight based on all three elements..."
+  },
+  "photoDescription": "What's visible in the photo",
+  "verseMatch": {
+    "found": true/false,
+    "confidence": 0.0-1.0,
+    "matchedVerse": "Verse reference if found"
+  }
+}`
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',  // Use gpt-4o for vision capabilities
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a biblical scholar and spiritual counselor analyzing Bible photos for the "Turn the Page Challenge". Provide meaningful insights that connect scripture, visual elements, and personal reflection. Always return valid JSON only.'
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: prompt
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: params.imageUrl
+              }
+            }
+          ]
+        }
+      ],
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+      max_tokens: 1000
+    })
+
+    const content = completion.choices[0].message.content
+    if (!content) {
+      throw new Error('No response from OpenAI')
+    }
+
+    const parsed = JSON.parse(content)
+    
+    return {
+      extractedText: {
+        bibleVerse: parsed.extractedText?.bibleVerse || '',
+        handwrittenNotes: parsed.extractedText?.handwrittenNotes || '',
+        printedText: parsed.extractedText?.printedText || ''
+      },
+      insights: {
+        summary: parsed.insights?.summary || '',
+        connections: parsed.insights?.connections || '',
+        themes: parsed.insights?.themes || [],
+        personalGrowth: parsed.insights?.personalGrowth || ''
+      },
+      photoDescription: parsed.photoDescription || '',
+      verseMatch: {
+        found: parsed.verseMatch?.found || false,
+        confidence: parsed.verseMatch?.confidence || 0,
+        matchedVerse: parsed.verseMatch?.matchedVerse
+      }
+    }
+  } catch (error) {
+    console.error('Error analyzing Turn the Page Challenge photo:', error)
+    return null
+  }
+}
 
