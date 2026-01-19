@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Camera, Mic, Loader2, Check } from 'lucide-react'
 import { toast } from '@/lib/toast'
+import { SuccessCelebration } from '@/components/ui/success-celebration'
 
 interface QuickBiblePhotoProps {
   dayNumber: number
@@ -20,6 +21,7 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
   const [quickNote, setQuickNote] = useState('')
   const [showNoteInput, setShowNoteInput] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
 
@@ -82,11 +84,13 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
       }
 
       setSaved(true)
+      setShowSuccess(true)
       toast.success('Saved!')
       
       // Reset after 2 seconds and refresh page
       setTimeout(() => {
         setSaved(false)
+        setShowSuccess(false)
         setQuickNote('')
         setShowNoteInput(false)
         if (fileInputRef.current) {
@@ -141,7 +145,14 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
   }
 
   return (
-    <div className="space-y-4">
+    <>
+      {showSuccess && (
+        <SuccessCelebration
+          message="Bible reading saved!"
+          onComplete={() => setShowSuccess(false)}
+        />
+      )}
+      <div className="space-y-4">
       {/* Big Camera Button - Mobile Optimized */}
       <button
         onClick={handleCameraClick}
@@ -238,6 +249,7 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
           <span className="text-sm font-bold text-primary-900">Day {dayNumber}: {book} {chapter}</span>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

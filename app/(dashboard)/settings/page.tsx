@@ -74,7 +74,17 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-        <div className="text-center text-gray-600">Loading...</div>
+        <div className="space-y-6">
+          <div className="h-10 w-48 bg-gray-200 rounded-full animate-pulse mx-auto" />
+          <div className="h-8 w-64 bg-gray-200 rounded-lg animate-pulse mx-auto" />
+          <div className="bg-white rounded-2xl shadow-lg border-2 border-primary-100 p-8">
+            <div className="space-y-4">
+              <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
+              <div className="h-12 w-full bg-gray-200 rounded-xl animate-pulse" />
+              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

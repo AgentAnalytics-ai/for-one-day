@@ -5,13 +5,16 @@ import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { PremiumCard } from '@/components/ui/premium-card'
 import { PremiumButton } from '@/components/ui/premium-button'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { CardSkeleton, StatsSkeleton } from '@/components/ui/skeleton'
 import { ToastContainer } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ShareLegacyNoteModal } from '@/components/vault/share-legacy-note-modal'
+import { PullToRefresh } from '@/components/ui/pull-to-refresh'
+import { SwipeableCard } from '@/components/ui/swipeable-card'
+import { SuccessCelebration } from '@/components/ui/success-celebration'
 
 const AdvancedCreateLegacyNoteModal = dynamic(
   () => import('@/components/ui/create-legacy-note-modal').then(mod => ({ default: mod.CreateLegacyNoteModal })),
@@ -80,6 +83,8 @@ export default function VaultPage() {
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
   const [usage, setUsage] = useState<{ current: number; limit: number }>({ current: 0, limit: -1 })
   const [statsLoading, setStatsLoading] = useState(true)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
     async function getUser() {
@@ -171,7 +176,13 @@ export default function VaultPage() {
     setSelectedTemplate(null)
     loadVaultItems()
     loadUsage() // Reload usage counter
+    setSuccessMessage('Legacy note created successfully!')
+    setShowSuccess(true)
     toast.success('Legacy note created successfully!')
+  }
+
+  const handleRefresh = async () => {
+    await Promise.all([loadVaultItems(), loadTemplates(), loadUsage()])
   }
 
   const handleDelete = async (id: string) => {
@@ -191,9 +202,22 @@ export default function VaultPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" className="mx-auto mb-4" />
-        <p className="text-gray-600 font-medium">Loading your legacy vault...</p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Header Skeleton */}
+        <div className="text-center mb-8">
+          <div className="inline-block h-10 w-48 bg-gray-200 rounded-full animate-pulse mb-4" />
+          <div className="h-12 w-64 bg-gray-200 rounded-lg animate-pulse mx-auto mb-3" />
+          <div className="h-6 w-96 bg-gray-200 rounded-lg animate-pulse mx-auto" />
+        </div>
+        
+        {/* Stats Skeleton */}
+        <StatsSkeleton />
+        
+        {/* Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
       </div>
     )
   }
@@ -206,7 +230,15 @@ export default function VaultPage() {
     <>
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {showSuccess && (
+        <SuccessCelebration
+          message={successMessage}
+          onComplete={() => setShowSuccess(false)}
+        />
+      )}
+      
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full mb-4 shadow-sm border border-primary-200/50">
@@ -418,7 +450,11 @@ export default function VaultPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {vaultItems?.map((item) => (
-                <PremiumCard key={item.id} className="p-6">
+                <SwipeableCard
+                  key={item.id}
+                  onSwipeDelete={() => handleDelete(item.id)}
+                >
+                  <PremiumCard className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="text-lg font-medium text-gray-900">
                       {item.title}
@@ -486,12 +522,14 @@ export default function VaultPage() {
                       Delete
                     </PremiumButton>
                   </div>
-                </PremiumCard>
+                  </PremiumCard>
+                </SwipeableCard>
               ))}
             </div>
           )}
         </div>
-      </div>
+        </div>
+      </PullToRefresh>
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
