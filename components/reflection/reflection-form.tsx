@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react'
 import { PremiumButton } from '@/components/ui/premium-button'
+import { EnhancedTextarea } from '@/components/ui/enhanced-input'
+import { SuccessCelebration } from '@/components/ui/success-celebration'
 import { toast } from '@/lib/toast'
 import { ImageIcon, X, Loader2 } from 'lucide-react'
 import Image from 'next/image'
@@ -29,6 +31,7 @@ export function ReflectionForm({
   )
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]) // Track images to delete
   const [uploadingImages, setUploadingImages] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,11 +211,13 @@ export function ReflectionForm({
       }
 
       if (data.success) {
+        setShowSuccess(true)
         toast.success('Reflection saved successfully!')
         // Small delay to show success message, then reload
         setTimeout(() => {
+          setShowSuccess(false)
           window.location.reload()
-        }, 500)
+        }, 2000)
       } else {
         throw new Error(data.error || 'Failed to save reflection')
       }
@@ -233,21 +238,22 @@ export function ReflectionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label htmlFor="reflection" className="block text-sm font-medium text-gray-700 mb-2">
-          Your Reflection
-        </label>
-        <textarea
-          id="reflection"
+    <>
+      {showSuccess && (
+        <SuccessCelebration
+          message="Reflection saved successfully!"
+          onComplete={() => setShowSuccess(false)}
+        />
+      )}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <EnhancedTextarea
+          label="Your Reflection"
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
           placeholder="Share your thoughts, gratitude, or insights from today..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-          rows={6}
+          rows={8}
           required
         />
-      </div>
 
       {/* Image Upload Section - WhatsApp-style */}
       <div>
@@ -334,6 +340,7 @@ export function ReflectionForm({
           <p className="text-sm text-gray-500">{images.length} image{images.length > 1 ? 's' : ''} ready</p>
         ) : null}
       </div>
-    </form>
+      </form>
+    </>
   )
 }

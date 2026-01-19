@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { PremiumCard } from '@/components/ui/premium-card'
 import { PremiumButton } from '@/components/ui/premium-button'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { CardSkeleton } from '@/components/ui/skeleton'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { createCheckoutSession, createPortalSession } from '@/app/actions/billing-actions'
 import { toast } from '@/lib/toast'
@@ -91,10 +91,18 @@ export default function UpgradePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50 flex items-center justify-center">
-        <div className="text-center">
-          <LoadingSpinner />
-          <p className="mt-4 text-gray-600">Loading upgrade options...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="space-y-8">
+            <div className="text-center">
+              <div className="h-12 w-64 bg-gray-200 rounded-full animate-pulse mx-auto mb-4" />
+              <div className="h-6 w-96 bg-gray-200 rounded-lg animate-pulse mx-auto" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <CardSkeleton />
+              <CardSkeleton />
+            </div>
+          </div>
         </div>
       </div>
     )
