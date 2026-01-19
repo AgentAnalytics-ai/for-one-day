@@ -77,6 +77,8 @@ export function PremiumButton({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
+      aria-busy={loading}
+      aria-disabled={disabled || loading}
       className={`
         ${baseClasses}
         ${variants[variant]}

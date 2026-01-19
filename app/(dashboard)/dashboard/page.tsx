@@ -6,6 +6,7 @@ import { getTodaysVerse } from '@/lib/daily-verses'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
 import { UnifiedDailyPractice } from '@/components/bible/unified-daily-practice'
+import { ScrollReveal } from '@/components/ui/scroll-reveal'
 
 /**
  * 🎯 Unified Dashboard - Expert UX Flow
@@ -68,23 +69,27 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Hero Welcome */}
-      <div className="text-center">
-        <TimeGreeting />
-        <SubscriptionBadge tier={profile?.plan || 'free'} />
-        {(!profile || profile.plan === 'free') && (
-          <div className="mt-4">
-            <Link
-              href="/upgrade"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors"
-            >
-              Upgrade to Pro
-            </Link>
-          </div>
-        )}
-      </div>
+      <ScrollReveal>
+        <div className="text-center">
+          <TimeGreeting />
+          <SubscriptionBadge tier={profile?.plan || 'free'} />
+          {(!profile || profile.plan === 'free') && (
+            <div className="mt-4">
+              <Link
+                href="/upgrade"
+                aria-label="Upgrade to Pro plan"
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors"
+              >
+                Upgrade to Pro
+              </Link>
+            </div>
+          )}
+        </div>
+      </ScrollReveal>
 
       {/* Unified Daily Practice - ONE FLOW */}
-      <UnifiedDailyPractice
+      <ScrollReveal delay={100}>
+        <UnifiedDailyPractice
         turnThePage={{
           dayNumber: today.dayNumber,
           book: today.book,
@@ -101,10 +106,13 @@ export default async function DashboardPage() {
           prompt: dailyVerse.prompt,
           isCompleted: reflectionCompleted
         }}
-      />
+        />
+      </ScrollReveal>
 
       {/* Dynamic Stats - Connected to Supabase */}
-      <DynamicStats userId={user.id} />
+      <ScrollReveal delay={200}>
+        <DynamicStats userId={user.id} />
+      </ScrollReveal>
     </div>
   )
 }
