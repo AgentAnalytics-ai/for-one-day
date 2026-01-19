@@ -20,18 +20,18 @@ export function PremiumCard({
       className={`
         relative overflow-hidden rounded-2xl
         ${gradient 
-          ? 'bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30' 
+          ? 'bg-gradient-to-br from-white via-primary-50/30 to-primary-50/30' 
           : 'bg-white'
         }
-        shadow-lg shadow-purple-500/5 border border-gray-100/50
-        ${hover ? 'hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1' : ''}
+        shadow-lg shadow-primary-500/5 border-2 border-primary-100/50
+        ${hover ? 'hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 hover:border-primary-200' : ''}
         transition-all duration-300 ease-out
         backdrop-blur-sm
         ${className}
       `}
     >
       {gradient && (
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-primary-500/5 pointer-events-none" />
       )}
       <div className="relative z-10">
         {children}
@@ -73,7 +73,7 @@ export function StatCard({
     <PremiumCard className={`p-6 ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-purple-100 to-blue-100 text-purple-600">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-primary-100 to-primary-200 text-primary-700 shadow-sm">
             {icon}
           </div>
           <div>

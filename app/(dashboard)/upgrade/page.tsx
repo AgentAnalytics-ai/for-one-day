@@ -119,11 +119,17 @@ export default function UpgradePage() {
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Title */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl md:text-5xl font-serif font-light text-gray-900 mb-2">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full mb-6 shadow-sm border border-primary-200/50">
+            <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            <span className="font-semibold text-primary-900">Upgrade</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             Upgrade to Pro
           </h2>
-          <p className="text-xl text-gray-600 mt-2">Unlock unlimited legacy notes and family connections.</p>
+          <p className="text-xl text-gray-600 font-medium mt-2">Unlock unlimited legacy notes and family connections.</p>
         </div>
 
         <div className="flex justify-center mb-8">
@@ -132,7 +138,7 @@ export default function UpgradePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Free Plan Card */}
-          <PremiumCard className="p-8 border-2 border-green-200 shadow-lg">
+          <PremiumCard className="p-8 border-2 border-secondary-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
             <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">Free</h2>
             <p className="text-5xl font-bold text-gray-900 mb-6">$0<span className="text-xl font-medium text-gray-600">/month</span></p>
             <ul className="space-y-3 text-gray-700 mb-8">

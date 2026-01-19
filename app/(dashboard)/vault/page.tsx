@@ -208,58 +208,66 @@ export default function VaultPage() {
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-3xl font-serif font-medium text-gray-900 mb-2">
-            Legacy Vault
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full mb-4 shadow-sm border border-primary-200/50">
+            <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+            <span className="font-semibold text-primary-900">Legacy Vault</span>
+          </div>
+          <h1 className="text-4xl font-serif font-bold text-gray-900 mb-3">
+            Preserve Your Legacy
           </h1>
-          <p className="text-gray-600">
-            Preserve your wisdom, love, and life lessons for your family
+          <p className="text-lg text-gray-600 font-medium">
+            Your wisdom, love, and life lessons for generations to come
           </p>
         </div>
 
         {/* Stats - Fixed height to prevent layout shift */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2 min-h-[40px] flex items-center justify-center">
+          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center border-2 border-primary-200">
+            <div className="text-4xl font-bold text-primary-700 mb-2 min-h-[40px] flex items-center justify-center">
               {statsLoading ? (
                 <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
               ) : (
                 usage.limit === -1 ? (usage.current || 0) : `${usage.current || 0}/${usage.limit}`
               )}
             </div>
-            <div className="text-sm text-gray-600">Legacy Notes</div>
+            <div className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Legacy Notes</div>
           </PremiumCard>
-          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2 min-h-[40px] flex items-center justify-center">
+          <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center border-2 border-primary-200">
+            <div className="text-4xl font-bold text-primary-700 mb-2 min-h-[40px] flex items-center justify-center">
               {statsLoading ? (
                 <div className="w-12 h-8 bg-gray-200 rounded animate-pulse"></div>
               ) : (
                 templates?.length || 0
               )}
             </div>
-            <div className="text-sm text-gray-600">Available Templates</div>
+            <div className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Available Templates</div>
           </PremiumCard>
         </div>
 
         {/* Upgrade Prompt for Free Users */}
         {usage.limit !== -1 && usage.current >= usage.limit - 1 && (
-          <PremiumCard className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200">
-            <div className="flex items-start gap-4">
+          <PremiumCard className="p-8 bg-gradient-to-br from-accent-50 via-accent-50/50 to-accent-100 border-2 border-accent-300 shadow-xl">
+            <div className="flex items-start gap-6">
               <div className="flex-shrink-0">
-                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+                <div className="w-12 h-12 bg-accent-200 rounded-full flex items-center justify-center shadow-md">
+                  <svg className="w-6 h-6 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">
                   You&apos;ve used {usage.current} of {usage.limit} free letters
                 </h3>
-                <p className="text-gray-700 mb-4">
+                <p className="text-gray-700 mb-6 font-medium leading-relaxed">
                   What happens if you need to write more? Upgrade to Pro for unlimited letters, 
                   scheduled delivery, and emergency access features.
                 </p>
                 <Link href="/upgrade">
-                  <PremiumButton className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700">
+                  <PremiumButton size="lg" className="shadow-xl hover:shadow-2xl">
                     Upgrade to Pro - $9.99/month
                   </PremiumButton>
                 </Link>
@@ -269,12 +277,12 @@ export default function VaultPage() {
         )}
 
         {/* Create New Note */}
-        <PremiumCard className="p-8" data-tour="create">
+        <PremiumCard className="p-8 border-2 border-primary-200" data-tour="create">
           <div className="text-center">
-            <h2 className="text-2xl font-medium text-gray-900 mb-4">
+            <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">
               Create a Legacy Note
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-lg text-gray-600 mb-8 font-medium">
               Choose from our professional templates or create your own
             </p>
             <PremiumButton
@@ -297,7 +305,7 @@ export default function VaultPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Choose a template</label>
                   <select
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-primary-300 focus:border-primary-500 focus:outline-none transition-all duration-200 font-medium text-gray-900 shadow-sm hover:border-primary-300"
                     value={selectedTemplateOption?.id || ''}
                     onChange={(e) => {
                       const t = templates.find(t => t.id === e.target.value) || null
@@ -354,9 +362,9 @@ export default function VaultPage() {
         <div data-tour="vault">
           <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Legacy Notes</h2>
           {vaultItems && vaultItems.length === 0 ? (
-            <PremiumCard className="p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-50">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <PremiumCard className="p-12 text-center bg-gradient-to-br from-primary-50 via-primary-50/50 to-secondary-50 border-2 border-primary-200">
+              <div className="w-24 h-24 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl ring-4 ring-primary-200">
+                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
               </div>
@@ -374,19 +382,19 @@ export default function VaultPage() {
                 <p className="text-gray-800 font-medium mb-3">Most powerful first letters:</p>
                 <ul className="text-left text-gray-700 space-y-2">
                   <li className="flex items-start">
-                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span><strong>&quot;If I Die Tomorrow&quot;</strong> - Your most important values</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span><strong>&quot;Wedding Day Letter&quot;</strong> - For their biggest day</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     <span><strong>&quot;Life Lessons&quot;</strong> - Wisdom you wish you knew earlier</span>
@@ -576,16 +584,16 @@ function LetterModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-medium text-gray-900">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-primary-200 animate-in zoom-in-95 duration-300">
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-serif font-bold text-gray-900">
               {letter.title}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-colors duration-200 focus:ring-4 focus:ring-primary-300 focus:outline-none"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -670,10 +678,10 @@ function LetterModal({
             </div>
           </div>
 
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end mt-8">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              className="px-6 py-3 bg-primary-700 text-white rounded-xl hover:bg-primary-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 focus:ring-4 focus:ring-primary-300 focus:outline-none"
             >
               Close
             </button>
