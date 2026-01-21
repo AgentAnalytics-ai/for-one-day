@@ -60,6 +60,23 @@ export async function signUp(formData: FormData) {
   const password = formData.get('password') as string
   const fullName = formData.get('full-name') as string
   
+  // Spam protection: Validate display name
+  const spamKeywords = [
+    '85.000', 'Lira', 'bit.ly', 'tinyurl', 'http://', 'https://',
+    'click here', 'free money', 'earn money', 'get rich'
+  ]
+  const fullNameLower = fullName.toLowerCase()
+  const hasSpam = spamKeywords.some(keyword => fullNameLower.includes(keyword.toLowerCase()))
+  
+  if (hasSpam) {
+    redirect('/auth/signup?error=' + encodeURIComponent('Invalid name. Please use your real name.'))
+  }
+  
+  // Spam protection: Block URLs in display name
+  if (fullNameLower.includes('http') || fullNameLower.includes('www.') || fullNameLower.includes('.com')) {
+    redirect('/auth/signup?error=' + encodeURIComponent('Invalid name. URLs are not allowed.'))
+  }
+  
   // Family invites removed
   
   const { data, error } = await supabase.auth.signUp({
