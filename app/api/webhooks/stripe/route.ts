@@ -96,39 +96,92 @@ export async function POST(request: NextRequest) {
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const supabase = await createClient()
-  const userId = session.metadata?.user_id
+  let userId = session.metadata?.user_id
+
+  // Fallback: If user_id not in metadata, try to find by customer email
+  if (!userId && session.customer) {
+    try {
+      const customer = await stripe!.customers.retrieve(session.customer as string)
+      if (customer && !customer.deleted && customer.metadata?.user_id) {
+        userId = customer.metadata.user_id
+        console.log(`Found user_id from customer metadata: ${userId}`)
+      } else if (customer && !customer.deleted && customer.email) {
+        // Last resort: Find user by email
+        const { data: { users } } = await supabase.auth.admin.listUsers()
+        const user = users?.find(u => u.email === customer.email)
+        if (user) {
+          userId = user.id
+          console.log(`Found user_id by email: ${userId}`)
+        }
+      }
+    } catch (error) {
+      console.error('Error retrieving customer:', error)
+    }
+  }
 
   if (!userId) {
-    console.error('No user_id in checkout session metadata')
+    console.error('No user_id found in checkout session. Session ID:', session.id)
+    console.error('Session metadata:', session.metadata)
+    console.error('Customer ID:', session.customer)
     return
   }
 
   console.log(`Checkout completed for user: ${userId}`)
 
   // Update user's subscription status to pro
-  await supabase
+  const { error: updateError } = await supabase
     .from('profiles')
     .update({ 
       plan: 'pro'
     })
     .eq('user_id', userId)
+
+  if (updateError) {
+    console.error('Error updating profile:', updateError)
+    throw updateError
+  }
+
+  console.log(`Successfully updated user ${userId} to pro plan`)
 }
 
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   const supabase = await createClient()
-  const userId = subscription.metadata?.user_id
+  let userId = subscription.metadata?.user_id
+
+  // Fallback: If user_id not in metadata, try to find by customer
+  if (!userId && subscription.customer) {
+    try {
+      const customer = await stripe!.customers.retrieve(subscription.customer as string)
+      if (customer && !customer.deleted && customer.metadata?.user_id) {
+        userId = customer.metadata.user_id
+        console.log(`Found user_id from customer metadata: ${userId}`)
+      } else if (customer && !customer.deleted && customer.email) {
+        // Last resort: Find user by email
+        const { data: { users } } = await supabase.auth.admin.listUsers()
+        const user = users?.find(u => u.email === customer.email)
+        if (user) {
+          userId = user.id
+          console.log(`Found user_id by email: ${userId}`)
+        }
+      }
+    } catch (error) {
+      console.error('Error retrieving customer:', error)
+    }
+  }
 
   if (!userId) {
-    console.error('No user_id in subscription metadata')
+    console.error('No user_id found in subscription. Subscription ID:', subscription.id)
+    console.error('Subscription metadata:', subscription.metadata)
+    console.error('Customer ID:', subscription.customer)
     return
   }
 
   console.log(`Subscription created for user: ${userId}`)
 
-  // Insert subscription record
-  await supabase
+  // Insert or update subscription record (upsert in case it already exists)
+  const { error: subError } = await supabase
     .from('subscriptions')
-    .insert({
+    .upsert({
       id: subscription.id,
       user_id: userId,
       status: subscription.status,
@@ -136,15 +189,29 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
       current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
       cancel_at_period_end: (subscription as any).cancel_at_period_end || false
+    }, {
+      onConflict: 'id'
     })
 
+  if (subError) {
+    console.error('Error upserting subscription:', subError)
+    throw subError
+  }
+
   // Update user's subscription status
-  await supabase
+  const { error: profileError } = await supabase
     .from('profiles')
     .update({ 
       plan: 'pro'
     })
     .eq('user_id', userId)
+
+  if (profileError) {
+    console.error('Error updating profile:', profileError)
+    throw profileError
+  }
+
+  console.log(`Successfully created subscription for user ${userId}`)
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -212,27 +279,57 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
 
   // Get subscription details
   const subscription = await stripe!.subscriptions.retrieve((invoice as any).subscription as string)
-  const userId = subscription.metadata?.user_id
+  let userId = subscription.metadata?.user_id
+
+  // Fallback: If user_id not in metadata, try to find by customer
+  if (!userId && subscription.customer) {
+    try {
+      const customer = await stripe!.customers.retrieve(subscription.customer as string)
+      if (customer && !customer.deleted && customer.metadata?.user_id) {
+        userId = customer.metadata.user_id
+      } else if (customer && !customer.deleted && customer.email) {
+        const { data: { users } } = await supabase.auth.admin.listUsers()
+        const user = users?.find(u => u.email === customer.email)
+        if (user) {
+          userId = user.id
+        }
+      }
+    } catch (error) {
+      console.error('Error retrieving customer:', error)
+    }
+  }
 
   if (!userId) {
-    console.error('No user_id in subscription metadata')
+    console.error('No user_id found for payment. Invoice ID:', invoice.id)
     return
   }
 
   console.log(`Payment succeeded for user: ${userId}`)
 
   // Update subscription status to active
-  await supabase
+  const { error: subError } = await supabase
     .from('subscriptions')
     .update({ status: 'active' })
     .eq('id', subscription.id)
 
-  await supabase
+  if (subError) {
+    console.error('Error updating subscription:', subError)
+  }
+
+  // Update user's subscription status
+  const { error: profileError } = await supabase
     .from('profiles')
     .update({ 
       plan: 'pro'
     })
     .eq('user_id', userId)
+
+  if (profileError) {
+    console.error('Error updating profile:', profileError)
+    throw profileError
+  }
+
+  console.log(`Successfully updated user ${userId} to pro plan after payment`)
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
