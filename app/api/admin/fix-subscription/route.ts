@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // If user has Stripe customer ID, check subscription status
-    if (userData.stripe_customer_id && stripe) {
+    if (userData?.stripe_customer_id && stripe) {
       try {
         const customers = await stripe.customers.list({
           email: email,
