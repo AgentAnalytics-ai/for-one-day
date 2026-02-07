@@ -29,6 +29,7 @@ interface UnifiedDailyPracticeV2Props {
     verse: {
       text: string
       reference: string
+      theme: string
     }
     prompt: string
     isCompleted: boolean

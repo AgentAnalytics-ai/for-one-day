@@ -129,7 +129,8 @@ export default async function DashboardPage() {
           reflection={{
             verse: {
               text: dailyVerse.text,
-              reference: dailyVerse.reference
+              reference: dailyVerse.reference,
+              theme: dailyVerse.theme
             },
             prompt: dailyVerse.prompt,
             isCompleted: reflectionCompleted
