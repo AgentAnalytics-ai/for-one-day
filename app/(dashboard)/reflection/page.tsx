@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { ReflectionForm } from '@/components/reflection/reflection-form'
 import { MemoryCard } from '@/components/reflection/memory-card'
 import { WeeklyReviewCard } from '@/components/reflection/weekly-review-card'
-import { getTodaysVerse } from '@/lib/daily-verses'
 import { getStylePrompt, getStyleContext, type ReflectionStyle } from '@/lib/reflection-styles'
 import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
 import { EnhancedVerseDisplay } from '@/components/reflection/enhanced-verse-display'
@@ -11,6 +10,9 @@ import Image from 'next/image'
 import { EditButton } from '@/components/reflection/edit-button'
 import { ReflectionImages } from '@/components/reflection/reflection-images'
 import { TurnThePageChallenge } from '@/components/reflection/turn-the-page-challenge'
+import { SaveAsLegacyNote } from '@/components/reflection/save-as-legacy-note'
+import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
+import { getTodaysReflectionVerse } from '@/lib/reflection-verse'
 
 /**
  * 📖 Daily Reflection Page
@@ -56,25 +58,42 @@ export default async function ReflectionPage({
 
   const reflectionStyle: ReflectionStyle = (profile?.reflection_style as ReflectionStyle) || 'auto'
 
-  // Get today's verse (rotates daily based on day of year)
-  const dailyVerse = getTodaysVerse()
+  // Get today's Bible reading for context
+  const todayReading = getTodaysBibleReading()
+  
+  // Get today's verse (tied to Turn the Page reading)
+  const dailyVerse = getTodaysReflectionVerse()
 
   // Get style-specific prompt (stays Christian, just different approach)
   const stylePrompt = getStylePrompt(dailyVerse, reflectionStyle)
   const styleContext = getStyleContext(dailyVerse, reflectionStyle)
 
+  const readingContext = `You just read ${todayReading.book} ${todayReading.chapter}. `
+
   // Generate signed URLs for media attachments if they exist
-  let mediaUrls: string[] = []
+  let mediaUrls: Array<{ url: string; storage_path: string }> = []
+  let turnThePagePhoto: { url: string; storage_path: string } | null = null
+  
   if (existingReflection?.media_urls && existingReflection.media_urls.length > 0) {
     const signedUrlPromises = existingReflection.media_urls.map(async (storagePath: string) => {
+      // All reflection images (including Turn the Page photos) are stored in 'media' bucket
       const { data } = await supabase.storage
         .from('media')
         .createSignedUrl(storagePath, 3600) // 1 hour expiry
-      return data?.signedUrl || null
+      
+      return {
+        url: data?.signedUrl || '',
+        storage_path: storagePath
+      }
     })
     
     const signedUrls = await Promise.all(signedUrlPromises)
-    mediaUrls = signedUrls.filter((url): url is string => url !== null)
+    mediaUrls = signedUrls.filter(item => item.url)
+    
+    // If there's a photo and it's from Turn the Page (has day_number), use it as Turn the Page photo
+    if (existingReflection.day_number && mediaUrls.length > 0) {
+      turnThePagePhoto = mediaUrls[0]
+    }
   }
 
   const reflectionData = existingReflection ? {
@@ -159,18 +178,26 @@ export default async function ReflectionPage({
                 <ReflectionImages images={reflectionData.mediaUrls} />
               )}
 
-              {/* Turn the Page Challenge - AI Insights */}
-              {existingReflection?.turn_the_page_insights && (
+              {/* Turn the Page Challenge - AI Insights (Pro only) */}
+              {isPro && existingReflection?.turn_the_page_insights && (
                 <TurnThePageChallenge insights={existingReflection.turn_the_page_insights} />
+              )}
+
+              {/* Save as Legacy Note */}
+              {existingReflection && (
+                <SaveAsLegacyNote
+                  reflectionId={existingReflection.id}
+                  reflectionText={reflectionData.userReflection || ''}
+                  reflectionDate={reflectionData.date}
+                />
               )}
             </div>
           ) : (
             <ReflectionForm 
               initialReflection={reflectionData.userReflection || ''}
-              initialImages={existingReflection?.media_urls?.map((storagePath: string, index: number) => ({
-                url: mediaUrls[index] || '',
-                storage_path: storagePath
-              })) || []}
+              initialImages={mediaUrls}
+              turnThePagePhoto={turnThePagePhoto}
+              readingContext={readingContext}
             />
           )}
         </div>

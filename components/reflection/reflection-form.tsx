@@ -18,16 +18,26 @@ interface ReflectionImage {
 interface ReflectionFormProps {
   initialReflection?: string
   initialImages?: Array<{ url: string; storage_path: string }>
+  turnThePagePhoto?: { url: string; storage_path: string } | null
+  readingContext?: string
 }
 
 export function ReflectionForm({ 
   initialReflection = '', 
-  initialImages = []
+  initialImages = [],
+  turnThePagePhoto = null,
+  readingContext = ''
 }: ReflectionFormProps = {}) {
   const [reflection, setReflection] = useState(initialReflection)
   const [saving, setSaving] = useState(false)
+  
+  // Combine Turn the Page photo with other images (avoid duplicates)
+  const allInitialImages = turnThePagePhoto && !initialImages.some(img => img.storage_path === turnThePagePhoto.storage_path)
+    ? [turnThePagePhoto, ...initialImages]
+    : initialImages
+  
   const [images, setImages] = useState<ReflectionImage[]>(() => 
-    initialImages.map(img => ({ ...img, isExisting: true }))
+    allInitialImages.map(img => ({ ...img, isExisting: true }))
   )
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]) // Track images to delete
   const [uploadingImages, setUploadingImages] = useState(false)
@@ -245,18 +255,60 @@ export function ReflectionForm({
           onComplete={() => setShowSuccess(false)}
         />
       )}
+      
+      {/* Turn the Page Connection Banner */}
+      {turnThePagePhoto && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-primary-50 to-blue-50 rounded-xl border-2 border-primary-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-primary-700 font-bold text-sm">1</span>
+            </div>
+            <p className="text-sm font-semibold text-primary-900">
+              Your Turn the Page photo is included below
+            </p>
+          </div>
+          {readingContext && (
+            <p className="text-xs text-primary-700 italic ml-11">
+              {readingContext}Reflect on what you read and how it connects to today&apos;s verse.
+            </p>
+          )}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="space-y-6">
         <EnhancedTextarea
           label="Your Reflection"
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
-          placeholder="Share your thoughts, gratitude, or insights from today..."
+          placeholder={
+            readingContext 
+              ? `${readingContext}How does this connect to today's verse?`
+              : "Share your thoughts, gratitude, or insights from today..."
+          }
           rows={8}
           required
         />
 
       {/* Image Upload Section - WhatsApp-style */}
       <div>
+        {/* Show Turn the Page photo prominently if it exists */}
+        {turnThePagePhoto && images.some(img => img.storage_path === turnThePagePhoto.storage_path) && (
+          <div className="mb-4 p-3 bg-primary-50 rounded-lg border-2 border-primary-300">
+            <p className="text-xs font-semibold text-primary-700 mb-2 flex items-center gap-1">
+              <span>From Turn the Page Challenge</span>
+            </p>
+            <div className="relative aspect-square w-32 bg-gray-100 rounded-lg overflow-hidden">
+              <Image
+                src={turnThePagePhoto.url}
+                alt="Your Bible reading photo"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          </div>
+        )}
+        
         <input
           ref={imageInputRef}
           type="file"
@@ -280,7 +332,7 @@ export function ReflectionForm({
           </button>
           
           {/* Photo Suggestion - Meta-level UX guidance */}
-          {images.length === 0 && (
+          {images.length === 0 && !turnThePagePhoto && (
             <p className="text-xs text-gray-500 italic pl-1">
               Tip: Not sure what to capture? Try taking a photo of today&apos;s verse with your thoughts written around it, or snap something that represents your reflection.
             </p>

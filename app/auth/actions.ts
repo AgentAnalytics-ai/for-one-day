@@ -109,8 +109,8 @@ export async function signUp(formData: FormData) {
     // Don't fail signup if email fails
   }
 
-  // Redirect directly to dashboard - NO EMAIL VERIFICATION NEEDED
-  redirect('/dashboard')
+  // Redirect to check-email page - EMAIL VERIFICATION REQUIRED
+  redirect('/auth/check-email?email=' + encodeURIComponent(email))
 }
 
 export async function signOut() {

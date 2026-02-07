@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
 
 export async function GET() {
   try {
@@ -162,9 +163,12 @@ export async function POST(request: NextRequest) {
         onConflict: 'user_id'
       })
 
-    // Trigger AI analysis for Turn the Page Challenge (non-blocking, fire-and-forget)
-    // Only analyze if there are photos and reflection text
-    if (data.media_urls && data.media_urls.length > 0 && reflection.trim()) {
+    // Trigger AI analysis for Turn the Page Challenge (Pro users only, non-blocking, fire-and-forget)
+    // Only analyze if user is Pro, has photos, and reflection text
+    const subscription = await getUserSubscriptionStatus(user.id)
+    const isPro = subscription.plan === 'pro' || subscription.plan === 'lifetime'
+    
+    if (isPro && data.media_urls && data.media_urls.length > 0 && reflection.trim()) {
       // Get first image URL for analysis
       const firstImagePath = data.media_urls[0]
       if (firstImagePath) {
