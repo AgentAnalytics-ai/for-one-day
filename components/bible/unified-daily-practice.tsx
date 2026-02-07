@@ -217,22 +217,17 @@ export function UnifiedDailyPractice({ turnThePage, reflection }: UnifiedDailyPr
                 {reflection.prompt}
               </p>
 
-              {/* Smart Contextual Suggestion - Enhanced Connection */}
+              {/* Simple Call-to-Action */}
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 shadow-lg">
-                <div className="mb-4 space-y-2">
-                  <p className="text-sm text-white/95 font-medium leading-relaxed">
-                    You just read <strong className="font-bold">{turnThePage.book} {turnThePage.chapter}</strong>.
-                  </p>
-                  <p className="text-xs text-white/80 leading-relaxed">
-                    Your photo from Step 1 will be included in your reflection, creating a complete record of your daily practice.
-                  </p>
-                </div>
+                <p className="text-sm text-white/95 font-medium mb-4 text-center">
+                  Ready to reflect on what you read?
+                </p>
                 <Link
                   href="/reflection"
                   className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 px-8 py-3.5 rounded-full text-sm font-bold transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 active:scale-95 w-full justify-center group"
                 >
                   <PenTool className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
-                  <span>Start Your Reflection</span>
+                  <span>Write Reflection</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </div>
