@@ -5,7 +5,7 @@ import { DynamicStats } from '@/components/dashboard/dynamic-stats'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { getBibleReadingAssignment } from '@/lib/bible-reading-plan'
 import { getTodaysReflectionVerse } from '@/lib/reflection-verse'
-import { UnifiedDailyPractice } from '@/components/bible/unified-daily-practice'
+import { UnifiedDailyPracticeV2 } from '@/components/dashboard/unified-daily-practice-v2'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import { LegacyNotePrompt } from '@/components/dashboard/legacy-note-prompt'
 
@@ -68,6 +68,32 @@ export default async function DashboardPage() {
   // Check if reflection is completed
   const reflectionCompleted = !!(todayEntry?.reflection && todayEntry.reflection.trim().length > 0)
 
+  // Get reflection form data (images, turn the page photo, etc.)
+  let mediaUrls: Array<{ url: string; storage_path: string }> = []
+  let turnThePagePhoto: { url: string; storage_path: string } | null = null
+  
+  if (todayEntry?.media_urls && todayEntry.media_urls.length > 0) {
+    const signedUrlPromises = todayEntry.media_urls.map(async (storagePath: string) => {
+      const { data } = await supabase.storage
+        .from('media')
+        .createSignedUrl(storagePath, 3600)
+      
+      return {
+        url: data?.signedUrl || '',
+        storage_path: storagePath
+      }
+    })
+    
+    const signedUrls = await Promise.all(signedUrlPromises)
+    mediaUrls = signedUrls.filter(item => item.url)
+    
+    if (todayEntry.day_number && mediaUrls.length > 0) {
+      turnThePagePhoto = mediaUrls[0]
+    }
+  }
+
+  const readingContext = `You just read ${today.book} ${today.chapter}. `
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Hero Welcome */}
@@ -89,25 +115,32 @@ export default async function DashboardPage() {
         </div>
       </ScrollReveal>
 
-      {/* Unified Daily Practice - ONE FLOW */}
+      {/* Unified Daily Practice - Clean Single-Page Flow */}
       <ScrollReveal delay={100}>
-        <UnifiedDailyPractice
-        turnThePage={{
-          dayNumber: today.dayNumber,
-          book: today.book,
-          chapter: today.chapter,
-          progress,
-          completedDays,
-          isCompleted: turnThePageCompleted
-        }}
-        reflection={{
-          verse: {
-            text: dailyVerse.text,
-            reference: dailyVerse.reference
-          },
-          prompt: dailyVerse.prompt,
-          isCompleted: reflectionCompleted
-        }}
+        <UnifiedDailyPracticeV2
+          turnThePage={{
+            dayNumber: today.dayNumber,
+            book: today.book,
+            chapter: today.chapter,
+            progress,
+            completedDays,
+            isCompleted: turnThePageCompleted
+          }}
+          reflection={{
+            verse: {
+              text: dailyVerse.text,
+              reference: dailyVerse.reference
+            },
+            prompt: dailyVerse.prompt,
+            isCompleted: reflectionCompleted
+          }}
+          reflectionForm={{
+            initialReflection: todayEntry?.reflection || '',
+            initialImages: mediaUrls,
+            turnThePagePhoto,
+            readingContext
+          }}
+          isPro={profile?.plan === 'pro' || profile?.plan === 'lifetime'}
         />
       </ScrollReveal>
 

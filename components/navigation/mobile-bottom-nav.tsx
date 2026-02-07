@@ -20,12 +20,6 @@ export function MobileBottomNav() {
       active: pathname === '/dashboard' || pathname === '/'
     },
     {
-      href: '/reflection',
-      label: 'Reflection',
-      icon: BookOpen,
-      active: pathname === '/reflection' || pathname?.startsWith('/reflection')
-    },
-    {
       href: '/vault',
       label: 'Vault',
       icon: Lock,
@@ -43,7 +37,7 @@ export function MobileBottomNav() {
     <>
       {/* Mobile Bottom Navigation - Only visible on mobile */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-primary-100 shadow-2xl safe-area-inset-bottom md:hidden">
-        <div className="grid grid-cols-4 h-16">
+        <div className="grid grid-cols-3 h-16">
           {navItems.map((item) => {
             const Icon = item.icon
             return (

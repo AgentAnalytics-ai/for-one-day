@@ -29,12 +29,6 @@ export function KeyboardShortcuts() {
         description: 'Go to Dashboard'
       },
       {
-        key: 'r',
-        ctrl: true,
-        action: () => router.push('/reflection'),
-        description: 'Go to Reflection'
-      },
-      {
         key: 'v',
         ctrl: true,
         action: () => router.push('/vault'),
@@ -99,7 +93,6 @@ export function KeyboardShortcutsHelp({ isOpen, onClose }: { isOpen: boolean; on
 
   const shortcuts = [
     { keys: 'Ctrl/Cmd + D', description: 'Go to Dashboard' },
-    { keys: 'Ctrl/Cmd + R', description: 'Go to Reflection' },
     { keys: 'Ctrl/Cmd + V', description: 'Go to Vault' },
     { keys: 'Ctrl/Cmd + S', description: 'Go to Settings' },
     { keys: 'Ctrl/Cmd + U', description: 'Go to Upgrade' },
