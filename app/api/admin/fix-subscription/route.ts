@@ -26,44 +26,31 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Get user
-    const { data: userData, error: userError } = await supabase
+    // Find user by email in auth.users
+    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers()
+    
+    if (authError) {
+      return NextResponse.json({ error: 'Failed to search users' }, { status: 500 })
+    }
+    
+    const user = users?.find(u => u.email === email)
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Get user profile data
+    const { data: userData } = await supabase
       .from('profiles')
       .select('user_id, stripe_customer_id')
-      .eq('user_id', (await supabase.auth.admin.getUserByEmail(email)).data.user?.id || '')
+      .eq('user_id', user.id)
       .single()
-
-    if (userError || !userData) {
-      // Try to find by email in auth.users
-      const { data: { users }, error: authError } = await supabase.auth.admin.listUsers()
-      const user = users?.find(u => u.email === email)
-      
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 })
-      }
-
-      // Update profile
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ plan })
-        .eq('user_id', user.id)
-
-      if (updateError) {
-        return NextResponse.json({ error: updateError.message }, { status: 500 })
-      }
-
-      return NextResponse.json({ 
-        success: true, 
-        message: `Updated ${email} to ${plan} plan`,
-        userId: user.id
-      })
-    }
 
     // Update profile
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ plan })
-      .eq('user_id', userData.user_id)
+      .eq('user_id', user.id)
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 })
@@ -110,7 +97,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       message: `Updated ${email} to ${plan} plan`,
-      userId: userData.user_id
+      userId: user.id
     })
 
   } catch (error) {
