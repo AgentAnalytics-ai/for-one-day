@@ -2,11 +2,12 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
-import { getTodaysVerse } from '@/lib/daily-verses'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
+import { getTodaysReflectionVerse } from '@/lib/reflection-verse'
 import { UnifiedDailyPractice } from '@/components/bible/unified-daily-practice'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
+import { LegacyNotePrompt } from '@/components/dashboard/legacy-note-prompt'
 
 /**
  * 🎯 Unified Dashboard - Expert UX Flow
@@ -60,8 +61,8 @@ export default async function DashboardPage() {
 
   const turnThePageCompleted = !!todayEntry && todayEntry.day_number === today.dayNumber
 
-  // Get today's verse for reflection
-  const dailyVerse = getTodaysVerse()
+  // Get today's verse for reflection (tied to Turn the Page reading)
+  const dailyVerse = getTodaysReflectionVerse()
 
   // Check if reflection is completed
   const reflectionCompleted = !!(todayEntry?.reflection && todayEntry.reflection.trim().length > 0)
@@ -109,8 +110,13 @@ export default async function DashboardPage() {
         />
       </ScrollReveal>
 
-      {/* Dynamic Stats - Connected to Supabase */}
+      {/* Legacy Note Prompt - Connects Daily Practice to Legacy */}
       <ScrollReveal delay={200}>
+        <LegacyNotePrompt userId={user.id} />
+      </ScrollReveal>
+
+      {/* Dynamic Stats - Connected to Supabase */}
+      <ScrollReveal delay={300}>
         <DynamicStats userId={user.id} />
       </ScrollReveal>
     </div>

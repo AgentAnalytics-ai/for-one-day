@@ -24,6 +24,15 @@ export default async function DashboardLayout({
     redirect('/auth/login')
   }
 
+  // Check email verification (grandfather existing users)
+  // Only require verification for users created after email verification was enabled
+  const verificationRequiredDate = new Date('2026-01-22') // Date when email verification was enabled
+  const userCreatedDate = new Date(user.created_at)
+  
+  if (!user.email_confirmed_at && userCreatedDate >= verificationRequiredDate) {
+    redirect('/auth/check-email?email=' + encodeURIComponent(user.email || ''))
+  }
+
   // Fetch user profile (or create if missing)
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
