@@ -88,9 +88,9 @@ export async function POST(request: NextRequest) {
             user_id: userId,
             status: subscription.status,
             price_id: subscription.items.data[0]?.price.id,
-            current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-            current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-            cancel_at_period_end: subscription.cancel_at_period_end || false
+            current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
+            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
+            cancel_at_period_end: (subscription as any).cancel_at_period_end || false
           }, {
             onConflict: 'id'
           })
