@@ -85,20 +85,12 @@ export function QuickBiblePhoto({ dayNumber, book, chapter }: QuickBiblePhotoPro
 
       setSaved(true)
       setShowSuccess(true)
-      toast.success('Saved!')
+      toast.success('Photo saved! Taking you to reflection...')
       
-      // Reset after 2 seconds and refresh page
+      // Auto-navigate to reflection after 1.5 seconds
       setTimeout(() => {
-        setSaved(false)
-        setShowSuccess(false)
-        setQuickNote('')
-        setShowNoteInput(false)
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ''
-        }
-        // Refresh page to show updated state
-        window.location.reload()
-      }, 2000)
+        window.location.href = '/reflection'
+      }, 1500)
 
     } catch (error) {
       console.error('Error saving Bible photo:', error)
