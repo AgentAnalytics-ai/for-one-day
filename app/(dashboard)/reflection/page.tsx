@@ -11,8 +11,8 @@ import { EditButton } from '@/components/reflection/edit-button'
 import { ReflectionImages } from '@/components/reflection/reflection-images'
 import { TurnThePageChallenge } from '@/components/reflection/turn-the-page-challenge'
 import { SaveAsLegacyNote } from '@/components/reflection/save-as-legacy-note'
-import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
-import { getTodaysReflectionVerse } from '@/lib/reflection-verse'
+import { getBibleReadingAssignment } from '@/lib/bible-reading-plan'
+import { getReflectionVerseForReading } from '@/lib/reflection-verse'
 
 /**
  * 📖 Daily Reflection Page
@@ -58,11 +58,22 @@ export default async function ReflectionPage({
 
   const reflectionStyle: ReflectionStyle = (profile?.reflection_style as ReflectionStyle) || 'auto'
 
-  // Get today's Bible reading for context
-  const todayReading = getTodaysBibleReading()
+  // Get sequential reading (next day after highest completed)
+  const { data: allEntries } = await supabase
+    .from('daily_reflections')
+    .select('day_number')
+    .eq('user_id', user.id)
+    .not('day_number', 'is', null)
+
+  const completedDays = allEntries?.map(e => e.day_number).filter(Boolean) as number[] || []
+  const highestCompletedDay = completedDays.length > 0 ? Math.max(...completedDays) : 0
+  const nextDayNumber = Math.min(highestCompletedDay + 1, 730)
   
-  // Get today's verse (tied to Turn the Page reading)
-  const dailyVerse = getTodaysReflectionVerse()
+  // Get reading assignment for the sequential day
+  const todayReading = getBibleReadingAssignment(nextDayNumber)
+  
+  // Get verse tied to this reading
+  const dailyVerse = getReflectionVerseForReading(todayReading)
 
   // Get style-specific prompt (stays Christian, just different approach)
   const stylePrompt = getStylePrompt(dailyVerse, reflectionStyle)

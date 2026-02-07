@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
-import { getTodaysBibleReading } from '@/lib/bible-reading-plan'
+import { getBibleReadingAssignment } from '@/lib/bible-reading-plan'
 import { getTodaysReflectionVerse } from '@/lib/reflection-verse'
 import { UnifiedDailyPractice } from '@/components/bible/unified-daily-practice'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
@@ -27,19 +27,7 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
-  // Get today's Bible reading
-  const today = getTodaysBibleReading()
-  const todayDate = new Date().toISOString().split('T')[0]
-
-  // Check Turn the Page status
-  const { data: todayEntry } = await supabase
-    .from('daily_reflections')
-    .select('id, media_urls, quick_note, day_number, reflection')
-    .eq('user_id', user.id)
-    .eq('date', todayDate)
-    .maybeSingle()
-
-  // Get progress
+  // Get progress - sequential system: always show next day after highest completed
   const { data: allEntries } = await supabase
     .from('daily_reflections')
     .select('day_number')
@@ -48,18 +36,31 @@ export default async function DashboardPage() {
 
   const completedDays = allEntries?.map(e => e.day_number).filter(Boolean) as number[] || []
   const highestCompletedDay = completedDays.length > 0 ? Math.max(...completedDays) : 0
-  const currentDay = Math.max(highestCompletedDay, today.dayNumber)
+  
+  // Sequential: Always show the next day after your highest completed day
+  // This allows you to catch up on missed days instead of skipping ahead
+  const nextDayNumber = Math.min(highestCompletedDay + 1, 730)
+  const today = getBibleReadingAssignment(nextDayNumber)
   
   const progress = {
-    currentDay,
+    currentDay: nextDayNumber,
     totalDays: 730,
-    percentage: Math.round((currentDay / 730) * 100),
+    percentage: Math.round((nextDayNumber / 730) * 100),
     currentBook: today.book,
     currentChapter: today.chapter,
-    daysRemaining: Math.max(0, 730 - currentDay)
+    daysRemaining: Math.max(0, 730 - nextDayNumber)
   }
 
-  const turnThePageCompleted = !!todayEntry && todayEntry.day_number === today.dayNumber
+  // Check if this day is already completed
+  const todayDate = new Date().toISOString().split('T')[0]
+  const { data: todayEntry } = await supabase
+    .from('daily_reflections')
+    .select('id, media_urls, quick_note, day_number, reflection')
+    .eq('user_id', user.id)
+    .eq('day_number', nextDayNumber)
+    .maybeSingle()
+
+  const turnThePageCompleted = !!todayEntry && todayEntry.day_number === nextDayNumber
 
   // Get today's verse for reflection (tied to Turn the Page reading)
   const dailyVerse = getTodaysReflectionVerse()
