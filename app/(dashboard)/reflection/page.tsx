@@ -96,6 +96,9 @@ export default async function ReflectionPage({
     }
   }
 
+  // Extract just URLs for ReflectionImages component (expects string[])
+  const mediaUrlStrings = mediaUrls.map(item => item.url).filter(Boolean)
+
   const reflectionData = existingReflection ? {
     day: new Date().getDay(),
     date: today,
@@ -104,7 +107,7 @@ export default async function ReflectionPage({
     context: styleContext,
     completed: true,
     userReflection: existingReflection.reflection,
-    mediaUrls: mediaUrls
+    mediaUrls: mediaUrlStrings
   } : {
     day: new Date().getDay(),
     date: today,
