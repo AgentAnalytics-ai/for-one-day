@@ -91,7 +91,7 @@ export default function UpgradePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50">
+      <div className="min-h-screen bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="space-y-8">
             <div className="text-center">
@@ -110,9 +110,9 @@ export default function UpgradePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <PremiumCard className="p-8 text-center max-w-md">
-          <h2 className="text-2xl font-serif font-medium text-gray-900 mb-4">Access Denied</h2>
+          <h2 className="section-title mb-4">Access Denied</h2>
           <p className="text-gray-600 mb-6">Please sign in to view upgrade options.</p>
           <Link href="/auth/login">
             <PremiumButton>Sign In</PremiumButton>
@@ -123,21 +123,21 @@ export default function UpgradePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-green-50">
+    <div className="min-h-screen bg-slate-50">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Page Title */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full mb-6 shadow-sm border border-primary-200/50">
+          <div className="page-eyebrow mb-4">
             <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
-            <span className="font-semibold text-primary-900">Upgrade</span>
+            <span className="text-primary-900">Upgrade</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+          <h2 className="page-title mb-3">
             Upgrade to Pro
           </h2>
-          <p className="text-xl text-gray-600 font-medium mt-2">Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools.</p>
+          <p className="page-subtitle max-w-2xl mx-auto">Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools.</p>
         </div>
 
         <div className="flex justify-center mb-8">
@@ -147,12 +147,12 @@ export default function UpgradePage() {
           AI writing tools are included with Pro and Lifetime plans.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {/* Free Plan Card */}
-          <PremiumCard className="p-8 border-2 border-secondary-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <PremiumCard className="p-8 border-2 border-secondary-200 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
             <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">Free</h2>
             <p className="text-5xl font-bold text-gray-900 mb-6">$0<span className="text-xl font-medium text-gray-600">/month</span></p>
-            <ul className="space-y-3 text-gray-700 mb-8">
+            <ul className="space-y-3 text-gray-700 mb-8 flex-1">
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -184,11 +184,11 @@ export default function UpgradePage() {
           </PremiumCard>
 
           {/* Pro Plan Card */}
-          <PremiumCard className="p-8 border-2 border-blue-200 shadow-lg relative">
+          <PremiumCard className="p-8 border-2 border-blue-200 shadow-lg relative flex flex-col">
             <span className="absolute top-4 right-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</span>
             <h2 className="text-3xl font-serif font-bold text-blue-900 mb-4">Pro</h2>
             <p className="text-5xl font-bold text-blue-900 mb-6">$9.99<span className="text-xl font-medium text-gray-600">/month</span></p>
-            <ul className="space-y-3 text-gray-700 mb-8">
+            <ul className="space-y-3 text-gray-700 mb-8 flex-1">
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -269,17 +269,17 @@ export default function UpgradePage() {
         </div>
 
         {/* Success Message */}
-        <PremiumCard className="p-8 text-center bg-gradient-to-r from-green-50 to-blue-50 mt-8">
+        <PremiumCard className="p-8 text-center bg-gradient-to-r from-green-50 to-blue-50 mt-10">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
-            Secure Payment Processing Active
+          <h3 className="card-heading mb-2">
+            Secure billing, powered by Stripe
           </h3>
-          <p className="text-gray-600 mb-6">
-            Your subscription is powered by Stripe, the industry standard for secure payments. All transactions are encrypted and PCI compliant.
+          <p className="section-description mb-6">
+            All payments are encrypted and PCI compliant. You can manage or cancel your plan anytime.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/dashboard">

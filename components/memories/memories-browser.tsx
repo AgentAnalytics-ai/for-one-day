@@ -69,13 +69,16 @@ export function MemoriesBrowser() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap gap-2 items-center">
-        <span className="text-sm font-medium text-slate-600 mr-2">Filter:</span>
+    <div className="space-y-6">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="mr-2 text-sm font-medium text-slate-600">Filter</span>
         <button
           type="button"
           onClick={() => setFilter('')}
-          className={`px-3 py-1.5 rounded-full text-sm ${!filter ? 'bg-blue-900 text-white' : 'bg-white border border-slate-200 text-slate-700'}`}
+          className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+            !filter ? 'bg-blue-900 text-white' : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
+          }`}
         >
           Everyone
         </button>
@@ -84,14 +87,15 @@ export function MemoriesBrowser() {
             key={p.id}
             type="button"
             onClick={() => setFilter(p.id)}
-            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm ${
-              filter === p.id ? 'bg-blue-900 text-white' : 'bg-white border border-slate-200 text-slate-700'
+            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm transition-colors ${
+              filter === p.id ? 'bg-blue-900 text-white' : 'bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100'
             }`}
           >
             <User className="w-3.5 h-3.5" />
             {p.display_name}
           </button>
         ))}
+      </div>
       </div>
 
       {loading ? (
@@ -105,14 +109,14 @@ export function MemoriesBrowser() {
           .
         </p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {memories.map((m) => {
             const text = (m.polished_text || m.body_text || '').trim()
             const name = m.memory_people?.display_name || 'Someone'
             return (
               <li
                 key={m.id}
-                className="flex gap-4 p-4 rounded-2xl border border-slate-200 bg-white shadow-sm"
+                className="flex gap-4 p-4 rounded-2xl border border-slate-200/90 bg-white shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
               >
                 <button
                   type="button"
@@ -136,15 +140,20 @@ export function MemoriesBrowser() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 justify-between">
                     <div>
-                      <Link
-                        href={`/memories/${m.person_id}`}
-                        className="text-sm font-semibold text-blue-900 hover:underline"
-                      >
-                        {name}
-                      </Link>
-                      <span className="text-xs text-slate-500 ml-2">
-                        {format(new Date(m.created_at), 'MMM d, yyyy · h:mm a')}
-                      </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Link
+                          href={`/memories/${m.person_id}`}
+                          className="text-sm font-semibold text-blue-900 hover:underline"
+                        >
+                          {name}
+                        </Link>
+                        <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-600 text-[11px] px-2 py-0.5">
+                          {format(new Date(m.created_at), 'MMM d')}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {format(new Date(m.created_at), 'h:mm a')}
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -155,7 +164,7 @@ export function MemoriesBrowser() {
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-slate-800 whitespace-pre-wrap mt-2">{text || '—'}</p>
+                  <p className="text-slate-800 whitespace-pre-wrap mt-2 leading-relaxed">{text || '—'}</p>
                 </div>
               </li>
             )

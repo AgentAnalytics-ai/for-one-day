@@ -83,7 +83,7 @@ export function ProfileSettingsView({ profile, onUpdate }: ProfileSettingsViewPr
 
       {/* Profile Information - View Mode */}
       <div>
-        <h2 className="text-xl font-medium text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="section-title mb-4 flex items-center gap-2">
           <User className="w-5 h-5 text-gray-600" />
           Profile Information
         </h2>
@@ -106,7 +106,7 @@ export function ProfileSettingsView({ profile, onUpdate }: ProfileSettingsViewPr
 
       {/* Emergency Contact - View Mode */}
       <div className="border-t border-gray-200 pt-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="section-title mb-4 flex items-center gap-2">
           <Users className="w-5 h-5 text-gray-600" />
           Emergency Contact
         </h2>
@@ -186,7 +186,7 @@ export function ProfileSettingsView({ profile, onUpdate }: ProfileSettingsViewPr
 
       {/* Executor/Trustee - View Mode */}
       <div className="border-t border-gray-200 pt-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="section-title mb-4 flex items-center gap-2">
           <Users className="w-5 h-5 text-gray-600" />
           Executor/Trustee
         </h2>

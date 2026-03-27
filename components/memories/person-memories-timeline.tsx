@@ -82,13 +82,13 @@ export function PersonMemoriesTimeline({
 
   return (
     <>
-      <ul className="space-y-4">
+      <ul className="space-y-3">
         {memories.map((m) => {
         const text = (m.polished_text || m.body_text || '').trim()
         return (
           <li
             key={m.id}
-            className="flex gap-4 p-4 rounded-2xl border border-slate-200 bg-white shadow-sm"
+            className="flex gap-4 p-4 rounded-2xl border border-slate-200/90 bg-white shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
           >
             <button
               type="button"

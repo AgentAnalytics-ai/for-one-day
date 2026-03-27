@@ -94,8 +94,8 @@ export function WeeklyReviewCard({ userId }: WeeklyReviewCardProps) {
             <Calendar className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-serif font-semibold text-gray-900">Your Week</h3>
-            <p className="text-sm text-gray-600">Last 7 days of reflections</p>
+            <h3 className="section-title">Your Week</h3>
+            <p className="text-sm text-slate-600">Last 7 days of reflections</p>
           </div>
         </div>
         <Link

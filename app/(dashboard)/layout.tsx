@@ -60,7 +60,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-50">
       <SkipLink />
       <KeyboardShortcuts />
       <NavigationTour />

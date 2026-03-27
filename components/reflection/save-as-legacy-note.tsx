@@ -96,8 +96,8 @@ export function SaveAsLegacyNote({ reflectionId, reflectionText, reflectionDate 
           <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border-2 border-primary-200 animate-in zoom-in-95 duration-300">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-serif font-bold text-gray-900">
-                  Save as Legacy Note
+                <h3 className="modal-title">
+                  Save as Keepsake
                 </h3>
                 <button
                   onClick={() => setShowModal(false)}

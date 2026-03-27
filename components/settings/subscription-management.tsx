@@ -99,14 +99,14 @@ export function SubscriptionManagement() {
       <div className="bg-gray-50 rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="card-heading">
               Current Plan: {subscription.plan === 'pro' ? 'Pro' : subscription.plan === 'lifetime' ? 'Lifetime' : 'Free'}
             </h3>
             <p className="text-sm text-gray-600">
               {subscription.plan === 'free' 
-                ? 'Limited to 3 legacy notes'
+                ? 'Limited to 3 saved keepsakes'
                 : subscription.plan === 'pro'
-                ? 'Unlimited legacy notes and features'
+                ? 'Unlimited keepsakes and features'
                 : 'Lifetime access to all features'
               }
             </p>
@@ -124,7 +124,7 @@ export function SubscriptionManagement() {
       {/* Subscription Details */}
       {subscription.plan === 'pro' && subscription.subscription && (
         <div className="bg-blue-50 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Subscription Details</h4>
+          <h4 className="mb-2 text-base font-serif font-semibold text-blue-900 md:text-lg">Subscription Details</h4>
           <div className="space-y-2 text-sm text-blue-800">
             <div className="flex justify-between">
               <span>Status:</span>
@@ -173,9 +173,9 @@ export function SubscriptionManagement() {
           </div>
         ) : (
           <div>
-            <h4 className="font-medium text-gray-900 mb-3">Upgrade to Pro</h4>
+            <h4 className="card-heading mb-3">Upgrade to Pro</h4>
             <p className="text-sm text-gray-600 mb-4">
-              Get unlimited legacy notes and access to all premium features.
+              Get unlimited keepsakes and access to all premium features.
             </p>
             <button
               onClick={() => window.location.href = '/upgrade'}
@@ -216,7 +216,7 @@ export function SubscriptionManagement() {
 
       {/* Help Text */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="font-medium text-gray-900 mb-2">Need Help?</h4>
+        <h4 className="card-heading mb-2">Need Help?</h4>
         <p className="text-sm text-gray-600">
           If you have questions about your subscription or need assistance, please contact our support team.
         </p>

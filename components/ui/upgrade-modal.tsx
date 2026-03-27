@@ -26,7 +26,7 @@ export function UpgradeModal({ isOpen, onClose, feature, currentUsage, limit }: 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h2 className="text-xl font-serif font-medium text-gray-900">
+            <h2 className="modal-title">
               Upgrade to Pro
             </h2>
           </div>
@@ -42,7 +42,7 @@ export function UpgradeModal({ isOpen, onClose, feature, currentUsage, limit }: 
         <div className="p-6">
           {/* Feature-specific message */}
           <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="card-heading mb-2">
               {feature}
             </h3>
             {currentUsage !== undefined && limit !== undefined && (
@@ -57,13 +57,13 @@ export function UpgradeModal({ isOpen, onClose, feature, currentUsage, limit }: 
 
           {/* Pro Features */}
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
-            <p className="text-sm font-medium text-gray-900 mb-3">Pro includes:</p>
+            <p className="text-sm font-medium text-slate-900 mb-3">Pro includes:</p>
             <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Unlimited legacy notes
+                Unlimited keepsakes
               </li>
               <li className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

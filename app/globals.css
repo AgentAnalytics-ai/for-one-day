@@ -6,29 +6,23 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
-    
-    /* Masculine Leadership Color System */
-    --primary: 220 100% 27%;       /* Blue-900 - Authority, leadership, trust */
+
+    /* Core color system */
+    --primary: 220 100% 27%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 220 100% 95%; /* Blue-50 */
-    
-    --secondary: 142 76% 20%;      /* Green-800 - Family protection, growth, stability */
+    --primary-light: 220 100% 95%;
+
+    --secondary: 142 76% 20%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 142 76% 95%; /* Green-50 */
-    
-    --accent: 32 95% 44%;          /* Amber-700 - Legacy achievement, value, warmth */
+    --secondary-light: 142 76% 95%;
+
+    --accent: 32 95% 44%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 32 95% 95%;    /* Amber-50 */
-    
-    /* Neutral Palette */
-    --neutral-50: 249 250 251;     /* Gray-50 */
-    --neutral-100: 243 244 246;    /* Gray-100 */
-    --neutral-900: 17 24 39;       /* Gray-900 */
+    --accent-light: 32 95% 95%;
   }
 
   body {
-    @apply bg-gradient-to-br from-blue-50 via-gray-50 to-green-50;
-    @apply text-foreground;
+    @apply bg-slate-50 text-foreground antialiased;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
@@ -38,6 +32,41 @@
 }
 
 @layer utilities {
+  .page-eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold tracking-wide text-slate-600;
+  }
+
+  .page-title {
+    @apply text-3xl md:text-4xl font-serif font-semibold tracking-tight text-slate-900;
+  }
+
+  .page-subtitle {
+    @apply mt-2 text-sm md:text-base text-slate-600 leading-relaxed;
+  }
+
+  /* In-page sections (below page title): Templates, Your Keepsakes, etc. */
+  .section-title {
+    @apply text-xl md:text-2xl font-serif font-semibold tracking-tight text-slate-900;
+  }
+
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-500;
+  }
+
+  .section-description {
+    @apply text-sm md:text-base text-slate-600 leading-relaxed;
+  }
+
+  /* Titles inside cards, prompts, and list rows */
+  .card-heading {
+    @apply text-base md:text-lg font-serif font-semibold text-slate-900;
+  }
+
+  /* Dialog / modal primary title (same scale as section-title; use either) */
+  .modal-title {
+    @apply text-xl md:text-2xl font-serif font-semibold tracking-tight text-slate-900;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -149,9 +178,9 @@
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
 
-  /* Smooth transitions for Meta-level polish */
+  /* Shared interaction timing */
   .transition-smooth {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   /* Line clamp utility */

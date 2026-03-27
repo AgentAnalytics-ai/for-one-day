@@ -109,7 +109,7 @@ export function KeyboardShortcutsHelp({ isOpen, onClose }: { isOpen: boolean; on
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-serif font-bold text-gray-900">
+          <h2 className="modal-title">
             Keyboard Shortcuts
           </h2>
           <button

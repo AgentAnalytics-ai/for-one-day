@@ -71,7 +71,7 @@ export function RecentMemoriesStrip() {
 
   return (
     <div>
-      <h3 className="text-lg font-serif font-semibold text-gray-900 mb-3">Recent memories</h3>
+      <h3 className="card-heading mb-3">Recent memories</h3>
       <ul className="grid sm:grid-cols-2 gap-3">
         {items.map((m) => {
           const text = (m.polished_text || m.body_text || '').trim()

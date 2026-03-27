@@ -205,15 +205,15 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/40 rounded-2xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/40 rounded-2xl p-6 md:p-8 border border-slate-200/80 shadow-md">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-7">
         <div>
-          <h2 className="text-2xl font-serif font-semibold text-gray-900">Capture a memory</h2>
-          <p className="text-sm text-slate-600 mt-1 max-w-xl">
+          <h2 className="section-title">Capture a memory</h2>
+          <p className="text-sm text-slate-600 mt-1.5 max-w-xl leading-relaxed">
             Photo, a few words, saved for someone you love. AI writing tools are available with Pro.
           </p>
         </div>
-        <p className="text-xs text-slate-500 bg-white/80 border border-slate-200 rounded-lg px-3 py-2 max-w-xs">
+        <p className="text-xs text-slate-500 bg-white/90 border border-slate-200 rounded-lg px-3 py-2 max-w-xs leading-relaxed">
           <span className="font-medium text-slate-700">Idea for today:</span> {dailySuggestion}
         </p>
       </div>
@@ -225,7 +225,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
         </div>
       ) : (
         <>
-          <div className="mb-4">
+          <div className="mb-5 rounded-xl border border-slate-200/80 bg-white/70 p-4">
             <label className="block text-sm font-medium text-gray-800 mb-2">Who is this for?</label>
             <div className="flex flex-wrap gap-2 items-center">
               {people.map((p) => (
@@ -267,7 +267,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             )}
           </div>
 
-          <div className="mb-4">
+          <div className="mb-5 rounded-xl border border-slate-200/80 bg-white/70 p-4">
             <label className="block text-sm font-medium text-gray-800 mb-2">Your note</label>
             <textarea
               value={polished !== null ? polished : body}
@@ -292,12 +292,12 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-3">
             <button
               type="button"
               disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('grammar')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50"
             >
               {polishing === 'grammar' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4 text-slate-600" />}
               Fix grammar
@@ -307,7 +307,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               type="button"
               disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('expand')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50"
             >
               {polishing === 'expand' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-amber-600" />}
               Expand with AI
@@ -315,7 +315,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             </button>
           </div>
           {!isPro && (
-            <p className="text-xs text-slate-600 mb-4">
+            <p className="text-xs text-slate-600 mb-5">
               AI writing is available on Pro.{' '}
               <Link href="/upgrade" className="text-blue-800 font-medium hover:underline">
                 Upgrade to unlock
@@ -324,12 +324,12 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             </p>
           )}
 
-          <div className="mb-6">
+          <div className="mb-7 rounded-xl border border-slate-200/80 bg-white/70 p-4">
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onPickFile} />
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-slate-300 text-sm text-slate-600 hover:border-blue-400 hover:text-blue-800"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-slate-300 text-sm text-slate-600 hover:border-blue-400 hover:text-blue-800 transition-colors"
             >
               <ImageIcon className="w-4 h-4" />
               Add photo
@@ -361,12 +361,12 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <PremiumButton
               type="button"
               onClick={saveMemory}
               disabled={saving || !personId}
-              className="px-8 py-3"
+              className="px-8 py-3 shadow-sm hover:shadow-md transition-shadow"
             >
               {saving ? 'Saving…' : 'Save memory'}
             </PremiumButton>

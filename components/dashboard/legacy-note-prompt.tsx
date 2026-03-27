@@ -42,7 +42,7 @@ export async function LegacyNotePrompt({ userId }: LegacyNotePromptProps) {
           <Sparkles className="w-6 h-6 text-primary-700" />
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-serif font-bold text-gray-900 mb-2">
+          <h3 className="card-heading text-lg md:text-xl mb-2">
             {legacyCount === 0 
               ? "Save Something Meaningful"
               : isMilestone

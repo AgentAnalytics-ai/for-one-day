@@ -20,18 +20,18 @@ export function PremiumCard({
       className={`
         relative overflow-hidden rounded-2xl
         ${gradient 
-          ? 'bg-gradient-to-br from-white via-primary-50/30 to-primary-50/30' 
+          ? 'bg-gradient-to-br from-white via-slate-50 to-blue-50/50'
           : 'bg-white'
         }
-        shadow-lg shadow-primary-500/5 border-2 border-primary-100/50
-        ${hover ? 'hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1 hover:border-primary-200' : ''}
-        transition-all duration-300 ease-out
+        shadow-sm border border-slate-200/80
+        ${hover ? 'hover:shadow-md hover:border-slate-300' : ''}
+        transition-all duration-200 ease-out
         backdrop-blur-sm
         ${className}
       `}
     >
       {gradient && (
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-primary-500/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-blue-100/30 pointer-events-none" />
       )}
       <div className="relative z-10">
         {children}

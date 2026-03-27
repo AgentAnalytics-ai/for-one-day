@@ -55,7 +55,7 @@ export function ProfileSettingsForm({ profile, onSave, onCancel }: ProfileSettin
     <form action={handleSubmit} className="space-y-6">
       {/* Basic Profile Info */}
       <div>
-        <h2 className="text-xl font-medium text-gray-900 mb-4">Profile Information</h2>
+        <h2 className="section-title mb-4">Profile Information</h2>
         
         <div className="grid grid-cols-1 gap-4">
           <div>
@@ -178,7 +178,7 @@ export function ProfileSettingsForm({ profile, onSave, onCancel }: ProfileSettin
 
       {/* Executor/Trustee Section */}
       <div className="border-t border-gray-200 pt-6">
-        <h2 className="text-xl font-medium text-gray-900 mb-4">Executor/Trustee</h2>
+        <h2 className="section-title mb-4">Executor/Trustee</h2>
         <p className="text-sm text-gray-600 mb-4">
           Designate someone who will have legal authority to access your legacy notes and handle your affairs. 
           This is typically your spouse, adult child, or a trusted family member.

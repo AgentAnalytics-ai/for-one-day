@@ -199,21 +199,10 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
       {/* DESKTOP: Original centered logo design */}
       <nav className="hidden md:block sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md" style={{ backgroundColor: '#ffffff' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-20 relative">
-            {/* Centered Brand Name */}
-            <Link 
-              href="/dashboard" 
-              className="absolute left-1/2 transform -translate-x-1/2 group"
-            >
-              <div className="relative px-5 sm:px-6 py-2 sm:py-2.5 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-white tracking-tight">
-                  For One Day
-                </h1>
-              </div>
-            </Link>
-
-            {/* Left-side Navigation */}
-            <div className="flex items-center space-x-2 mr-auto">
+          {/* Equal left/right columns so the logo stays optically centered (Benji bar pattern) */}
+          <div className="grid h-16 lg:h-[4.5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
+            {/* Left: primary nav */}
+            <div className="flex min-w-0 items-center justify-start gap-0.5 lg:gap-1">
               {navItems.map((item) => {
                 const isActive =
                   item.href === '/dashboard'
@@ -223,38 +212,51 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive 
-                        ? 'text-gray-900 bg-gray-100' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${
+                      isActive
+                        ? 'bg-slate-100 text-slate-900'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    {item.icon}
-                    <span className="hidden sm:inline">{item.name}</span>
+                    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-5 [&>svg]:w-5">
+                      {item.icon}
+                    </span>
+                    <span className="hidden lg:inline">{item.name}</span>
                   </Link>
                 )
               })}
             </div>
 
-            {/* Right-side User menu with dropdown */}
-            <div className="relative ml-auto" ref={dropdownRef}>
+            {/* Center: brand */}
+            <Link href="/dashboard" className="group justify-self-center">
+              <div className="rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 px-4 py-1.5 shadow-md transition-all duration-200 group-hover:shadow-lg sm:px-5 sm:py-2">
+                <span className="whitespace-nowrap font-serif text-lg font-light tracking-tight text-white sm:text-xl md:text-2xl">
+                  For One Day
+                </span>
+              </div>
+            </Link>
+
+            {/* Right: account */}
+            <div className="relative flex min-w-0 justify-end" ref={dropdownRef}>
               <button
+                type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                className="inline-flex max-w-full items-center gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 sm:gap-2.5 sm:px-3"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs sm:text-sm font-medium text-gray-700">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                  <span className="text-sm font-medium text-slate-700">
                     {(profile?.full_name || 'User').charAt(0).toUpperCase()}
                   </span>
                 </div>
-                <span className="hidden sm:inline text-sm font-medium text-gray-700 truncate max-w-[120px]">
+                <span className="hidden max-w-[10rem] truncate text-sm font-medium text-slate-800 sm:inline">
                   {profile?.full_name || 'User'}
                 </span>
-                <svg 
-                  className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>

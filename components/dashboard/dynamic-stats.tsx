@@ -77,7 +77,7 @@ function SacredStatCard({
           <p className="text-2xl font-bold text-gray-900">{value}</p>
         </div>
       </div>
-      <h4 className="text-lg font-serif font-medium text-gray-900 mb-1">{title}</h4>
+      <h4 className="card-heading mb-1">{title}</h4>
       <p className="text-sm text-gray-600">{description}</p>
     </div>
   )

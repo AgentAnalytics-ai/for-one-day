@@ -16,15 +16,14 @@ export function Header() {
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm" style={{ backgroundColor: '#ffffff' }}>
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm" style={{ backgroundColor: '#ffffff' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 py-4 sm:py-5">
-          {/* Left - Brand Name - Simplified for mobile */}
+        <div className="flex items-center justify-between h-16 sm:h-20 py-3 sm:py-4">
           <Link 
             href={isDashboard ? "/dashboard" : "/"} 
             className="group"
           >
-            <div className={`relative rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-md group-hover:shadow-lg transition-all duration-200 ${
+            <div className={`relative rounded-lg bg-slate-900 shadow-sm group-hover:shadow-md transition-all duration-200 ${
               isDashboard ? 'px-4 sm:px-5 py-1.5 sm:py-2' : 'px-5 sm:px-6 py-2 sm:py-2.5'
             }`}>
               <h1 className={`font-serif font-light text-white tracking-tight ${
@@ -37,19 +36,18 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Right-side Navigation - Clean */}
           <nav className="flex items-center gap-3 sm:gap-4">
             {isLandingPage ? (
               <>
                 <Link
                   href="/auth/login"
-                  className="text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-gray-50"
+                  className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center px-3 sm:px-5 py-1.5 sm:py-2 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md"
+                  className="inline-flex items-center px-3 sm:px-5 py-1.5 sm:py-2 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   Start Free
                 </Link>
@@ -57,14 +55,14 @@ export function Header() {
             ) : isAuthPage ? (
               <Link
                 href="/"
-                className="text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-gray-50"
+                className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
               >
                 <span className="hidden sm:inline">← </span>Home
               </Link>
             ) : isLegalPage ? (
               <Link
                 href="/"
-                className="text-xs sm:text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-gray-50"
+                className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
               >
                 <span className="hidden sm:inline">← </span>Home
               </Link>

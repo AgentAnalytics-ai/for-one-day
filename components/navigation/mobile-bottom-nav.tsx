@@ -42,7 +42,7 @@ export function MobileBottomNav() {
   return (
     <>
       {/* Mobile Bottom Navigation - Only visible on mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-primary-100 shadow-2xl safe-area-inset-bottom md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200 shadow-xl safe-area-inset-bottom md:hidden">
         <div className="grid grid-cols-4 h-16">
           {navItems.map((item) => {
             const Icon = item.icon
@@ -55,8 +55,8 @@ export function MobileBottomNav() {
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 transition-all duration-200',
                   item.active
-                    ? 'text-primary-700 bg-primary-50'
-                    : 'text-gray-500 hover:text-primary-600 hover:bg-primary-50/50'
+                    ? 'text-slate-900 bg-slate-100'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
                 )}
               >
                 <Icon className={cn(
@@ -65,12 +65,12 @@ export function MobileBottomNav() {
                 )} />
                 <span className={cn(
                   'text-xs font-semibold transition-all duration-200',
-                  item.active ? 'text-primary-700' : 'text-gray-500'
+                  item.active ? 'text-slate-900' : 'text-slate-500'
                 )}>
                   {item.label}
                 </span>
                 {item.active && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary-700 rounded-b-full" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-slate-900 rounded-b-full" />
                 )}
               </Link>
             )

@@ -8,8 +8,9 @@ export default function MemoriesPage() {
         <Link href="/dashboard" className="text-sm text-blue-800 hover:underline mb-4 inline-block">
           ← Today
         </Link>
-        <h1 className="text-3xl font-serif font-light text-gray-900">Memories</h1>
-        <p className="text-slate-600 mt-2">
+        <div className="page-eyebrow">Today</div>
+        <h1 className="page-title mt-2">Memories</h1>
+        <p className="page-subtitle">
           Everything you&apos;ve saved, organized by person. Add people and capture moments from{' '}
           <Link href="/dashboard" className="text-blue-800 font-medium hover:underline">
             Today

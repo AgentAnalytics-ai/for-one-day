@@ -87,7 +87,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Calendar className="w-8 h-8 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-blue-800 mb-2">Schedule Delivery</h3>
+          <h3 className="mb-2 text-lg font-serif font-semibold text-blue-800">Schedule Delivery</h3>
           <p className="text-blue-600 mb-4">
             Write now, deliver later. Schedule this keepsake to be sent at the perfect moment.
           </p>
@@ -113,7 +113,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-green-800 mb-2">Delivery Scheduled!</h3>
+          <h3 className="mb-2 text-lg font-serif font-semibold text-green-800">Delivery Scheduled!</h3>
           <p className="text-green-600 mb-4">
             Your keepsake will be delivered on {new Date(`${deliveryDate}T${deliveryTime}`).toLocaleString()}
           </p>
@@ -133,7 +133,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
             <Calendar className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-blue-800">Schedule Delivery</h3>
+            <h3 className="text-lg font-serif font-semibold text-blue-800">Schedule Delivery</h3>
             <p className="text-sm text-blue-600">Set when this keepsake should be delivered</p>
           </div>
         </div>

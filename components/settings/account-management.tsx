@@ -34,7 +34,7 @@ export function AccountManagement({ profile }: AccountManagementProps) {
   return (
     <div className="space-y-4">
       <div className="border-t border-gray-200 pt-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Email Preferences</h3>
+        <h3 className="card-heading mb-2">Email Preferences</h3>
         <p className="text-sm text-gray-600 mb-4">
           Manage your email notifications and subscription preferences.
         </p>
@@ -62,7 +62,7 @@ export function AccountManagement({ profile }: AccountManagementProps) {
           className="flex items-center justify-between w-full text-left mb-4"
         >
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Advanced Actions</h3>
+            <h3 className="card-heading">Advanced Actions</h3>
             <p className="text-sm text-gray-500">Unsubscribe or close your account</p>
           </div>
           <svg 

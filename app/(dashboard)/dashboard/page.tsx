@@ -25,13 +25,13 @@ export default async function DashboardPage() {
   const isPro = profile?.plan === 'pro' || profile?.plan === 'lifetime'
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 md:space-y-12">
       <ScrollReveal>
-        <div className="text-center">
+        <div className="flex flex-col items-center gap-3 text-center pt-1 md:pt-2">
           <TimeGreeting />
           <SubscriptionBadge tier={profile?.plan || 'free'} />
           {(!profile || profile.plan === 'free') && (
-            <div className="mt-4">
+            <div className="mt-1">
               <Link
                 href="/upgrade"
                 aria-label="Upgrade to Pro plan"
@@ -49,7 +49,15 @@ export default async function DashboardPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={150}>
-        <RecentMemoriesStrip />
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="section-label">Recent</h2>
+            <Link href="/memories" className="text-sm text-blue-800 hover:underline">
+              View all
+            </Link>
+          </div>
+          <RecentMemoriesStrip />
+        </section>
       </ScrollReveal>
 
       <ScrollReveal delay={200}>
@@ -57,7 +65,10 @@ export default async function DashboardPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={300}>
-        <DynamicStats userId={user.id} />
+        <section className="space-y-3">
+          <h2 className="section-label">Your progress</h2>
+          <DynamicStats userId={user.id} />
+        </section>
       </ScrollReveal>
     </div>
   )

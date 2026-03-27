@@ -48,7 +48,7 @@ export function SubscriptionBadge({ tier, className = '' }: SubscriptionBadgePro
   const tierConfig = config[tier]
 
   return (
-    <div className={`inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${tierConfig.color} border ${tierConfig.borderColor} rounded-full ${tierConfig.textColor} text-sm font-medium ${className}`}>
+    <div className={`inline-flex shrink-0 items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${tierConfig.color} border ${tierConfig.borderColor} rounded-full ${tierConfig.textColor} text-sm font-medium ${className}`}>
       {tierConfig.icon}
       {tierConfig.label}
     </div>

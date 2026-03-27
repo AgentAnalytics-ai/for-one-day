@@ -32,8 +32,9 @@ export default async function PersonMemoriesPage({
         <Link href="/memories" className="text-sm text-blue-800 hover:underline mb-4 inline-block">
           ← All memories
         </Link>
-        <h1 className="text-3xl font-serif font-light text-gray-900">{person.display_name}</h1>
-        {person.relationship && <p className="text-slate-600 mt-1">{person.relationship}</p>}
+        <div className="page-eyebrow">Person timeline</div>
+        <h1 className="page-title mt-2">{person.display_name}</h1>
+        {person.relationship && <p className="page-subtitle">{person.relationship}</p>}
       </div>
       <PersonMemoriesTimeline personId={personId} displayName={person.display_name} />
     </div>

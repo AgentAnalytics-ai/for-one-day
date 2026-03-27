@@ -241,16 +241,16 @@ export default function VaultPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full mb-4 shadow-sm border border-primary-200/50">
+          <div className="page-eyebrow mb-4">
             <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
             </svg>
-            <span className="font-semibold text-primary-900">Keepsakes</span>
+            <span className="text-primary-900">Keepsakes</span>
           </div>
-          <h1 className="text-4xl font-serif font-bold text-gray-900 mb-3">
+          <h1 className="page-title mb-3">
             Keep What Matters
           </h1>
-          <p className="text-lg text-gray-600 font-medium">
+          <p className="page-subtitle max-w-2xl mx-auto">
             Notes, photos, and messages for the people you love
           </p>
         </div>
@@ -291,7 +291,7 @@ export default function VaultPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">
+                <h3 className="section-title mb-3">
                   You&apos;ve used {usage.current} of {usage.limit} free keepsakes
                 </h3>
                 <p className="text-gray-700 mb-6 font-medium leading-relaxed">
@@ -311,10 +311,10 @@ export default function VaultPage() {
         {/* Create New Note */}
         <PremiumCard className="p-8 border-2 border-primary-200" data-tour="create">
           <div className="text-center">
-            <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">
+            <h2 className="section-title mb-4">
               Create a Keepsake
             </h2>
-            <p className="text-lg text-gray-600 mb-8 font-medium">
+            <p className="section-description mb-8">
               Choose from our professional templates or create your own
             </p>
             <PremiumButton
@@ -330,7 +330,7 @@ export default function VaultPage() {
 
         {/* Templates */}
         <div>
-          <h2 className="text-2xl font-medium text-gray-900 mb-4">Templates</h2>
+          <h2 className="section-title mb-4">Templates</h2>
           {templates && templates.length > 0 ? (
             <PremiumCard className="p-6">
               <div className="grid grid-cols-1 gap-4">
@@ -358,7 +358,7 @@ export default function VaultPage() {
                 {selectedTemplateOption && (
                   <div className="rounded-lg border border-gray-200 p-4 bg-gray-50">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-medium text-gray-900">{selectedTemplateOption.name}</h3>
+                      <h3 className="card-heading">{selectedTemplateOption.name}</h3>
                       <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{selectedTemplateOption.category}</span>
                     </div>
                     <p className="text-sm text-gray-600 mb-4">{selectedTemplateOption.description}</p>
@@ -392,7 +392,7 @@ export default function VaultPage() {
 
         {/* Keepsakes */}
         <div data-tour="vault">
-          <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Keepsakes</h2>
+          <h2 className="section-title mb-6">Your Keepsakes</h2>
           {vaultItems && vaultItems.length === 0 ? (
             <PremiumCard className="p-12 text-center bg-gradient-to-br from-primary-50 via-primary-50/50 to-secondary-50 border-2 border-primary-200">
               <div className="w-24 h-24 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl ring-4 ring-primary-200">
@@ -401,7 +401,7 @@ export default function VaultPage() {
                 </svg>
               </div>
               
-              <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">
+              <h3 className="section-title mb-3">
                 Your Memory Space Starts Here
               </h3>
               
@@ -455,7 +455,7 @@ export default function VaultPage() {
                 >
                   <PremiumCard className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-lg font-medium text-gray-900">
+                    <h3 className="card-heading">
                       {item.title}
                     </h3>
                     <div className="flex items-center space-x-2">
@@ -625,7 +625,7 @@ function LetterModal({
       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-primary-200 animate-in zoom-in-95 duration-300">
         <div className="p-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-serif font-bold text-gray-900">
+            <h2 className="modal-title">
               {letter.title}
             </h2>
             <button

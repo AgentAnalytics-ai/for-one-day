@@ -198,8 +198,8 @@ export function TemplateLegacyNoteModal({ isOpen, onClose, onSuccess, template }
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Create Legacy Note</h2>
-              <p className="text-gray-600 mt-1">Using: {template.name}</p>
+              <h2 className="modal-title">Create Keepsake</h2>
+              <p className="section-description mt-1">Using: {template.name}</p>
             </div>
             <button
               onClick={onClose}
@@ -218,7 +218,7 @@ export function TemplateLegacyNoteModal({ isOpen, onClose, onSuccess, template }
                   <Heart className="w-4 h-4 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-purple-900">{template.name}</h3>
+                  <h3 className="text-base font-serif font-semibold text-purple-900 md:text-lg">{template.name}</h3>
                   <p className="text-sm text-purple-700">{template.description}</p>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export function TemplateLegacyNoteModal({ isOpen, onClose, onSuccess, template }
 
             {/* Voice Recording */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Add Your Voice (Optional)</h3>
+              <h3 className="card-heading">Add Your Voice (Optional)</h3>
               <VoiceRecorder
                 onRecordingComplete={handleVoiceRecordingComplete}
                 onRemoveRecording={handleRemoveVoiceRecording}
@@ -303,7 +303,7 @@ export function TemplateLegacyNoteModal({ isOpen, onClose, onSuccess, template }
 
             {/* Preview */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Preview</h3>
+              <h3 className="card-heading">Preview</h3>
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="text-sm text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto">
                   {generateContent()}
