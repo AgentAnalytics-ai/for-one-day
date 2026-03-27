@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from '@/lib/toast'
+import { MemoryImageLightbox } from '@/components/memories/memory-image-lightbox'
 
 type Mem = {
   id: string
@@ -25,6 +26,7 @@ export function PersonMemoriesTimeline({
 }) {
   const [memories, setMemories] = useState<Mem[]>([])
   const [loading, setLoading] = useState(true)
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -79,15 +81,24 @@ export function PersonMemoriesTimeline({
   }
 
   return (
-    <ul className="space-y-4">
-      {memories.map((m) => {
+    <>
+      <ul className="space-y-4">
+        {memories.map((m) => {
         const text = (m.polished_text || m.body_text || '').trim()
         return (
           <li
             key={m.id}
             className="flex gap-4 p-4 rounded-2xl border border-slate-200 bg-white shadow-sm"
           >
-            <div className="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                if (m.preview_url) setLightboxUrl(m.preview_url)
+              }}
+              className="relative w-28 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100 cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-blue-400"
+              aria-label={m.preview_url ? 'Open memory photo' : 'No photo available'}
+              disabled={!m.preview_url}
+            >
               {m.preview_url ? (
                 <Image src={m.preview_url} alt="" fill className="object-cover" unoptimized />
               ) : (
@@ -95,7 +106,7 @@ export function PersonMemoriesTimeline({
                   No photo
                 </div>
               )}
-            </div>
+            </button>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start gap-2">
                 <span className="text-xs text-slate-500">
@@ -114,7 +125,14 @@ export function PersonMemoriesTimeline({
             </div>
           </li>
         )
-      })}
-    </ul>
+        })}
+      </ul>
+      <MemoryImageLightbox
+        open={!!lightboxUrl}
+        imageUrl={lightboxUrl}
+        title={`${displayName} memory photo`}
+        onClose={() => setLightboxUrl(null)}
+      />
+    </>
   )
 }

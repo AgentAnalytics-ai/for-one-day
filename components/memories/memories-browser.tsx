@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { Trash2, User } from 'lucide-react'
 import { toast } from '@/lib/toast'
+import { MemoryImageLightbox } from '@/components/memories/memory-image-lightbox'
 
 type Person = { id: string; display_name: string; relationship: string | null }
 type Mem = {
@@ -24,6 +25,8 @@ export function MemoriesBrowser() {
   const [memories, setMemories] = useState<Mem[]>([])
   const [filter, setFilter] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
+  const [lightboxTitle, setLightboxTitle] = useState<string>('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -111,7 +114,17 @@ export function MemoriesBrowser() {
                 key={m.id}
                 className="flex gap-4 p-4 rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
-                <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!m.preview_url) return
+                    setLightboxUrl(m.preview_url)
+                    setLightboxTitle(`${name} memory photo`)
+                  }}
+                  className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100 cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  aria-label={m.preview_url ? 'Open memory photo' : 'No photo available'}
+                  disabled={!m.preview_url}
+                >
                   {m.preview_url ? (
                     <Image src={m.preview_url} alt="" fill className="object-cover" unoptimized />
                   ) : (
@@ -119,7 +132,7 @@ export function MemoriesBrowser() {
                       Text only
                     </div>
                   )}
-                </div>
+                </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 justify-between">
                     <div>
@@ -149,6 +162,12 @@ export function MemoriesBrowser() {
           })}
         </ul>
       )}
+      <MemoryImageLightbox
+        open={!!lightboxUrl}
+        imageUrl={lightboxUrl}
+        title={lightboxTitle}
+        onClose={() => setLightboxUrl(null)}
+      />
     </div>
   )
 }
