@@ -3,11 +3,11 @@ import { PremiumButton } from '@/components/ui/premium-button'
 import { PageHeader } from '@/components/ui/page-header'
 
 const colors = [
-  { name: 'Background', value: 'bg-slate-50', label: 'Slate 50' },
-  { name: 'Surface', value: 'bg-white', label: 'White' },
-  { name: 'Primary', value: 'bg-primary-700', label: 'Primary 700' },
-  { name: 'Primary Light', value: 'bg-primary-100', label: 'Primary 100' },
-  { name: 'Accent', value: 'bg-amber-600', label: 'Amber 600' },
+  { name: 'Canvas', value: 'bg-slate-50', label: '#F8FAFC - App background' },
+  { name: 'Surface', value: 'bg-white', label: '#FFFFFF - Cards and panels' },
+  { name: 'Primary', value: 'bg-primary-900', label: '#102A43 - Main actions and active states' },
+  { name: 'Primary Soft', value: 'bg-primary-100', label: '#D9E6F1 - Gentle emphasis surfaces' },
+  { name: 'Accent', value: 'bg-accent-600', label: '#D97706 - Highlights and milestones' },
 ]
 
 export default function DesignSystemPage() {
@@ -30,6 +30,12 @@ export default function DesignSystemPage() {
             </PremiumCard>
           ))}
         </div>
+        <PremiumCard className="p-4">
+          <p className="text-sm text-slate-700">
+            Usage ratio: <strong>70% neutrals</strong>, <strong>20% primary navy</strong>,{' '}
+            <strong>10% amber accent</strong>. Keep accents intentional so the product feels calm and trustworthy.
+          </p>
+        </PremiumCard>
       </section>
 
       <section className="space-y-4">

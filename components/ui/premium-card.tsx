@@ -20,7 +20,7 @@ export function PremiumCard({
       className={`
         relative overflow-hidden rounded-2xl
         ${gradient 
-          ? 'bg-gradient-to-br from-white via-slate-50 to-blue-50/50'
+          ? 'bg-gradient-to-br from-white via-slate-50 to-primary-50/50'
           : 'bg-white'
         }
         shadow-sm border border-slate-200/80
@@ -31,7 +31,7 @@ export function PremiumCard({
       `}
     >
       {gradient && (
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-blue-100/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-primary-100/30 pointer-events-none" />
       )}
       <div className="relative z-10">
         {children}

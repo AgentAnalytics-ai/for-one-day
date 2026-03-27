@@ -12,12 +12,20 @@ This is the lightweight system used to keep Figma explorations and Next.js imple
 
 ## Color
 
-- `--background`: app canvas
-- `--foreground`: base text
-- `--primary`: deep navy actions and active states
-- `--primary-light`: soft navy surfaces
-- `--accent`: warm amber emphasis
-- `--accent-light`: warm background highlights
+- Brand anchors:
+  - Primary navy: `#102A43`
+  - Primary depth/hover: `#0B1F33`
+  - Accent amber: `#D97706`
+- Neutral system:
+  - Canvas: `#F8FAFC`
+  - Surface: `#FFFFFF`
+  - Border: `#E2E8F0`
+  - Text strong: `#0F172A`
+  - Text muted: `#475569`
+- Recommended ratio:
+  - 70% neutrals
+  - 20% primary
+  - 10% accent
 
 ## Typography
 
