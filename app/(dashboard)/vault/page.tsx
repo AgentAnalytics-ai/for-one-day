@@ -192,9 +192,9 @@ export default function VaultPage() {
     const { error } = await supabase.from('vault_items').delete().eq('id', id)
 
     if (error) {
-      toast.error('Failed to delete note', error.message)
+      toast.error('Failed to delete keepsake', error.message)
     } else {
-      toast.success('Note deleted successfully')
+      toast.success('Keepsake deleted successfully')
       loadVaultItems()
       loadUsage() // Reload usage counter
     }

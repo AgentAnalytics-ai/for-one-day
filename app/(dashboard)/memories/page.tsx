@@ -19,9 +19,9 @@ export default function MemoriesPage() {
       </div>
       <MemoriesBrowser />
       <p className="text-xs text-slate-500 pt-4 border-t border-slate-200">
-        Earlier daily journal entries (if any) live in{' '}
+        Earlier reflection entries (if any) live in{' '}
         <Link href="/reflections/history" className="text-blue-800 hover:underline">
-          journal history
+          reflections history
         </Link>
         .
       </p>

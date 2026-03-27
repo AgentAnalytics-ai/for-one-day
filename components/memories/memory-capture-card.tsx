@@ -295,7 +295,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
           <div className="flex flex-wrap gap-2 mb-4">
             <button
               type="button"
-              disabled={!!polishing || !(polished || body).trim()}
+              disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('grammar')}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50"
             >
@@ -305,7 +305,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             </button>
             <button
               type="button"
-              disabled={!!polishing || !(polished || body).trim()}
+              disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('expand')}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50"
             >
@@ -314,6 +314,15 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               {!isPro && <span className="text-[10px] uppercase tracking-wide text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Pro</span>}
             </button>
           </div>
+          {!isPro && (
+            <p className="text-xs text-slate-600 mb-4">
+              AI writing is available on Pro.{' '}
+              <Link href="/upgrade" className="text-blue-800 font-medium hover:underline">
+                Upgrade to unlock
+              </Link>
+              .
+            </p>
+          )}
 
           <div className="mb-6">
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onPickFile} />

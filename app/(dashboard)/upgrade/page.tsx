@@ -143,6 +143,9 @@ export default function UpgradePage() {
         <div className="flex justify-center mb-8">
           <SubscriptionBadge tier={currentPlan} className="text-lg px-5 py-2" />
         </div>
+        <p className="text-center text-sm text-gray-600 mb-8">
+          AI writing tools are included with Pro and Lifetime plans.
+        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Free Plan Card */}
