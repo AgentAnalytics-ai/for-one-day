@@ -11,6 +11,7 @@ import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { createCheckoutSession, createPortalSession } from '@/app/actions/billing-actions'
 import { toast } from '@/lib/toast'
 import { ToastContainer } from '@/components/ui/toast'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default function UpgradePage() {
   const [user, setUser] = useState<User | null>(null)
@@ -126,19 +127,20 @@ export default function UpgradePage() {
     <div className="min-h-screen bg-slate-50">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Title */}
-        <div className="text-center mb-12">
-          <div className="page-eyebrow mb-4">
-            <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-            <span className="text-primary-900">Upgrade</span>
-          </div>
-          <h2 className="page-title mb-3">
-            Upgrade to Pro
-          </h2>
-          <p className="page-subtitle max-w-2xl mx-auto">Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools.</p>
-        </div>
+        <PageHeader
+          className="mb-12"
+          align="center"
+          eyebrow={
+            <>
+              <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+              <span className="text-primary-900">Upgrade</span>
+            </>
+          }
+          title="Upgrade to Pro"
+          subtitle="Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools."
+        />
 
         <div className="flex justify-center mb-8">
           <SubscriptionBadge tier={currentPlan} className="text-lg px-5 py-2" />

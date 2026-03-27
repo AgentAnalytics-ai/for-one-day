@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ReflectionHistoryClient } from '@/components/reflection/reflection-history-client'
 import { Calendar } from 'lucide-react'
+import { PageHeader } from '@/components/ui/page-header'
 
 /**
  * 📖 Reflection History Page - Instagram Archive Style
@@ -29,22 +30,17 @@ export default async function ReflectionHistoryPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-            <Calendar className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">
-              Reflection History
-            </h1>
-            <p className="text-gray-600">
-              {reflections?.length || 0} reflection{reflections?.length !== 1 ? 's' : ''} saved
-            </p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        className="mb-8"
+        eyebrow={
+          <>
+            <Calendar className="w-4 h-4 text-purple-700" />
+            <span className="text-purple-900">Archive</span>
+          </>
+        }
+        title="Reflection History"
+        subtitle={`${reflections?.length || 0} reflection${reflections?.length !== 1 ? 's' : ''} saved`}
+      />
 
       {/* Client Component for Interactive Calendar */}
       <ReflectionHistoryClient 

@@ -9,6 +9,7 @@ import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
 import { ToastContainer, Toast } from '@/components/ui/toast'
 import { toast } from '@/lib/toast'
+import { PageHeader } from '@/components/ui/page-header'
 
 interface Profile {
   user_id: string
@@ -92,23 +93,21 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
-      <div className="mb-8">
-        <div className="text-center mb-6">
-          <div className="page-eyebrow mb-4">
+      <PageHeader
+        className="mb-8"
+        align="center"
+        eyebrow={
+          <>
             <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span className="text-primary-900">Settings</span>
-          </div>
-        </div>
-        <h1 className="page-title mb-3 text-center">
-          Account Settings
-        </h1>
-        <p className="page-subtitle text-center max-w-2xl mx-auto">
-          Manage your profile and emergency contact information
-        </p>
-      </div>
+          </>
+        }
+        title="Account Settings"
+        subtitle="Manage your profile and emergency contact information"
+      />
 
       <div className="bg-white rounded-2xl shadow-lg border-2 border-primary-100 p-6 sm:p-8">
         <ProfileSettingsView 
@@ -125,7 +124,7 @@ export default function SettingsPage() {
 
       {/* Account Management */}
       <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="text-lg sm:text-xl font-medium text-gray-900 mb-4">Account Management</h2>
+        <h2 className="section-title mb-4">Account Management</h2>
         <AccountManagement profile={profile} />
       </div>
 
