@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { PremiumCard } from '@/components/ui/premium-card'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { PageHeader } from '@/components/ui/page-header'
@@ -11,6 +12,12 @@ const colors = [
 ]
 
 export default function DesignSystemPage() {
+  // Keep the design system reference internal by default.
+  // In production, only show it when explicitly enabled.
+  if (process.env.NODE_ENV === 'production' && process.env.SHOW_DESIGN_SYSTEM !== 'true') {
+    redirect('/dashboard')
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <PageHeader
