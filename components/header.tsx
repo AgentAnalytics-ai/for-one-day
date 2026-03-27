@@ -12,7 +12,7 @@ export function Header() {
   const pathname = usePathname()
   const isAuthPage = pathname?.startsWith('/auth')
   const isLandingPage = pathname === '/'
-  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/vault') || pathname?.startsWith('/reflection') || pathname?.startsWith('/settings') || pathname?.startsWith('/upgrade')
+  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/vault') || pathname?.startsWith('/reflection') || pathname?.startsWith('/memories') || pathname?.startsWith('/settings') || pathname?.startsWith('/upgrade')
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
   return (

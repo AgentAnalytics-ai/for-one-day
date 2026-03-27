@@ -224,6 +224,7 @@ export async function sendWelcomeEmail({
   name: string
 }) {
   const subject = 'Welcome to For One Day!'
+  const appUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://foroneday.app'
   
   const html = `
     <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -232,8 +233,8 @@ export async function sendWelcomeEmail({
       </h1>
       
       <p style="color: #4b5563; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-        Thank you for joining us. You're now part of a community dedicated to preserving 
-        what matters most - your legacy, your wisdom, and your love for your family.
+        Thank you for joining us. Your space is ready to capture small moments and meaningful
+        memories for the people you love.
       </p>
       
       <div style="background: #f9fafb; border-radius: 8px; padding: 24px; margin: 24px 0;">
@@ -241,13 +242,13 @@ export async function sendWelcomeEmail({
           Getting Started
         </h2>
         <ul style="color: #4b5563; font-size: 16px; line-height: 1.8; margin: 0; padding-left: 20px;">
-          <li>Create your first legacy note for someone you love</li>
-          <li>Start your daily reflection journey</li>
-          <li>Invite family members to join your legacy</li>
+          <li>Add someone you love in Memories</li>
+          <li>Capture your first memory note (photo + words)</li>
+          <li>Upgrade to Pro to unlock AI writing tools</li>
         </ul>
       </div>
       
-      <a href="https://foroneday.app/dashboard" 
+      <a href="${appUrl}/dashboard" 
          style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; 
                 text-decoration: none; border-radius: 6px; font-weight: 600; margin: 24px 0;">
         Go to Dashboard
@@ -264,7 +265,7 @@ export async function sendWelcomeEmail({
       </p>
       
       <p style="color: #6b7280; font-size: 12px; text-align: center;">
-        <a href="https://foroneday.app/unsubscribe?email=${encodeURIComponent(to)}" 
+        <a href="${appUrl}/unsubscribe?email=${encodeURIComponent(to)}" 
            style="color: #6b7280; text-decoration: underline;">
           Unsubscribe from emails
         </a>

@@ -137,7 +137,7 @@ export default function UpgradePage() {
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
             Upgrade to Pro
           </h2>
-          <p className="text-xl text-gray-600 font-medium mt-2">Unlock unlimited legacy notes and family connections.</p>
+          <p className="text-xl text-gray-600 font-medium mt-2">Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools.</p>
         </div>
 
         <div className="flex justify-center mb-8">
@@ -154,19 +154,19 @@ export default function UpgradePage() {
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>3 Legacy Notes</span>
+                <span>3 saved keepsakes</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>10 Family Connections</span>
+                <span>10 people in Memories</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Unlimited Daily Reflections</span>
+                <span>Unlimited daily reflections</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,25 +190,25 @@ export default function UpgradePage() {
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Unlimited Legacy Notes</span>
+                <span>Unlimited saved keepsakes</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Unlimited Family Connections</span>
+                <span>Unlimited people in Memories</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Family Sharing Features</span>
+                <span>Advanced memory organization</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Advanced Analytics</span>
+                <span>AI writing tools (grammar + expansion)</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,7 +286,7 @@ export default function UpgradePage() {
             </Link>
             <Link href="/vault">
               <PremiumButton>
-                Start Creating Legacy Notes
+                Start Saving Keepsakes
               </PremiumButton>
             </Link>
           </div>

@@ -197,7 +197,7 @@ export async function EnhancedStreak({ userId }: EnhancedStreakProps) {
         <div className="text-center pt-4">
           <p className="text-gray-600 text-sm mb-2">Reflect today to start your streak!</p>
           <a
-            href="/reflection"
+            href="/dashboard"
             className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors shadow-md"
           >
             Write Your Reflection

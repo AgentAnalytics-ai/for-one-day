@@ -11,7 +11,7 @@ export function EditButton() {
   const router = useRouter()
 
   const handleEdit = () => {
-    router.push('/reflection?edit=true')
+    router.push('/reflections/history')
   }
 
   return (

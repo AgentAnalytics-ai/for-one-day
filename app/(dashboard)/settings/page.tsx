@@ -185,7 +185,7 @@ export default function SettingsPage() {
               Emergency Access
             </h3>
             <p className="text-blue-800 text-sm mb-3">
-              If something happens to you, your emergency contact can request access to your legacy notes. 
+              If something happens to you, your emergency contact can request access to your keepsakes.
               This helps ensure your family receives your important messages.
             </p>
             <div className="text-blue-700 text-sm">
@@ -193,7 +193,7 @@ export default function SettingsPage() {
               <ul className="list-disc list-inside mt-1 space-y-1">
                 <li>Your emergency contact emails our support team</li>
                 <li>We verify their identity and relationship to you</li>
-                <li>We securely deliver your legacy notes to them</li>
+                <li>We securely deliver your keepsakes to them</li>
                 <li>This process typically takes 1-2 business days</li>
               </ul>
             </div>

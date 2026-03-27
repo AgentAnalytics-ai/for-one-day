@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
-      message: 'Legacy note scheduled for delivery',
+      message: 'Keepsake scheduled for delivery',
       scheduled_for: `${validatedData.scheduled_date} at ${validatedData.scheduled_time}`
     })
 

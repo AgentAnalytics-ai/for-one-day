@@ -44,30 +44,30 @@ export async function LegacyNotePrompt({ userId }: LegacyNotePromptProps) {
         <div className="flex-1">
           <h3 className="text-xl font-serif font-bold text-gray-900 mb-2">
             {legacyCount === 0 
-              ? "Your Wisdom Deserves to Be Preserved"
+              ? "Save Something Meaningful"
               : isMilestone
-              ? `You've written ${reflectionCount} reflections!`
-              : "Preserve Your Legacy"
+              ? `You've captured ${reflectionCount} reflections!`
+              : "Keep Your Story Safe"
             }
           </h3>
           <p className="text-gray-700 mb-4 leading-relaxed">
             {legacyCount === 0
-              ? `You've written ${reflectionCount} reflection${reflectionCount !== 1 ? 's' : ''}. Your daily practice builds wisdom that deserves to be preserved for future generations. Create your first legacy note today.`
-              : `You've reached a milestone! Consider preserving your most meaningful reflections as legacy notes for your loved ones.`
+              ? `You've written ${reflectionCount} reflection${reflectionCount !== 1 ? 's' : ''}. Turn your best moments into keepsakes your loved ones can revisit later.`
+              : `You've reached a milestone. Save one of your most meaningful reflections as a keepsake for someone you love.`
             }
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link href="/vault">
               <PremiumButton size="lg" className="w-full sm:w-auto">
                 <Lock className="w-4 h-4 mr-2" />
-                {legacyCount === 0 ? 'Create Your First Legacy Note' : 'Create Legacy Note'}
+                {legacyCount === 0 ? 'Create Your First Keepsake' : 'Create Keepsake'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </PremiumButton>
             </Link>
             {reflectionCount > 0 && (
-              <Link href="/reflection">
+              <Link href="/memories">
                 <PremiumButton variant="secondary" size="lg" className="w-full sm:w-auto">
-                  View Reflections
+                  View Memories
                 </PremiumButton>
               </Link>
             )}

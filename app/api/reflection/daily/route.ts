@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
-
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -162,48 +160,6 @@ export async function POST(request: NextRequest) {
       }, {
         onConflict: 'user_id'
       })
-
-    // Trigger AI analysis for Turn the Page Challenge (Pro users only, non-blocking, fire-and-forget)
-    // Only analyze if user is Pro, has photos, and reflection text
-    const subscription = await getUserSubscriptionStatus(user.id)
-    const isPro = subscription.plan === 'pro' || subscription.plan === 'lifetime'
-    
-    if (isPro && data.media_urls && data.media_urls.length > 0 && reflection.trim()) {
-      // Get first image URL for analysis
-      const firstImagePath = data.media_urls[0]
-      if (firstImagePath) {
-        // Generate signed URL for AI analysis
-        const { data: signedUrlData } = await supabase.storage
-          .from('media')
-          .createSignedUrl(firstImagePath, 3600) // 1 hour expiry
-
-        if (signedUrlData?.signedUrl) {
-          // Trigger analysis asynchronously (don't wait for response)
-          // Construct base URL from request
-          const protocol = request.headers.get('x-forwarded-proto') || 'http'
-          const host = request.headers.get('host') || 'localhost:3000'
-          const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${host}`
-          
-          // Fire-and-forget: trigger analysis without blocking
-          fetch(`${baseUrl}/api/reflection/turn-the-page/analyze`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              // Forward auth cookie for internal API call
-              'Cookie': request.headers.get('cookie') || ''
-            },
-            body: JSON.stringify({
-              reflectionId: data.id,
-              imageUrl: signedUrlData.signedUrl,
-              reflection: reflection.trim()
-            })
-          }).catch(error => {
-            // Silently fail - analysis is optional, save should succeed regardless
-            console.error('Failed to trigger AI analysis:', error)
-          })
-        }
-      }
-    }
 
     return NextResponse.json({ 
       success: true, 

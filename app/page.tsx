@@ -25,12 +25,12 @@ export default async function HomePage() {
         <div className="text-center max-w-4xl mx-auto">
           {/* Hero Copy */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light text-gray-900 mb-8 leading-tight">
-            Live today.<br />
-            <span className="font-medium">Prepare for the day that matters most.</span>
+            Hold on to today.<br />
+            <span className="font-medium">Capture what matters for the people you love.</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed">
-            Your life, documented. Your wishes, preserved. Your legacy, delivered—on your timeline.
+            Save meaningful notes and photos, organized by person, with optional Pro AI writing tools when you need them.
           </p>
           
           {/* Primary CTA */}
@@ -78,8 +78,8 @@ export default async function HomePage() {
             <HowItWorksCard
               step="1"
               title="Write Your Legacy"
-              subtitle="Secure & Private"
-              description="Create letters, messages, and memories for your family in a secure vault."
+              subtitle="Capture Moments"
+              description="Write a quick memory, add a photo, and save it for someone you love."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -90,8 +90,8 @@ export default async function HomePage() {
             <HowItWorksCard
               step="2"
               title="Organize & Share"
-              subtitle="Family Access"
-              description="Designate trusted family members to access your legacy when needed."
+              subtitle="By Person"
+              description="Keep memories organized by name so each person has their own timeline."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -102,8 +102,8 @@ export default async function HomePage() {
             <HowItWorksCard
               step="3"
               title="Peace of Mind"
-              subtitle="Forever Secure"
-              description="Your words are encrypted, backed up, and preserved for generations to come."
+              subtitle="Private & Secure"
+              description="Your notes and photos stay private, encrypted, and always in your control."
               icon={
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -130,15 +130,15 @@ export default async function HomePage() {
             />
             
             <FeaturePreviewCard
-              title="Legacy Letters"
-              preview="Letter to My Daughter • release: wedding day"
+              title="Keepsakes"
+              preview="A short memory saved today, ready to revisit later"
               microCTA="Try This"
               href="/auth/signup"
             />
             
             <FeaturePreviewCard
-              title="Bible Verses"
-              preview="Daily Bible verses that inspire reflection and growth"
+              title="Moments & memories"
+              preview="Photos and notes for the people who matter—organized by name, with optional AI polish"
               microCTA="Try This"
               href="/auth/signup"
             />
@@ -152,7 +152,7 @@ export default async function HomePage() {
       <section id="pricing" className="py-24 px-6 md:px-8">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            Choose Your Legacy Journey
+            Choose Your Plan
           </h2>
           
           <PricingTable />
@@ -169,7 +169,7 @@ export default async function HomePage() {
           <div className="space-y-8">
             <FAQItem
               question="Is this faith-specific?"
-              answer="Faith-friendly, not pushy. You control content."
+              answer="No. It is built for anyone who wants to capture meaningful memories."
             />
             
             <FAQItem
@@ -179,7 +179,7 @@ export default async function HomePage() {
             
             <FAQItem
               question="Can my spouse see it?"
-              answer="Yes—grant access for family sharing and shared memories."
+              answer="You control what is shared and who can access it."
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export default async function HomePage() {
           </div>
           
           <p className="text-sm text-gray-500">
-            Encrypted storage · Cancel anytime · Your story, preserved forever. Your voice, heard beyond your lifetime.
+            Encrypted storage · Cancel anytime · Your memories, organized for the people who matter most.
           </p>
         </div>
       </section>
@@ -223,7 +223,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <p className="text-gray-400 text-sm">
-            Your life&apos;s story, preserved and delivered.
+            Capture what matters. Keep it close.
           </p>
         </div>
       </footer>
@@ -318,10 +318,10 @@ function PricingTable() {
         period=""
         description="Perfect for getting started"
         features={[
-          "3 legacy notes",
-          "Voice recordings",
-          "Family sharing",
-          "Email reminders"
+          "3 saved keepsakes",
+          "10 people in Memories",
+          "Unlimited daily reflections",
+          "Basic support"
         ]}
         cta="Start Free"
         href="/auth/signup"
@@ -332,13 +332,13 @@ function PricingTable() {
         name="Pro"
         price="$9.99"
         period="/mo"
-        description="Complete legacy platform"
+        description="For families who want more"
         features={[
-          "Unlimited legacy notes",
-          "Unlimited voice recordings",
-          "Advanced family sharing",
+          "Unlimited saved keepsakes",
+          "Unlimited people in Memories",
+          "AI writing tools (grammar + expansion)",
           "Priority support",
-          "Premium templates"
+          "Advanced organization"
         ]}
         cta="Upgrade to Pro"
         href="/auth/signup"

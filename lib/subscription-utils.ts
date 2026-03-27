@@ -114,7 +114,7 @@ export async function checkLegacyNoteLimit(userId: string): Promise<FeatureLimit
     canCreate,
     message: canCreate 
       ? undefined 
-      : `You've reached your limit of ${limit} legacy notes. Upgrade to Pro for unlimited notes.`
+      : `You've reached your limit of ${limit} saved keepsakes. Upgrade to Pro for unlimited keepsakes.`
   }
 }
 
@@ -167,7 +167,7 @@ export async function checkFamilyConnectionLimit(userId: string): Promise<Featur
     canCreate,
     message: canCreate 
       ? undefined 
-      : `You've reached your limit of ${limit} family connections. Upgrade to Pro for unlimited connections.`
+      : `You've reached your limit of ${limit} people in Memories. Upgrade to Pro for unlimited people.`
   }
 }
 
@@ -191,7 +191,7 @@ export async function checkVoiceRecordingLimit(userId: string): Promise<FeatureL
     current: 0,
     limit: 0,
     canCreate: false,
-    message: 'Voice recordings are available for Pro members. Upgrade to Pro to record and save voice messages.'
+    message: 'Voice recordings are available for Pro members. Upgrade to Pro to record and save voice keepsakes.'
   }
 }
 
@@ -211,7 +211,7 @@ export async function checkLegacyLetterAttachmentLimit(
   if (isVideo && subscription.limits.legacyNotes !== -1) {
     return {
       canAdd: false,
-      message: 'Video attachments are available for Pro members. Upgrade to Pro to add videos to your legacy letters.',
+      message: 'Video attachments are available for Pro members. Upgrade to Pro to add videos to your keepsakes.',
       upgradeRequired: true
     }
   }
@@ -220,7 +220,7 @@ export async function checkLegacyLetterAttachmentLimit(
   if (subscription.plan === 'free' && currentAttachmentCount >= 3) {
     return {
       canAdd: false,
-      message: `You've reached the limit of 3 attachments per letter. Upgrade to Pro for unlimited attachments.`,
+      message: `You've reached the limit of 3 attachments per keepsake. Upgrade to Pro for unlimited attachments.`,
       upgradeRequired: true
     }
   }

@@ -89,7 +89,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
           </div>
           <h3 className="text-lg font-semibold text-blue-800 mb-2">Schedule Delivery</h3>
           <p className="text-blue-600 mb-4">
-            Write now, deliver later. Schedule this legacy note to be sent at the perfect moment.
+            Write now, deliver later. Schedule this keepsake to be sent at the perfect moment.
           </p>
           <PremiumButton
             onClick={() => setIsEnabled(true)}
@@ -115,7 +115,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
           </div>
           <h3 className="text-lg font-semibold text-green-800 mb-2">Delivery Scheduled!</h3>
           <p className="text-green-600 mb-4">
-            Your legacy note will be delivered on {new Date(`${deliveryDate}T${deliveryTime}`).toLocaleString()}
+            Your keepsake will be delivered on {new Date(`${deliveryDate}T${deliveryTime}`).toLocaleString()}
           </p>
           <div className="text-sm text-green-600">
             Recipients: {recipients.filter(r => r.email && r.name).map(r => r.name).join(', ')}
@@ -134,7 +134,7 @@ export function ScheduledDelivery({ onScheduleDelivery, disabled = false }: Sche
           </div>
           <div>
             <h3 className="text-lg font-semibold text-blue-800">Schedule Delivery</h3>
-            <p className="text-sm text-blue-600">Set when this legacy note should be delivered</p>
+            <p className="text-sm text-blue-600">Set when this keepsake should be delivered</p>
           </div>
         </div>
         <button

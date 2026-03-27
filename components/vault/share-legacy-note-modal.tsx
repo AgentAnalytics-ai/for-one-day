@@ -98,11 +98,11 @@ export function ShareLegacyNoteModal({ isOpen, onClose, vaultItem }: ShareLegacy
         throw new Error(errorMsg)
       }
 
-      toast.success('Legacy note shared successfully!')
+      toast.success('Keepsake shared successfully!')
       onClose()
     } catch (error) {
       console.error('Error sharing:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to share legacy note')
+      toast.error(error instanceof Error ? error.message : 'Failed to share keepsake')
     } finally {
       setIsSending(false)
     }
@@ -116,7 +116,7 @@ export function ShareLegacyNoteModal({ isOpen, onClose, vaultItem }: ShareLegacy
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={onClose}>
       <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-medium text-gray-900">Share Legacy Note</h2>
+          <h2 className="text-xl font-medium text-gray-900">Share Keepsake</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"

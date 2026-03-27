@@ -130,7 +130,7 @@ export function WeeklyReviewCard({ userId }: WeeklyReviewCardProps) {
               `}
             >
               <Link
-                href={hasReflection ? `/reflections/history?date=${dateString}` : '/reflection'}
+                href={hasReflection ? `/reflections/history?date=${dateString}` : '/dashboard'}
                 className="block"
               >
                 {/* Story Card - Instagram Style */}

@@ -278,7 +278,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
     }
     
     if (userPlan === 'free' && currentCount >= 3) {
-      alert('Free users can add up to 3 attachments per letter. Upgrade to Pro for unlimited attachments.')
+      alert('Free users can add up to 3 attachments per keepsake. Upgrade to Pro for unlimited attachments.')
       setUpgradeFeature('Unlimited Attachments')
       setShowUpgradeModal(true)
       return
@@ -427,7 +427,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
 
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to update legacy note')
+          throw new Error(errorData.error || 'Failed to update keepsake')
         }
 
         const result = await response.json()
@@ -436,7 +436,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
           onClose()
           resetForm()
         } else {
-          throw new Error(result.error || 'Failed to update legacy note')
+          throw new Error(result.error || 'Failed to update keepsake')
         }
       } else {
         // Create new text note using API
@@ -469,7 +469,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             setShowUpgradeModal(true)
             return
           }
-          throw new Error(errorData.error || 'Failed to save legacy note')
+          throw new Error(errorData.error || 'Failed to save keepsake')
         }
 
         const result = await response.json()
@@ -478,12 +478,12 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
           onClose()
           resetForm()
         } else {
-          throw new Error(result.error || 'Failed to save legacy note')
+          throw new Error(result.error || 'Failed to save keepsake')
         }
       }
     } catch (error) {
-      console.error('Error creating legacy note:', error)
-      alert(error instanceof Error ? error.message : 'Failed to save legacy note. Please try again.')
+      console.error('Error creating keepsake:', error)
+      alert(error instanceof Error ? error.message : 'Failed to save keepsake. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -547,9 +547,9 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {editingItem ? 'Edit Legacy Note' : 'Create Legacy Note'}
+                  {editingItem ? 'Edit Keepsake' : 'Create Keepsake'}
                 </h2>
-                <p className="text-sm text-gray-500">Share your heart with your family</p>
+                <p className="text-sm text-gray-500">Save a message for someone you love</p>
               </div>
             </div>
             <button
@@ -565,7 +565,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
             <div className="px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-700">
-                  Legacy Notes Used: <span className="font-semibold text-blue-600">{legacyNoteCount} / 3</span>
+                  Keepsakes Used: <span className="font-semibold text-blue-600">{legacyNoteCount} / 3</span>
                 </span>
                 {legacyNoteCount >= 3 && (
                   <span className="text-xs text-red-600 font-medium">Upgrade needed</span>
@@ -680,7 +680,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  Only selected family members will be able to view this legacy note
+                  Only selected family members will be able to view this keepsake
                 </p>
               </div>
             )}
@@ -978,7 +978,7 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
                 ) : (
                   <>
                     <Heart className="w-4 h-4" />
-                    {editingItem ? 'Update Legacy Note' : 'Create Legacy Note'}
+                    {editingItem ? 'Update Keepsake' : 'Create Keepsake'}
                   </>
                 )}
               </button>

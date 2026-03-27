@@ -35,13 +35,13 @@ export default async function SignUpPage({
           {/* Hero Section - More spacing */}
           <div className="text-center mb-10 sm:mb-12">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-light text-gray-900 mb-4 sm:mb-5 leading-tight tracking-tight">
-              {inviteFamilyId ? 'Join your family' : 'Start your legacy journey'}
+              {inviteFamilyId ? 'Join your family' : 'Start your memory journey'}
             </h1>
             
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-sm mx-auto font-light">
               {inviteFamilyId 
                 ? 'You\'ve been invited to join a family on For One Day.'
-                : 'Join thousands documenting their life story.'
+                : 'Join people capturing memories that matter.'
               }
             </p>
           </div>
@@ -179,7 +179,7 @@ export default async function SignUpPage({
           {/* Trust Elements */}
           <div className="mt-10 text-center">
             <p className="text-xs text-gray-500 leading-relaxed font-medium">
-              Secure · Fast · Your legacy vault
+              Secure · Fast · Your private memory space
             </p>
           </div>
           </div>

@@ -63,17 +63,17 @@ export async function PATCH(
 
     if (updateError) {
       console.error('Error updating vault item:', updateError)
-      return NextResponse.json({ error: 'Failed to update legacy note' }, { status: 500 })
+      return NextResponse.json({ error: 'Failed to update keepsake' }, { status: 500 })
     }
 
     return NextResponse.json({ 
       success: true, 
       vaultItemId: vaultItem.id,
-      message: 'Legacy note updated successfully' 
+      message: 'Keepsake updated successfully' 
     })
 
   } catch (error) {
-    console.error('Error in update legacy note API:', error)
+    console.error('Error in update keepsake API:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -124,7 +124,7 @@ export default function VaultPage() {
       }
     } catch (error) {
       console.error('Error loading vault items:', error)
-      toast.error('Failed to load legacy notes')
+      toast.error('Failed to load keepsakes')
     }
   }
 
@@ -176,9 +176,9 @@ export default function VaultPage() {
     setSelectedTemplate(null)
     loadVaultItems()
     loadUsage() // Reload usage counter
-    setSuccessMessage('Legacy note created successfully!')
+    setSuccessMessage('Keepsake created successfully!')
     setShowSuccess(true)
-    toast.success('Legacy note created successfully!')
+    toast.success('Keepsake created successfully!')
   }
 
   const handleRefresh = async () => {
@@ -186,7 +186,7 @@ export default function VaultPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this legacy note?')) return
+    if (!confirm('Are you sure you want to delete this keepsake?')) return
 
     const supabase = createClient()
     const { error } = await supabase.from('vault_items').delete().eq('id', id)
@@ -245,13 +245,13 @@ export default function VaultPage() {
             <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
             </svg>
-            <span className="font-semibold text-primary-900">Legacy Vault</span>
+            <span className="font-semibold text-primary-900">Keepsakes</span>
           </div>
           <h1 className="text-4xl font-serif font-bold text-gray-900 mb-3">
-            Preserve Your Legacy
+            Keep What Matters
           </h1>
           <p className="text-lg text-gray-600 font-medium">
-            Your wisdom, love, and life lessons for generations to come
+            Notes, photos, and messages for the people you love
           </p>
         </div>
 
@@ -265,7 +265,7 @@ export default function VaultPage() {
                 usage.limit === -1 ? (usage.current || 0) : `${usage.current || 0}/${usage.limit}`
               )}
             </div>
-            <div className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Legacy Notes</div>
+            <div className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Saved Keepsakes</div>
           </PremiumCard>
           <PremiumCard className="p-6 text-center min-h-[120px] flex flex-col justify-center border-2 border-primary-200">
             <div className="text-4xl font-bold text-primary-700 mb-2 min-h-[40px] flex items-center justify-center">
@@ -292,10 +292,10 @@ export default function VaultPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">
-                  You&apos;ve used {usage.current} of {usage.limit} free letters
+                  You&apos;ve used {usage.current} of {usage.limit} free keepsakes
                 </h3>
                 <p className="text-gray-700 mb-6 font-medium leading-relaxed">
-                  What happens if you need to write more? Upgrade to Pro for unlimited letters, 
+                  Need to save more? Upgrade to Pro for unlimited keepsakes,
                   scheduled delivery, and emergency access features.
                 </p>
                 <Link href="/upgrade">
@@ -312,7 +312,7 @@ export default function VaultPage() {
         <PremiumCard className="p-8 border-2 border-primary-200" data-tour="create">
           <div className="text-center">
             <h2 className="text-3xl font-serif font-bold text-gray-900 mb-4">
-              Create a Legacy Note
+              Create a Keepsake
             </h2>
             <p className="text-lg text-gray-600 mb-8 font-medium">
               Choose from our professional templates or create your own
@@ -323,7 +323,7 @@ export default function VaultPage() {
               className="px-8"
               disabled={usage.limit !== -1 && usage.current >= usage.limit}
             >
-              {usage.limit !== -1 && usage.current >= usage.limit ? 'Limit Reached' : 'Create New Note'}
+              {usage.limit !== -1 && usage.current >= usage.limit ? 'Limit Reached' : 'Create Keepsake'}
             </PremiumButton>
           </div>
         </PremiumCard>
@@ -390,9 +390,9 @@ export default function VaultPage() {
           )}
         </div>
 
-        {/* Legacy Notes */}
+        {/* Keepsakes */}
         <div data-tour="vault">
-          <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Legacy Notes</h2>
+          <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Keepsakes</h2>
           {vaultItems && vaultItems.length === 0 ? (
             <PremiumCard className="p-12 text-center bg-gradient-to-br from-primary-50 via-primary-50/50 to-secondary-50 border-2 border-primary-200">
               <div className="w-24 h-24 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl ring-4 ring-primary-200">
@@ -402,34 +402,33 @@ export default function VaultPage() {
               </div>
               
               <h3 className="text-2xl font-serif font-medium text-gray-900 mb-3">
-                Your Family&apos;s Future Starts Here
+                Your Memory Space Starts Here
               </h3>
               
               <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
-                Imagine your daughter on her wedding day, reading a letter you wrote today. 
-                Or your son facing a tough decision, guided by wisdom you shared years ago.
+                Save a note, photo, or message today so your loved ones can revisit it later.
               </p>
               
               <div className="bg-white/80 backdrop-blur rounded-lg p-6 mb-8 max-w-xl mx-auto">
-                <p className="text-gray-800 font-medium mb-3">Most powerful first letters:</p>
+                <p className="text-gray-800 font-medium mb-3">Great first keepsakes:</p>
                 <ul className="text-left text-gray-700 space-y-2">
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span><strong>&quot;If I Die Tomorrow&quot;</strong> - Your most important values</span>
+                    <span><strong>&quot;A Note for Hard Days&quot;</strong> - Encouragement they can return to</span>
                   </li>
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span><strong>&quot;Wedding Day Letter&quot;</strong> - For their biggest day</span>
+                    <span><strong>&quot;Wedding Day Note&quot;</strong> - Words for a milestone moment</span>
                   </li>
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span><strong>&quot;Life Lessons&quot;</strong> - Wisdom you wish you knew earlier</span>
+                    <span><strong>&quot;Life Lessons&quot;</strong> - Advice and values from your own journey</span>
                   </li>
                 </ul>
               </div>
@@ -440,11 +439,11 @@ export default function VaultPage() {
                 className="px-10 py-4 text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
                 data-tour="create"
               >
-                Write Your First Letter (5 minutes)
+                Save Your First Keepsake (5 minutes)
               </PremiumButton>
               
               <p className="text-sm text-gray-500 mt-4">
-                {usage.limit === -1 ? 'Unlimited letters with Pro' : `${usage.limit - usage.current} free letters remaining`}
+                {usage.limit === -1 ? 'Unlimited keepsakes with Pro' : `${usage.limit - usage.current} free keepsakes remaining`}
               </p>
             </PremiumCard>
           ) : (

@@ -16,16 +16,16 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 'today',
     title: 'Today',
-    description: 'Start here each day. See your daily verse and reflection prompt.',
+    description: 'Capture photos and short notes for someone you love. Optional AI helps polish your words.',
     target: 'a[href="/dashboard"]',
     href: '/dashboard'
   },
   {
-    id: 'reflection',
-    title: 'Reflection',
-    description: 'Write your daily journal entry. Document your thoughts and prayers.',
-    target: 'a[href="/reflection"]',
-    href: '/reflection'
+    id: 'memories',
+    title: 'Memories',
+    description: 'Review everything you’ve saved, organized by person.',
+    target: 'a[href="/memories"]',
+    href: '/memories'
   },
   {
     id: 'vault',

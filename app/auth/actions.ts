@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { sendWelcomeEmail } from '@/lib/email'
 
 const emailSchema = z.string().email()
 
@@ -97,13 +98,9 @@ export async function signUp(formData: FormData) {
     await initializeUserProfile(data.user.id, fullName)
   }
 
-  // Send welcome email via Resend (async, don't wait for it)
+  // Send welcome email via Resend (non-blocking for signup success)
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-welcome-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name: fullName })
-    })
+    await sendWelcomeEmail({ to: email, name: fullName })
   } catch (err) {
     console.error('Failed to send welcome email:', err)
     // Don't fail signup if email fails

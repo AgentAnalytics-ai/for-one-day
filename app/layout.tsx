@@ -9,10 +9,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://foroneday.app'),
   title: {
-    default: 'For One Day - Your Personal Legacy Vault | Document Your Life & Final Wishes',
+    default: 'For One Day - Capture Memories for People You Love',
     template: '%s | For One Day'
   },
-  description: 'Document your life, preserve your final wishes, and create your legacy. Secure personal vault for journaling, storing important documents, and scheduled delivery to loved ones.',
+  description: 'Capture meaningful memories for people you love. Save notes and photos, stay consistent with daily prompts, and unlock Pro AI writing tools when you are ready.',
   viewport: {
     width: 'device-width',
     initialScale: 1,
@@ -21,18 +21,16 @@ export const metadata: Metadata = {
     viewportFit: 'cover', // For iPhone notch support
   },
   keywords: [
-    'personal legacy vault',
-    'document final wishes',
-    'secure life documentation',
-    'personal archive',
-    'legacy planning',
-    'document your life',
-    'preserve legacy',
-    'secure vault',
-    'life documentation',
-    'final wishes storage',
-    'scheduled delivery',
-    'legacy letters'
+    'memory journal app',
+    'capture memories',
+    'family memories',
+    'daily memory prompts',
+    'memory timeline',
+    'save notes and photos',
+    'loved ones memories',
+    'ai writing assistant',
+    'pro writing tools',
+    'private memory vault'
   ],
   authors: [{ name: 'For One Day' }],
   creator: 'For One Day',
@@ -50,21 +48,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://foroneday.app',
     siteName: 'For One Day',
-    title: 'For One Day - Your Personal Legacy Vault',
-    description: 'Document your life, preserve your wishes, and deliver your legacy—on your timeline.',
+    title: 'For One Day - Capture Memories for People You Love',
+    description: 'Capture notes and photos that matter, organized by person, with optional Pro AI writing tools.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'For One Day - Your Personal Legacy Vault',
+        alt: 'For One Day - Capture Memories for People You Love',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Your Personal Legacy Vault',
-    description: 'Document your life, preserve your wishes, and deliver your legacy—on your timeline.',
+    title: 'Capture Memories for People You Love',
+    description: 'Capture notes and photos that matter, organized by person, with optional Pro AI writing tools.',
     images: ['/og-image.png'],
   },
   icons: {
