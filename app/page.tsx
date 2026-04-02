@@ -22,9 +22,9 @@ export default async function HomePage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center px-6 md:px-8 pt-16 md:pt-24">
-        <div className="text-center max-w-4xl mx-auto">
-          {/* Hero logo lockup */}
+      <section className="relative flex min-h-[calc(100vh-4.5rem)] items-center justify-center px-6 pb-16 pt-10 md:min-h-[calc(100vh-5rem)] md:px-8 md:pb-24 md:pt-14">
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Sunrise above headline (wordmark is in the header) */}
           <HeroLogoLockup />
 
           {/* Hero Copy */}

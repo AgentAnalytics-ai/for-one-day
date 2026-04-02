@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BrandLogo } from '@/components/brand/brand-logo'
-import { SunMotif } from '@/components/brand/sun-motif'
 
 /**
  * 🎨 2026 Expert-Designed Header Component
@@ -24,10 +23,10 @@ export function Header() {
   return (
     <header className={headerClass} style={{ backgroundColor: '#ffffff' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 py-3 sm:py-4">
-          <Link 
-            href={isDashboard ? "/dashboard" : "/"} 
-            className="group"
+        <div className="flex min-h-14 items-center justify-between py-3 sm:min-h-16 sm:py-3.5">
+          <Link
+            href={isDashboard ? '/dashboard' : '/'}
+            className="group shrink-0"
           >
             {isDashboard ? (
               <div className="relative rounded-lg bg-slate-900 px-4 sm:px-5 py-1.5 sm:py-2 shadow-sm transition-all duration-200 group-hover:shadow-md">
@@ -38,14 +37,11 @@ export function Header() {
                 />
               </div>
             ) : (
-              <div className="inline-flex flex-col items-center gap-2 sm:gap-2.5">
-                <div className="rounded-full bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-                  <SunMotif className="h-7 w-auto" />
-                </div>
-                <span className="font-serif font-semibold tracking-tight text-slate-900 text-xl sm:text-2xl md:text-3xl">
+              <span className="inline-flex items-center justify-center rounded-full bg-[#102A43] px-5 sm:px-6 py-2 shadow-sm transition-all duration-200 group-hover:shadow-md">
+                <span className="font-serif font-light tracking-tight text-white text-base sm:text-lg">
                   For One Day
                 </span>
-              </div>
+              </span>
             )}
           </Link>
 
