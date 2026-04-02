@@ -1,13 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { SubscriptionBadge } from '@/components/ui/subscription-badge'
 import { DynamicStats } from '@/components/dashboard/dynamic-stats'
-import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import { LegacyNotePrompt } from '@/components/dashboard/legacy-note-prompt'
 import { MemoryCaptureCard } from '@/components/memories/memory-capture-card'
 import { RecentMemoriesStrip } from '@/components/memories/recent-memories-strip'
 import { getDailyCapturePrompt } from '@/lib/daily-capture-prompts'
+import { TimeGreeting } from '@/components/dashboard/time-greeting'
+import { SubscriptionBadge } from '@/components/ui/subscription-badge'
+import { FirstKeepsakeCelebration } from '@/components/dashboard/first-keepsake-celebration'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -25,24 +26,18 @@ export default async function DashboardPage() {
   const isPro = profile?.plan === 'pro' || profile?.plan === 'lifetime'
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 md:space-y-12">
+    <div className="space-y-8 md:space-y-10">
       <ScrollReveal>
-        <div className="flex flex-col items-center gap-3 text-center pt-1 md:pt-2">
+        <header className="flex flex-col items-center gap-2 text-center pt-1 md:pt-2">
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Today
+          </span>
           <TimeGreeting />
           <SubscriptionBadge tier={profile?.plan || 'free'} />
-          {(!profile || profile.plan === 'free') && (
-            <div className="mt-1">
-              <Link
-                href="/upgrade"
-                aria-label="Upgrade to Pro plan"
-                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-medium transition-colors"
-              >
-                Upgrade to Pro
-              </Link>
-            </div>
-          )}
-        </div>
+        </header>
       </ScrollReveal>
+
+      <FirstKeepsakeCelebration />
 
       <ScrollReveal delay={100}>
         <MemoryCaptureCard isPro={isPro} dailySuggestion={suggestion} />

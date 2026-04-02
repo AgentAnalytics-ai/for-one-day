@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { signOut } from '@/app/auth/actions'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import { BrandLogo } from '@/components/brand/brand-logo'
+import { NavPillLogo } from '@/components/brand/nav-pill-logo'
 
 interface Profile {
   full_name: string | null
@@ -127,20 +129,18 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
 
   return (
     <>
-      {/* Spacer for top offset */}
-      <div className="h-4 md:h-6"></div>
+      {/* Slim spacer for top offset */}
+      <div className="h-2 md:h-3" />
       
       {/* MOBILE: Top bar with logo + user menu */}
-      <nav className="md:hidden sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <nav className="md:hidden sticky top-0 z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-14">
-            {/* Compact Logo on Left */}
-            <Link href="/dashboard" className="group flex-shrink-0">
-              <div className="px-3 py-1 rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 shadow-sm group-hover:shadow-md transition-all duration-200">
-                <h1 className="text-base font-serif font-light text-white tracking-tight whitespace-nowrap">
-                  For One Day
-                </h1>
-              </div>
+          <div className="flex items-center justify-between h-13">
+            {/* Compact wordmark on Left */}
+            <Link href="/dashboard" className="flex-shrink-0">
+              <span className="text-base font-serif font-semibold tracking-tight text-slate-900">
+                For One Day
+              </span>
             </Link>
             
             {/* User Menu on Right */}
@@ -196,44 +196,42 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
         </div>
       </nav>
 
-      {/* DESKTOP: Original centered logo design */}
-      <nav className="hidden md:block sticky top-0 z-50 bg-white border-b border-gray-200 shadow-md" style={{ backgroundColor: '#ffffff' }}>
+      {/* DESKTOP: Centered wordmark nav */}
+      <nav className="hidden md:block sticky top-0 z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Equal left/right columns so the logo stays optically centered (Benji bar pattern) */}
-          <div className="grid h-16 lg:h-[4.5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
+          <div className="grid min-h-[5rem] lg:min-h-[5.5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 py-2">
             {/* Left: primary nav */}
             <div className="flex min-w-0 items-center justify-start gap-0.5 lg:gap-1">
-              {navItems.map((item) => {
-                const isActive =
-                  item.href === '/dashboard'
-                    ? pathname === '/dashboard'
-                    : pathname === item.href || pathname.startsWith(`${item.href}/`)
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors lg:px-3 ${
-                      isActive
-                        ? 'bg-slate-100 text-slate-900'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-5 [&>svg]:w-5">
-                      {item.icon}
-                    </span>
-                    <span className="hidden lg:inline">{item.name}</span>
-                  </Link>
-                )
-              })}
+            {navItems.map((item) => {
+              const isActive =
+                item.href === '/dashboard'
+                  ? pathname === '/dashboard'
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`)
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`relative inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-white text-slate-900 border border-slate-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  {isActive ? <span className="absolute -top-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-500" /> : null}
+                  <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-5 [&>svg]:w-5">
+                    {item.icon}
+                  </span>
+                  <span className="hidden lg:inline">{item.name}</span>
+                </Link>
+              )
+            })}
             </div>
 
             {/* Center: brand */}
-            <Link href="/dashboard" className="group justify-self-center">
-              <div className="rounded-lg bg-gradient-to-br from-slate-900 to-gray-800 px-4 py-1.5 shadow-md transition-all duration-200 group-hover:shadow-lg sm:px-5 sm:py-2">
-                <span className="whitespace-nowrap font-serif text-lg font-light tracking-tight text-white sm:text-xl md:text-2xl">
-                  For One Day
-                </span>
-              </div>
+            <Link href="/dashboard" className="justify-self-center">
+              <NavPillLogo />
             </Link>
 
             {/* Right: account */}

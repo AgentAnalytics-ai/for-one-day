@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/header'
+import { HeroLogoLockup } from '@/components/marketing/hero-logo-lockup'
 
 /**
  * 🏠 Billion-Dollar UI Landing Page - 2026 Design
@@ -23,6 +24,9 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center px-6 md:px-8 pt-16 md:pt-24">
         <div className="text-center max-w-4xl mx-auto">
+          {/* Hero logo lockup */}
+          <HeroLogoLockup />
+
           {/* Hero Copy */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light text-gray-900 mb-8 leading-tight">
             Hold on to today.<br />

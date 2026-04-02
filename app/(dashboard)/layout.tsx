@@ -64,13 +64,16 @@ export default async function DashboardLayout({
       <SkipLink />
       <KeyboardShortcuts />
       <NavigationTour />
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-40">
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100/80 shadow-sm">
         <SimpleNav profile={profile} />
       </div>
       
-      {/* Add bottom padding on mobile for bottom nav and footer - 2026 Meta-level spacing */}
-      <main id="main-content" className="flex-1 w-full py-4 sm:py-6 md:py-8 pb-20 sm:pb-16 md:pb-12">
-        {children}
+      {/* Add bottom padding on mobile for bottom nav and footer - 2026+ Meta-level spacing */}
+      <main
+        id="main-content"
+        className="flex-1 w-full py-5 sm:py-7 md:py-9 pb-20 sm:pb-16 md:pb-12 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="mx-auto max-w-6xl">{children}</div>
       </main>
       
       <SupportFooter />

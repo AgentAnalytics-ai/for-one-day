@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { PremiumCard } from '@/components/ui/premium-card'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { PageHeader } from '@/components/ui/page-header'
@@ -25,6 +26,17 @@ export default function DesignSystemPage() {
         title="Design System (Lite)"
         subtitle="A lightweight source of truth for tokens, typography, and reusable UI patterns."
       />
+
+      <PremiumCard className="p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-slate-700">
+            Need a more “real product” brand feel? Use the Logo Lab to compare icon options.
+          </p>
+          <Link href="/design/logo-lab" className="text-sm text-blue-800 font-medium hover:underline">
+            Open Logo Lab →
+          </Link>
+        </div>
+      </PremiumCard>
 
       <section className="space-y-4">
         <h2 className="section-title">Color Tokens</h2>

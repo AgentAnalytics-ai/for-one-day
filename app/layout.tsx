@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
@@ -13,12 +13,9 @@ export const metadata: Metadata = {
     template: '%s | For One Day'
   },
   description: 'Capture meaningful memories for people you love. Save notes and photos, stay consistent with daily prompts, and unlock Pro AI writing tools when you are ready.',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-    viewportFit: 'cover', // For iPhone notch support
+  applicationName: 'For One Day',
+  alternates: {
+    canonical: 'https://foroneday.app',
   },
   keywords: [
     'memory journal app',
@@ -66,10 +63,21 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   icons: {
-    icon: '/icon.png',
+    icon: [
+      { url: '/icon', type: 'image/png', sizes: '48x48' },
+      { url: '/icon', type: 'image/png', sizes: '32x32' },
+    ],
     apple: '/apple-icon.png',
   },
   manifest: '/manifest.json',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -80,6 +88,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'For One Day',
+              url: 'https://foroneday.app',
+              logo: 'https://foroneday.app/icon',
+            }),
+          }}
+        />
         <SmoothScroll>
           <Providers>
             {children}

@@ -398,6 +398,10 @@ export function CreateLegacyNoteModal({ isOpen, onClose, onSuccess, selectedTemp
 
         const result = await response.json()
         if (result.success) {
+          // Show the one-time celebration after a user's first successful keepsake save.
+          if (legacyNoteCount === 0 && typeof window !== 'undefined') {
+            window.localStorage.setItem('fod-show-first-keepsake-celebration', '1')
+          }
           onSuccess()
           onClose()
           resetForm()
