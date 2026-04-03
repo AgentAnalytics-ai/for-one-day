@@ -45,10 +45,14 @@ for-one-day/
 ├── next.config.mjs               # Next.js config
 ├── package.json                  # Dependencies
 │
-├── README.md                     # Project overview
-├── SETUP.md                      # Detailed setup guide
-├── NEXT_STEPS.md                 # Quick start guide
-└── PROJECT_STRUCTURE.md          # This file
+├── README.md                     # Project overview (repository root)
+└── docs/
+    ├── product-language-guide.md
+    ├── internal/
+    │   ├── SETUP.md              # Detailed setup guide
+    │   ├── NEXT_STEPS.md         # Quick start guide
+    │   └── PROJECT_STRUCTURE.md # This file
+    └── ...
 ```
 
 ## Key Files Explained
