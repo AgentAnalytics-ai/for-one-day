@@ -6,8 +6,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createCheckoutSession } from '@/app/actions/billing-actions'
+import { blockInProduction } from '@/lib/route-guards'
 
 export async function GET() {
+  const blocked = blockInProduction()
+  if (blocked) return blocked
+
   try {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()

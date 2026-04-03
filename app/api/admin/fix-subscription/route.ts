@@ -1,41 +1,33 @@
 /**
- * Admin API: Manually Fix User Subscription
- * Use this to manually update a user's subscription if webhook failed
- * 
- * SECURITY: Add authentication/authorization before using in production!
+ * Admin API: Manually Fix User Subscription (e.g. if webhook failed).
+ *
+ * Protected by ADMIN_API_SECRET (Authorization: Bearer … or x-admin-secret).
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
+import { requireAdminApiSecret } from '@/lib/route-guards'
+import { createServiceRoleClient } from '@/lib/supabase/service-role'
+import { findUserIdByEmail } from '@/lib/auth-admin'
 
 export async function POST(request: NextRequest) {
-  try {
-    // SECURITY: Add admin check here
-    // const supabase = await createClient()
-    // const { data: { user } } = await supabase.auth.getUser()
-    // if (!user || user.email !== 'your-admin-email@example.com') {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    // }
+  const denied = requireAdminApiSecret(request)
+  if (denied) return denied
 
+  try {
     const { email, plan = 'pro' } = await request.json()
 
     if (!email) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
-    const supabase = await createClient()
-
-    // Find user by email in auth.users
-    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers()
-    
-    if (authError) {
-      return NextResponse.json({ error: 'Failed to search users' }, { status: 500 })
+    const supabase = createServiceRoleClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Server misconfigured (service role)' }, { status: 503 })
     }
-    
-    const user = users?.find(u => u.email === email)
-    
-    if (!user) {
+
+    const userId = await findUserIdByEmail(email)
+    if (!userId) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
@@ -43,14 +35,14 @@ export async function POST(request: NextRequest) {
     const { data: userData } = await supabase
       .from('profiles')
       .select('user_id, stripe_customer_id')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
     // Update profile
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ plan })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 })
@@ -79,7 +71,7 @@ export async function POST(request: NextRequest) {
               .from('subscriptions')
               .upsert({
                 id: subscription.id,
-                user_id: user.id,
+                user_id: userId,
                 status: subscription.status,
                 price_id: subscription.items.data[0]?.price.id,
                 current_period_start: new Date((subscription as any).current_period_start * 1000).toISOString(),
@@ -97,7 +89,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       message: `Updated ${email} to ${plan} plan`,
-      userId: user.id
+      userId
     })
 
   } catch (error) {

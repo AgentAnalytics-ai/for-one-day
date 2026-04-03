@@ -1,93 +1,96 @@
 /**
  * 🚨 Emergency Access Request API
- * Handles requests from family members for emergency vault access
+ * Public form: resolves account holder when possible, logs request, notifies support via Resend.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { findUserIdByEmail } from '@/lib/auth-admin'
+import { sendEmergencyAccessNotification } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    
-    const accountHolderEmail = formData.get('account_holder_email') as string
-    const requesterName = formData.get('requester_name') as string
-    const requesterEmail = formData.get('requester_email') as string
-    const requesterPhone = formData.get('requester_phone') as string
-    const requesterRelationship = formData.get('requester_relationship') as string
-    const requestReason = formData.get('request_reason') as string
-    const additionalInfo = formData.get('additional_info') as string
 
-    // Validate required fields
-    if (!accountHolderEmail || !requesterName || !requesterEmail || !requesterRelationship || !requestReason) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      )
+    const accountHolderEmail = (formData.get('account_holder_email') as string)?.trim()
+    const requesterName = (formData.get('requester_name') as string)?.trim()
+    const requesterEmail = (formData.get('requester_email') as string)?.trim()
+    const requesterPhone = (formData.get('requester_phone') as string)?.trim()
+    const requesterRelationship = (formData.get('requester_relationship') as string)?.trim()
+    const requestReason = (formData.get('request_reason') as string)?.trim()
+    const additionalInfo = (formData.get('additional_info') as string)?.trim()
+
+    if (
+      !accountHolderEmail ||
+      !requesterName ||
+      !requesterEmail ||
+      !requesterRelationship ||
+      !requestReason
+    ) {
+      return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 })
     }
+
+    const userId = await findUserIdByEmail(accountHolderEmail)
 
     const supabase = await createClient()
 
-    // Find the user by email
-    const { data: authUser } = await supabase.auth.admin.listUsers()
-    const targetUser = authUser.users.find(u => u.email === accountHolderEmail)
-
-    if (!targetUser) {
-      // Don't reveal if user exists or not (security)
-      // Still log the request for manual review
-    }
-
-    // Create emergency access request
-    const { error: insertError } = await supabase
+    const { data: inserted, error: insertError } = await supabase
       .from('emergency_access_requests')
       .insert({
-        user_id: targetUser?.id || null,
+        user_id: userId,
         requester_name: requesterName,
         requester_email: requesterEmail,
         requester_phone: requesterPhone || null,
         relationship: requesterRelationship,
         reason: `${requestReason}: ${additionalInfo || ''}`.trim(),
-        status: 'pending'
+        status: 'pending',
       })
+      .select('id')
+      .single()
 
     if (insertError) {
       console.error('Error creating emergency access request:', insertError)
       return NextResponse.json(
-        { success: false, error: 'Failed to submit request. Please email support@foroneday.app directly.' },
+        {
+          success: false,
+          error: 'Failed to submit request. Please email support@foroneday.app directly.',
+        },
         { status: 500 }
       )
     }
 
-    // Send notification email to admin (support@foroneday.app)
+    const requestId = inserted?.id ?? 'pending'
+    const accountHolderLabel = accountHolderEmail.split('@')[0] || 'Account holder'
+
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-admin-notification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'emergency_access_request',
-          accountHolderEmail,
-          requesterName,
-          requesterEmail,
-          relationship: requesterRelationship,
-          reason: requestReason
-        })
+      await sendEmergencyAccessNotification({
+        requestId,
+        accountHolderName: accountHolderLabel,
+        accountHolderEmail,
+        requesterName,
+        requesterEmail,
+        requesterRelationship,
+        requestReason,
+        additionalInfo: additionalInfo || '',
+        requesterPhone: requesterPhone || '',
       })
     } catch (emailError) {
       console.error('Failed to send admin notification:', emailError)
-      // Don't fail the request if email fails
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Your request has been submitted successfully. We will contact you within 1-2 business days to verify your identity and process your request.'
+      message:
+        'Your request has been submitted successfully. We will contact you within 1-2 business days to verify your identity and process your request.',
     })
-
   } catch (error) {
     console.error('Emergency access request error:', error)
     return NextResponse.json(
-      { success: false, error: 'An unexpected error occurred. Please email support@foroneday.app directly.' },
+      {
+        success: false,
+        error: 'An unexpected error occurred. Please email support@foroneday.app directly.',
+      },
       { status: 500 }
     )
   }
 }
-

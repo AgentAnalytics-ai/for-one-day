@@ -4,8 +4,12 @@
  */
 
 import { NextResponse } from 'next/server'
+import { blockInProduction } from '@/lib/route-guards'
 
 export async function GET() {
+  const blocked = blockInProduction()
+  if (blocked) return blocked
+
   try {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
     const successUrl = `${siteUrl}/dashboard?success=true`

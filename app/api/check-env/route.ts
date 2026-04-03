@@ -5,8 +5,12 @@
 
 import { NextResponse } from 'next/server'
 import { validateStripeUrls } from '@/lib/stripe'
+import { blockInProduction } from '@/lib/route-guards'
 
 export async function GET() {
+  const blocked = blockInProduction()
+  if (blocked) return blocked
+
   try {
     const checks = {
       timestamp: new Date().toISOString(),

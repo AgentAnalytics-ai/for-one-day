@@ -5,8 +5,12 @@
 
 import { NextResponse } from 'next/server'
 import { createCheckoutSession } from '@/app/actions/billing-actions'
+import { blockInProduction } from '@/lib/route-guards'
 
 export async function POST() {
+  const blocked = blockInProduction()
+  if (blocked) return blocked
+
   try {
     console.log('Testing checkout session creation...')
     const result = await createCheckoutSession()
@@ -23,7 +27,6 @@ export async function POST() {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString()
     }, { status: 500 })
   }

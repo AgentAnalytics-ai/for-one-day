@@ -1,30 +1,29 @@
 /**
  * Admin API: Sync All Stripe Subscriptions to Database
- * This ensures all active Stripe subscriptions are reflected in the database
- * 
- * SECURITY: Add authentication/authorization before using in production!
- * 
- * Usage: POST /api/admin/sync-stripe-subscriptions
+ *
+ * Protected by ADMIN_API_SECRET (Authorization: Bearer … or x-admin-secret).
+ * Configure a 24+ character secret in the deployment environment before calling.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
+import { requireAdminApiSecret } from '@/lib/route-guards'
+import { createServiceRoleClient } from '@/lib/supabase/service-role'
+import { findUserIdByEmail } from '@/lib/auth-admin'
 
 export async function POST(request: NextRequest) {
-  try {
-    // SECURITY: Add admin check here
-    // const supabase = await createClient()
-    // const { data: { user } } = await supabase.auth.getUser()
-    // if (!user || user.email !== 'your-admin-email@example.com') {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    // }
+  const denied = requireAdminApiSecret(request)
+  if (denied) return denied
 
+  try {
     if (!stripe) {
       return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 })
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
+    if (!supabase) {
+      return NextResponse.json({ error: 'Server misconfigured (service role)' }, { status: 503 })
+    }
     const results = {
       synced: 0,
       errors: 0,
@@ -53,13 +52,9 @@ export async function POST(request: NextRequest) {
           if (customer && !customer.deleted) {
             userId = customer.metadata?.user_id || null
 
-            // Last resort: Find by email
+            // Last resort: Find by email (Auth Admin)
             if (!userId && customer.email) {
-              const { data: { users } } = await supabase.auth.admin.listUsers()
-              const user = users?.find(u => u.email === customer.email)
-              if (user) {
-                userId = user.id
-              }
+              userId = await findUserIdByEmail(customer.email)
             }
           }
         }
@@ -110,13 +105,11 @@ export async function POST(request: NextRequest) {
           throw profileError
         }
 
-        // Get user email for reporting
-        const { data: { users } } = await supabase.auth.admin.listUsers()
-        const user = users?.find(u => u.id === userId)
+        const { data: authUser } = await supabase.auth.admin.getUserById(userId)
 
         results.synced++
         results.details.push({
-          email: user?.email || 'unknown',
+          email: authUser.user?.email || 'unknown',
           status: 'synced',
         })
 
