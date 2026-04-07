@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from '@/lib/toast'
 import { LovedOnesManager, LovedOne } from '@/components/settings/loved-ones-manager'
+import { ProfileAvatar } from '@/components/settings/profile-photo-field'
 
 interface UnsentMessage {
   id: string
@@ -344,22 +345,12 @@ export function UnsentMessagesBox() {
               >
                 {/* Header with Photo */}
                 <div className="flex items-start gap-4 mb-4">
-                  {message.recipient_photo_url ? (
-                    <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={message.recipient_photo_url}
-                        alt={message.recipient_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-xl font-semibold">
-                        {message.recipient_name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+                  <ProfileAvatar
+                    photoRef={message.recipient_photo_url}
+                    name={message.recipient_name}
+                    frameClass="h-16 w-16"
+                    initialClassName="text-xl"
+                  />
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900 truncate">
                       {message.recipient_name}

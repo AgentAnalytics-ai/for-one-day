@@ -1,8 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from '@/lib/toast'
+import {
+  cropFileToSquareJpeg,
+  uploadProfilePhotoBlob,
+  validateProfileImageFile,
+} from '@/lib/profile-photo'
+import { ProfileAvatar, ProfilePhotoField } from '@/components/settings/profile-photo-field'
 
 export interface Child {
   id: string
@@ -21,13 +27,15 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
   const [children, setChildren] = useState<Child[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [photoToRemove, setPhotoToRemove] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoBlob, setPhotoBlob] = useState<Blob | null>(null)
   const [formData, setFormData] = useState({
     child_name: '',
     email_address: '',
     password: '',
-    photo: null as File | null
   })
 
   useEffect(() => {
@@ -88,115 +96,71 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
     }
   }
 
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const revokePreview = useCallback(() => {
+    setPhotoPreview((prev) => {
+      if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev)
+      return null
+    })
+    setPhotoBlob(null)
+  }, [])
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file')
-      return
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be less than 5MB')
-      return
-    }
-
-    setFormData({ ...formData, photo: file })
-
-    // Create preview
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setPhotoPreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
+  const cancelForm = () => {
+    setShowForm(false)
+    setEditingId(null)
+    setPhotoToRemove(false)
+    setFormData({ child_name: '', email_address: '', password: '' })
+    revokePreview()
   }
 
-  const cropAndUploadPhoto = async (file: File): Promise<string | null> => {
+  const startCreate = () => {
+    setEditingId(null)
+    setPhotoToRemove(false)
+    setFormData({ child_name: '', email_address: '', password: '' })
+    revokePreview()
+    setShowForm(true)
+  }
+
+  const startEdit = (child: Child) => {
+    setEditingId(child.id)
+    setFormData({
+      child_name: child.child_name,
+      email_address: child.email_address,
+      password: '',
+    })
+    setPhotoToRemove(false)
+    setPhotoPreview(null)
+    setPhotoBlob(null)
+    setShowForm(true)
+  }
+
+  const handlePickPhoto = async (file: File) => {
+    const err = validateProfileImageFile(file)
+    if (err) {
+      toast.error(err)
+      return
+    }
     try {
-      // Simple crop: create square image from center
-      const img = new Image()
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
-
-      return new Promise((resolve) => {
-        img.onload = async () => {
-          // Calculate square crop from center
-          const size = Math.min(img.width, img.height)
-          const x = (img.width - size) / 2
-          const y = (img.height - size) / 2
-
-          // Set canvas to square (400x400 for profile photos)
-          canvas.width = 400
-          canvas.height = 400
-
-          // Draw cropped and resized image
-          ctx?.drawImage(img, x, y, size, size, 0, 0, 400, 400)
-
-          // Convert to blob
-          canvas.toBlob(async (blob) => {
-            if (!blob) {
-              resolve(null)
-              return
-            }
-
-            // Upload cropped image
-            const supabase = createClient()
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) {
-              resolve(null)
-              return
-            }
-
-            const fileExt = 'jpg' // Always use jpg for cropped images
-            const fileName = `children/${user.id}/${Date.now()}.${fileExt}`
-            
-            const { data, error } = await supabase.storage
-              .from('vault')
-              .upload(fileName, blob, { 
-                upsert: false,
-                contentType: 'image/jpeg'
-              })
-
-            if (error) {
-              console.error('Upload error:', error)
-              console.error('Error details:', JSON.stringify(error, null, 2))
-              // More specific error message
-              if (error.message?.includes('Bucket not found')) {
-                console.error('❌ The "vault" bucket does not exist in Supabase Storage. Please create it in the Supabase dashboard.')
-              } else if (error.message?.includes('new row violates row-level security')) {
-                console.error('❌ Storage RLS policy is blocking upload. Check bucket policies in Supabase.')
-              }
-              resolve(null)
-              return
-            }
-
-            // For private buckets, we need to use getPublicUrl (works if bucket has public access)
-            // OR createSignedUrl for private buckets (requires service role)
-            // Let's try public URL first, if bucket is private this will still return a URL but it won't be accessible
-            const { data: { publicUrl } } = supabase.storage
-              .from('vault')
-              .getPublicUrl(data.path)
-
-            resolve(publicUrl)
-          }, 'image/jpeg', 0.9) // 90% quality
-        }
-
-        img.src = URL.createObjectURL(file)
-      })
-    } catch (error) {
-      console.error('Error processing photo:', error)
-      return null
+      const blob = await cropFileToSquareJpeg(file)
+      setPhotoToRemove(false)
+      revokePreview()
+      const preview = URL.createObjectURL(blob)
+      setPhotoPreview(preview)
+      setPhotoBlob(blob)
+    } catch (e) {
+      console.error(e)
+      toast.error('Could not process that image. Try another file.')
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!formData.child_name || !formData.email_address || !formData.password) {
-      toast.error('Please fill in all required fields')
+
+    if (!formData.child_name?.trim() || !formData.email_address?.trim()) {
+      toast.error('Please fill in name and email')
+      return
+    }
+    if (!editingId && !formData.password) {
+      toast.error('Password is required for a new child profile')
       return
     }
 
@@ -205,32 +169,56 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
     try {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (!user) {
         toast.error('You must be logged in')
         setSubmitting(false)
         return
       }
 
-      // Upload and crop photo if provided
-      let photoUrl: string | null = null
-      if (formData.photo) {
-        try {
-          photoUrl = await cropAndUploadPhoto(formData.photo)
-          if (!photoUrl) {
-            toast.error('Failed to upload photo. Check console for details. Make sure the "vault" bucket exists in Supabase Storage.')
-            setSubmitting(false)
-            return
-          }
-        } catch (error) {
-          console.error('Photo upload exception:', error)
-          toast.error('Photo upload failed. Check browser console (F12) for details.')
+      let photoStoragePath: string | null | undefined
+      if (photoBlob) {
+        const path = await uploadProfilePhotoBlob(photoBlob, 'children')
+        if (!path) {
+          toast.error('Could not upload photo. Please try again.')
           setSubmitting(false)
           return
         }
+        photoStoragePath = path
       }
 
-      // Create child email account with photo URL
+      if (editingId) {
+        const updatePayload: {
+          child_name: string
+          email_address: string
+          password_encrypted?: string
+          photo_url?: string | null
+        } = {
+          child_name: formData.child_name.trim(),
+          email_address: formData.email_address.trim().toLowerCase(),
+        }
+        if (formData.password.trim()) {
+          updatePayload.password_encrypted = btoa(formData.password)
+        }
+        if (photoStoragePath) {
+          updatePayload.photo_url = photoStoragePath
+        } else if (photoToRemove) {
+          updatePayload.photo_url = null
+        }
+
+        const { error } = await supabase
+          .from('child_email_accounts')
+          .update(updatePayload)
+          .eq('id', editingId)
+
+        if (error) throw error
+        toast.success('Child profile updated')
+        cancelForm()
+        await loadChildren()
+        setSubmitting(false)
+        return
+      }
+
       const passwordEncrypted = btoa(formData.password)
 
       const insertData: {
@@ -243,12 +231,11 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
         user_id: user.id,
         child_name: formData.child_name.trim(),
         email_address: formData.email_address.trim().toLowerCase(),
-        password_encrypted: passwordEncrypted
+        password_encrypted: passwordEncrypted,
       }
-      
-      // Only include photo_url if we have one
-      if (photoUrl) {
-        insertData.photo_url = photoUrl
+
+      if (photoStoragePath) {
+        insertData.photo_url = photoStoragePath
       }
 
       const { data: childData, error } = await supabase
@@ -262,34 +249,31 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
         throw error
       }
 
-      toast.success('Child profile created successfully' + (photoUrl ? ' with photo!' : ''))
-      setFormData({ child_name: '', email_address: '', password: '', photo: null })
-      setPhotoPreview(null)
-      setShowForm(false)
-      
-      // Reload children to show the new photo
+      toast.success('Child profile created successfully' + (photoStoragePath ? ' with photo.' : ''))
+      cancelForm()
+
       await loadChildren()
-      
+
       if (onChildCreated && childData) {
         onChildCreated({
           id: childData.id,
           child_name: childData.child_name,
           email_address: childData.email_address,
-          photo_url: photoUrl,
-          created_at: childData.created_at
+          photo_url: photoStoragePath ?? null,
+          created_at: childData.created_at,
         })
       }
     } catch (error) {
-      console.error('Error creating child:', error)
-      let message = 'Failed to create child profile'
-      
+      console.error('Error saving child:', error)
+      let message = editingId ? 'Failed to update child profile' : 'Failed to create child profile'
+
       if (error instanceof Error) {
         message = error.message
         if (message.includes('duplicate') || message.includes('unique')) {
           message = 'A child with this email already exists'
         }
       }
-      
+
       toast.error(message)
     } finally {
       setSubmitting(false)
@@ -316,6 +300,11 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
     }
   }
 
+  const editingChild = useMemo(
+    () => (editingId ? children.find((c) => c.id === editingId) : undefined),
+    [children, editingId]
+  )
+
   if (loading) {
     return <div className="text-center py-8 text-gray-600">Loading...</div>
   }
@@ -334,7 +323,8 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
         </div>
         {showCreateButton && (
           <button
-            onClick={() => setShowForm(true)}
+            type="button"
+            onClick={startCreate}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
           >
             + Add Child
@@ -345,6 +335,9 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
       {/* Create Form */}
       {showForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
+          <h4 className="text-base font-semibold text-gray-900 mb-4">
+            {editingId ? 'Edit child' : 'Add a child'}
+          </h4>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -361,42 +354,31 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Photo (Optional)
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Photo
               </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoSelect}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              
-              {/* Photo Preview */}
-              {photoPreview && (
-                <div className="mt-4">
-                  <p className="text-xs text-gray-600 mb-2">Preview (will be cropped to square):</p>
-                  <div className="relative inline-block">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-300">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={photoPreview}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPhotoPreview(null)
-                        setFormData({ ...formData, photo: null })
-                      }}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
-                    >
-                      ×
-                    </button>
-                  </div>
+              {editingChild?.photo_url && !photoBlob && !photoToRemove && (
+                <div className="mb-3 flex flex-wrap items-center gap-3">
+                  <ProfileAvatar photoRef={editingChild.photo_url} name={editingChild.child_name} />
+                  <button
+                    type="button"
+                    disabled={submitting}
+                    onClick={() => setPhotoToRemove(true)}
+                    className="text-sm text-gray-600 underline-offset-2 hover:text-gray-900 hover:underline"
+                  >
+                    Remove photo
+                  </button>
                 </div>
               )}
+              {photoToRemove && (
+                <p className="mb-2 text-xs text-amber-700">Current photo will be removed when you save.</p>
+              )}
+              <ProfilePhotoField
+                previewUrl={photoPreview}
+                disabled={submitting}
+                onPickFile={handlePickPhoto}
+                onClear={revokePreview}
+              />
             </div>
 
             <div>
@@ -415,29 +397,28 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password *
+                Password{editingId ? '' : ' *'}
               </label>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter password"
-                required
+                placeholder={editingId ? 'Leave blank to keep current password' : 'Enter password'}
+                required={!editingId}
+                autoComplete="new-password"
               />
               <p className="text-xs text-gray-500 mt-1">
-                This will be encrypted and stored securely
+                {editingId
+                  ? 'Only fill this if you want to change the stored password.'
+                  : 'Stored securely for your account only.'}
               </p>
             </div>
 
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => {
-                  setShowForm(false)
-                  setFormData({ child_name: '', email_address: '', password: '', photo: null })
-                  setPhotoPreview(null)
-                }}
+                onClick={cancelForm}
                 className="flex-1 py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
                 Cancel
@@ -447,7 +428,7 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
                 disabled={submitting}
                 className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Saving...' : 'Save'}
+                {submitting ? 'Saving...' : editingId ? 'Update' : 'Save'}
               </button>
             </div>
           </form>
@@ -463,32 +444,27 @@ export function ChildrenManager({ onChildCreated, showCreateButton = true }: Chi
               key={child.id}
               className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-4"
             >
-              {child.photo_url ? (
-                <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={child.photo_url}
-                    alt={child.child_name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-lg font-semibold">
-                    {child.child_name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
+              <ProfileAvatar photoRef={child.photo_url} name={child.child_name} />
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-gray-900 truncate">{child.child_name}</div>
                 <div className="text-sm text-gray-600 truncate">{child.email_address}</div>
               </div>
-              <button
-                onClick={() => handleDelete(child.id)}
-                className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
-              >
-                Delete
-              </button>
+              <div className="flex flex-shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={() => startEdit(child)}
+                  className="rounded-md px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(child.id)}
+                  className="rounded-md px-3 py-1.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>

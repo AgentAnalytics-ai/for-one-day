@@ -1,0 +1,20 @@
+$ErrorActionPreference = "Stop"
+$CommitMessage = "chore: deploy"
+$ExpectedBranch = "main"
+$SkipChecks = $false
+$NoVercel = $false
+if (-not (Test-Path .\package.json)) { throw "Run from repo root (package.json)." }
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "git not found." }
+if (-not $NoVercel -and -not (Get-Command vercel -ErrorAction SilentlyContinue)) { throw "vercel not found: npm i -g vercel" }
+if ((git rev-parse --is-inside-work-tree).Trim() -ne "true") { throw "Not a git repo." }
+$branch = (git branch --show-current).Trim()
+if ($branch -ne $ExpectedBranch) { throw "Branch is $branch, expected $ExpectedBranch" }
+$status = git status --porcelain
+if ($status) {
+  if (-not $SkipChecks) { npm run type-check; npm run lint }
+  if ([string]::IsNullOrWhiteSpace($CommitMessage)) { $CommitMessage = Read-Host "Commit message" }
+  git add -A
+  git commit -m $CommitMessage
+}
+git push origin $branch
+if (-not $NoVercel) { vercel --prod --yes }
