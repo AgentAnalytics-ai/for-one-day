@@ -1,7 +1,7 @@
 import { SunMotif } from '@/components/brand/sun-motif'
 
 /**
- * Desktop header lockup: sun mark above the navy wordmark pill (no icon inside the pill).
+ * Desktop header lockup: sun mark above a clean white wordmark pill.
  */
 type NavPillLogoVariant = 'premium-calm' | 'bold-brand'
 
@@ -13,15 +13,23 @@ export function NavPillLogo({ variant = 'premium-calm' }: NavPillLogoProps) {
   const isBold = variant === 'bold-brand'
 
   return (
-    <div className={`inline-flex flex-col items-center ${isBold ? 'gap-2 sm:gap-2.5' : 'gap-1.5 sm:gap-2'}`}>
-      <SunMotif className={isBold ? 'h-8 w-auto sm:h-10' : 'h-7 w-auto sm:h-8'} aria-hidden />
+    <div
+      className={`inline-flex flex-col items-center transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5 ${
+        isBold ? 'gap-2 sm:gap-2.5' : 'gap-1.5 sm:gap-2'
+      }`}
+    >
+      <SunMotif
+        animated
+        className={isBold ? 'h-8 w-auto sm:h-10' : 'h-7 w-auto sm:h-8'}
+        aria-hidden
+      />
       <div
-        className={`inline-flex items-center justify-center rounded-full bg-[#102A43] shadow-sm ${
+        className={`inline-flex items-center justify-center rounded-full border border-slate-200/90 bg-white shadow-sm transition-shadow duration-200 group-hover:shadow ${
           isBold ? 'px-7 sm:px-8 py-2 sm:py-2.5' : 'px-6 sm:px-7 py-1.5 sm:py-2'
         }`}
       >
         <span
-          className={`font-serif tracking-tight text-white ${
+          className={`font-serif tracking-[-0.01em] text-primary-950 ${
             isBold ? 'text-lg sm:text-xl font-medium' : 'text-base sm:text-lg font-light'
           }`}
         >

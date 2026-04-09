@@ -36,7 +36,7 @@ export function FirstKeepsakeCelebration() {
             animate ? 'scale-100 opacity-100 shadow-md' : 'scale-95 opacity-0'
           }`}
         >
-          <SunMotif className="h-6 w-6" />
+          <SunMotif animated={animate} className="h-6 w-6" />
         </div>
         <div className="flex-1">
           <h3 className="card-heading">A new day in their story</h3>

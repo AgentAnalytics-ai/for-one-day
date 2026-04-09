@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { SimpleNav } from '@/components/dashboard/simple-nav'
 import { SupportFooter } from '@/components/support-footer'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
-import { MobileBottomNav } from '@/components/navigation/mobile-bottom-nav'
 import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts'
 import { SkipLink } from '@/components/ui/skip-link'
 
@@ -60,26 +59,20 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-[100dvh] min-h-screen flex-col bg-gradient-to-b from-slate-100/90 via-slate-50 to-[#eef2f6]">
       <SkipLink />
       <KeyboardShortcuts />
       <NavigationTour />
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100/80 shadow-sm">
-        <SimpleNav profile={profile} />
-      </div>
-      
-      {/* Add bottom padding on mobile for bottom nav and footer - 2026+ Meta-level spacing */}
+      <SimpleNav profile={profile} />
+
       <main
         id="main-content"
-        className="flex-1 w-full py-5 sm:py-7 md:py-9 pb-20 sm:pb-16 md:pb-12 px-4 sm:px-6 lg:px-8"
+        className="flex w-full flex-1 px-4 py-4 pb-[calc(5.75rem+env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:py-7 md:py-9 lg:px-8 lg:pb-12 lg:pt-5"
       >
-        <div className="mx-auto max-w-6xl">{children}</div>
+        <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>
-      
+
       <SupportFooter />
-      
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
     </div>
   )
 }

@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { signOut } from '@/app/auth/actions'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { BrandLogo } from '@/components/brand/brand-logo'
 import { NavPillLogo } from '@/components/brand/nav-pill-logo'
+import { cn } from '@/lib/utils'
 
 interface Profile {
   full_name: string | null
@@ -14,8 +14,9 @@ interface Profile {
 }
 
 /**
- * 🧭 Simple Navigation - Meta/Instagram Style
- * Bottom tab bar on mobile, centered logo on desktop
+ * Primary app navigation.
+ * Uses `lg` (not `md`) for the mobile/desktop split so tablets keep one pattern:
+ * desktop header + bottom tabs on smaller screens — avoids a cramped “desktop” pill row on tablets.
  */
 export function SimpleNav({ profile }: { profile: Profile | null }) {
   const pathname = usePathname()
@@ -78,18 +79,18 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
 
   // Shared dropdown menu component
   const DropdownMenu = () => (
-    <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-      <div className="px-4 py-3 border-b border-gray-100">
-        <p className="text-sm font-medium text-gray-900">{profile?.full_name || 'User'}</p>
-        <p className="text-xs text-gray-500">
-          {profile?.plan === 'pro' || profile?.plan === 'lifetime' ? 'Pro Member' : 'Free Member'}
+    <div className="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-slate-200/90 bg-white py-2 shadow-sm sm:w-64">
+      <div className="border-b border-slate-100 px-4 py-3">
+        <p className="text-sm font-medium text-slate-900">{profile?.full_name || 'User'}</p>
+        <p className="text-xs text-slate-500">
+          {profile?.plan === 'pro' || profile?.plan === 'lifetime' ? 'Pro member' : 'Free plan'}
         </p>
       </div>
-      
+
       <div className="py-1">
         <Link
           href="/settings"
-          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
           onClick={() => setIsDropdownOpen(false)}
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,21 +102,21 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
         
         <Link
           href="/settings"
-          className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
           onClick={() => setIsDropdownOpen(false)}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
-          Subscription Management
+          Subscription
         </Link>
       </div>
-      
-      <div className="border-t border-gray-100 py-1">
+
+      <div className="border-t border-slate-100 py-1">
         <form action={signOut}>
           <button
             type="submit"
-            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -129,78 +130,66 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
 
   return (
     <>
-      {/* Slim spacer for top offset */}
-      <div className="h-2 md:h-3" />
-      
-      {/* MOBILE: Top bar with logo + user menu */}
-      <nav className="md:hidden sticky top-0 z-50 bg-transparent">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-13">
-            {/* Compact wordmark on Left */}
-            <Link href="/dashboard" className="flex-shrink-0">
-              <span className="text-base font-serif font-semibold tracking-tight text-slate-900">
-                For One Day
-              </span>
-            </Link>
-            
-            {/* User Menu on Right */}
-            <div className="relative flex-shrink-0" ref={dropdownRef}>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+      {/* Desktop: breathing room below global safe-area (mobile uses layout safe-area) */}
+      <div className="hidden h-3 lg:block" aria-hidden />
+
+      {/* MOBILE / TABLET: Single bottom tab bar */}
+      <nav
+        className="safe-area-x fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/90 bg-white lg:hidden"
+        aria-label="Main navigation"
+      >
+        <div className="mx-auto flex max-w-lg items-stretch justify-between gap-1 px-2 pt-1.5 pb-safe sm:max-w-xl">
+          {navItems.map((item) => {
+            const isActive =
+              item.href === '/dashboard'
+                ? pathname === '/dashboard'
+                : pathname === item.href || pathname.startsWith(`${item.href}/`)
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'relative flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-1.5 transition-all duration-200',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2',
+                  isActive
+                    ? 'bg-slate-50 text-primary-950'
+                    : 'text-slate-500 active:bg-slate-50'
+                )}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-medium text-gray-700">
-                    {(profile?.full_name || 'User').charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              </button>
-
-              {isDropdownOpen && <DropdownMenu />}
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* MOBILE: Bottom Tab Bar - Meta/Instagram Style */}
-      {/* Enhanced for Meta-level mobile UX: proper touch targets (min 44px), safe area support */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-inset-bottom">
-        <div className="max-w-7xl mx-auto px-2 pb-safe">
-          <div className="flex items-center justify-around h-16 min-h-[64px]">
-            {navItems.map((item) => {
-              const isActive =
-                item.href === '/dashboard'
-                  ? pathname === '/dashboard'
-                  : pathname === item.href || pathname.startsWith(`${item.href}/`)
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex flex-col items-center justify-center gap-1 flex-1 min-h-[44px] px-2 py-2 transition-colors active:bg-gray-50 ${
-                    isActive 
-                      ? 'text-blue-600' 
-                      : 'text-gray-500'
-                  }`}
-                  aria-label={item.name}
+                {isActive ? (
+                  <span
+                    className="absolute top-1 left-1/2 h-0.5 w-6 -translate-x-1/2 rounded-full bg-amber-500"
+                    aria-hidden
+                  />
+                ) : null}
+                <span
+                  className={cn(
+                    '[&>svg]:h-[22px] [&>svg]:w-[22px] transition-transform duration-200',
+                    isActive ? 'text-primary-900' : 'text-slate-400'
+                  )}
                 >
-                  <div className={`${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
-                    {item.icon}
-                  </div>
-                  <span className={`text-xs font-medium ${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
-                    {item.name}
-                  </span>
-                </Link>
-              )
-            })}
-          </div>
+                  {item.icon}
+                </span>
+                <span
+                  className={cn(
+                    'max-w-[4.25rem] truncate text-[11px] font-semibold leading-tight tracking-tight',
+                    isActive ? 'text-primary-950' : 'text-slate-500'
+                  )}
+                >
+                  {item.name}
+                </span>
+              </Link>
+            )
+          })}
         </div>
       </nav>
 
       {/* DESKTOP: Centered wordmark nav */}
-      <nav className="hidden md:block sticky top-0 z-50 bg-transparent">
+      <nav className="sticky top-0 z-50 hidden bg-transparent lg:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Equal left/right columns so the logo stays optically centered (Benji bar pattern) */}
-          <div className="grid min-h-[5rem] lg:min-h-[5.5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 py-2">
+          <div className="grid min-h-[5rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 rounded-[1.25rem] border border-slate-200/80 bg-white px-3 py-2 lg:min-h-[5.25rem]">
             {/* Left: primary nav */}
             <div className="flex min-w-0 items-center justify-start gap-0.5 lg:gap-1">
             {navItems.map((item) => {
@@ -213,13 +202,16 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`relative inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={cn(
+                    'relative inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-white text-slate-900 border border-slate-200 shadow-sm'
+                      ? 'border border-slate-200/90 bg-white text-primary-950 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
+                  )}
                 >
-                  {isActive ? <span className="absolute -top-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-500" /> : null}
+                  {isActive ? (
+                    <span className="absolute -top-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-500" />
+                  ) : null}
                   <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:h-5 [&>svg]:w-5">
                     {item.icon}
                   </span>
@@ -230,7 +222,10 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
             </div>
 
             {/* Center: brand */}
-            <Link href="/dashboard" className="justify-self-center">
+            <Link
+              href="/dashboard"
+              className="group justify-self-center rounded-xl px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+            >
               <NavPillLogo />
             </Link>
 

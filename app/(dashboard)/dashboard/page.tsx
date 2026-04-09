@@ -28,8 +28,8 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8 md:space-y-10">
       <ScrollReveal>
-        <header className="flex flex-col items-center gap-2 text-center pt-1 md:pt-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+        <header className="flex flex-col items-center gap-3 pt-1 text-center md:gap-3.5 md:pt-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
             Today
           </span>
           <TimeGreeting />
@@ -47,7 +47,10 @@ export default async function DashboardPage() {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="section-label">Recent</h2>
-            <Link href="/memories" className="text-sm text-blue-800 hover:underline">
+            <Link
+              href="/memories"
+              className="text-sm font-medium text-primary-800 underline-offset-4 transition-colors hover:text-primary-950 hover:underline"
+            >
               View all
             </Link>
           </div>

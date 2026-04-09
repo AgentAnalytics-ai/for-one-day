@@ -6,8 +6,9 @@ import { Home, Images, Lock, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
- * Mobile Bottom Navigation
- * iOS/Android-style bottom navigation for mobile devices
+ * Legacy component — not mounted in `app/(dashboard)/layout.tsx`.
+ * Dashboard uses `SimpleNav`’s bottom tabs only. Do not add this to the layout alongside SimpleNav
+ * (duplicate nav + mismatched “Today” icon). Kept for reference or one-off experiments.
  */
 export function MobileBottomNav() {
   const pathname = usePathname()
@@ -42,7 +43,7 @@ export function MobileBottomNav() {
   return (
     <>
       {/* Mobile Bottom Navigation - Only visible on mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur border-t border-slate-200 shadow-xl safe-area-inset-bottom md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 shadow-xl backdrop-blur safe-area-inset-bottom md:hidden">
         <div className="grid grid-cols-4 h-16">
           {navItems.map((item) => {
             const Icon = item.icon

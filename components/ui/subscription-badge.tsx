@@ -23,9 +23,9 @@ export function SubscriptionBadge({ tier, className = '' }: SubscriptionBadgePro
     },
     pro: {
       label: 'Pro',
-      color: 'from-blue-50 to-indigo-50',
-      borderColor: 'border-blue-200',
-      textColor: 'text-blue-800',
+      color: 'from-primary-50/90 to-sky-50/50',
+      borderColor: 'border-primary-200/80',
+      textColor: 'text-primary-900',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -37,11 +37,11 @@ export function SunriseHero({ plan }: SunriseHeroProps) {
           {/* Animated sun motif */}
           <div className="flex flex-col items-center">
             <div
-              className={`rounded-full bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200 transition-all duration-800 ease-out ${
+              className={`rounded-full bg-white px-4 py-2 shadow-sm ring-1 ring-slate-200 transition-all duration-[800ms] ease-out ${
                 hasAnimated ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
               }`}
             >
-              <SunMotif className="h-8 w-auto" />
+              <SunMotif animated={hasAnimated} className="h-8 w-auto" />
             </div>
           </div>
 

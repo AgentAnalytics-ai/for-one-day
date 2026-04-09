@@ -22,10 +22,8 @@ export function TimeGreeting() {
   
   return (
     <>
-      <h1 className="page-title mb-1">
-        {greeting}
-      </h1>
-      <p className="text-base md:text-lg text-slate-600">{dateString}</p>
+      <h1 className="page-title text-balance text-slate-900">{greeting}</h1>
+      <p className="mt-1 text-base text-slate-600 md:text-lg md:text-slate-500">{dateString}</p>
     </>
   )
 }

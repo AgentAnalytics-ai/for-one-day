@@ -17,12 +17,12 @@ export function Header() {
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
   const headerClass =
-    'sticky top-0 z-50 backdrop-blur ' +
+    'sticky top-0 z-50 backdrop-blur safe-area-inset-top safe-area-x ' +
     (isLandingPage ? 'bg-white/95 border-b border-transparent shadow-none' : 'bg-white/95 border-b border-slate-200 shadow-sm')
 
   return (
     <header className={headerClass} style={{ backgroundColor: '#ffffff' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-14 items-center justify-between py-3 sm:min-h-16 sm:py-3.5">
           <Link
             href={isDashboard ? '/dashboard' : '/'}

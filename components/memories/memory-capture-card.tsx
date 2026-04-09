@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ImageIcon, Loader2, Sparkles, Wand2, Plus, CheckCircle2 } from 'lucide-react'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { toast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 
 export interface MemoryPerson {
   id: string
@@ -205,16 +206,18 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/40 rounded-2xl p-6 md:p-8 border border-slate-200/80 shadow-md">
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-7">
+    <div className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-white via-white to-primary-50/25 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_48px_-28px_rgba(16,42,67,0.18)] md:p-8">
+      <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="section-title">Capture a memory</h2>
-          <p className="text-sm text-slate-600 mt-1.5 max-w-xl leading-relaxed">
+          <h2 className="section-title text-slate-900">Capture a memory</h2>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600">
             Photo, a few words, saved for someone you love. AI writing tools are available with Pro.
           </p>
         </div>
-        <p className="text-xs text-slate-500 bg-white/90 border border-slate-200 rounded-lg px-3 py-2 max-w-xs leading-relaxed">
-          <span className="font-medium text-slate-700">Idea for today:</span> {dailySuggestion}
+        <p className="max-w-xs rounded-2xl border border-amber-200/40 bg-gradient-to-br from-amber-50/80 to-orange-50/30 px-3.5 py-2.5 text-xs leading-relaxed text-slate-700 shadow-sm">
+          <span className="font-semibold text-primary-900">Idea for today</span>
+          <span className="text-slate-500"> · </span>
+          {dailySuggestion}
         </p>
       </div>
 
@@ -225,19 +228,22 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
         </div>
       ) : (
         <>
-          <div className="mb-5 rounded-xl border border-slate-200/80 bg-white/70 p-4">
-            <label className="block text-sm font-medium text-gray-800 mb-2">Who is this for?</label>
-            <div className="flex flex-wrap gap-2 items-center">
+          <div className="mb-5 rounded-2xl border border-slate-200/60 bg-white/80 p-4 shadow-sm shadow-slate-900/[0.03] backdrop-blur-sm">
+            <label className="mb-2 block text-sm font-medium text-slate-800">
+              Who is this for?
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
               {people.map((p) => (
                 <button
                   key={p.id}
                   type="button"
                   onClick={() => setPersonId(p.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={cn(
+                    'rounded-full px-4 py-2 text-sm font-medium transition-all duration-200',
                     personId === p.id
-                      ? 'bg-blue-900 text-white shadow'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300'
-                  }`}
+                      ? 'bg-primary-900 text-white shadow-md shadow-primary-900/15'
+                      : 'border border-slate-200/90 bg-white text-slate-700 hover:border-primary-300/60 hover:bg-slate-50/80'
+                  )}
                 >
                   {p.display_name}
                 </button>
@@ -245,7 +251,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               <button
                 type="button"
                 onClick={() => setShowAddPerson((v) => !v)}
-                className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium text-blue-800 bg-blue-50 border border-blue-200 hover:bg-blue-100"
+                className="inline-flex items-center gap-1 rounded-full border border-primary-200/80 bg-primary-50/90 px-3 py-2 text-sm font-medium text-primary-900 transition-colors hover:bg-primary-100/90"
               >
                 <Plus className="w-4 h-4" />
                 Add someone
@@ -267,8 +273,8 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             )}
           </div>
 
-          <div className="mb-5 rounded-xl border border-slate-200/80 bg-white/70 p-4">
-            <label className="block text-sm font-medium text-gray-800 mb-2">Your note</label>
+          <div className="mb-5 rounded-2xl border border-slate-200/60 bg-white/80 p-4 shadow-sm shadow-slate-900/[0.03] backdrop-blur-sm">
+            <label className="mb-2 block text-sm font-medium text-slate-800">Your note</label>
             <textarea
               value={polished !== null ? polished : body}
               onChange={(e) => {
@@ -277,12 +283,12 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               }}
               rows={5}
               placeholder="Proud of you today — you kept trying even when it was hard."
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              className="w-full rounded-2xl border border-slate-200/90 bg-white/90 px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 shadow-inner shadow-slate-900/[0.02] transition-shadow focus:border-primary-400/80 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             />
             {polished !== null && polished !== body && (
               <button
                 type="button"
-                className="mt-2 text-xs text-blue-700 hover:underline"
+                className="mt-2 text-xs font-medium text-primary-800 underline-offset-2 hover:underline"
                 onClick={() => {
                   setPolished(null)
                 }}
@@ -297,9 +303,9 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               type="button"
               disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('grammar')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50/90 disabled:opacity-50"
             >
-              {polishing === 'grammar' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4 text-slate-600" />}
+              {polishing === 'grammar' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4 text-slate-600" />}
               Fix grammar
               {!isPro && <span className="text-[10px] uppercase tracking-wide text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Pro</span>}
             </button>
@@ -307,29 +313,32 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
               type="button"
               disabled={!!polishing || !(polished || body).trim() || !isPro}
               onClick={() => runPolish('expand')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-800 hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200/90 bg-white px-4 py-2 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50/90 disabled:opacity-50"
             >
-              {polishing === 'expand' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-amber-600" />}
+              {polishing === 'expand' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-amber-600" />}
               Expand with AI
               {!isPro && <span className="text-[10px] uppercase tracking-wide text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Pro</span>}
             </button>
           </div>
           {!isPro && (
-            <p className="text-xs text-slate-600 mb-5">
+            <p className="mb-5 text-xs text-slate-600">
               AI writing is available on Pro.{' '}
-              <Link href="/upgrade" className="text-blue-800 font-medium hover:underline">
+              <Link
+                href="/upgrade"
+                className="font-semibold text-primary-800 underline-offset-2 hover:underline"
+              >
                 Upgrade to unlock
               </Link>
               .
             </p>
           )}
 
-          <div className="mb-7 rounded-xl border border-slate-200/80 bg-white/70 p-4">
+          <div className="mb-7 rounded-2xl border border-slate-200/60 bg-white/80 p-4 shadow-sm shadow-slate-900/[0.03] backdrop-blur-sm">
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={onPickFile} />
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-dashed border-slate-300 text-sm text-slate-600 hover:border-blue-400 hover:text-blue-800 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-dashed border-slate-300/90 px-4 py-2 text-sm text-slate-600 transition-colors hover:border-primary-400/70 hover:bg-primary-50/30 hover:text-primary-900"
             >
               <ImageIcon className="w-4 h-4" />
               Add photo
@@ -340,7 +349,7 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
                   <div key={img.storage_path} className="relative w-20 h-20 rounded-lg overflow-hidden bg-slate-100">
                     {img.uploading ? (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                        <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
                       </div>
                     ) : (
                       <>
@@ -370,7 +379,10 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
             >
               {saving ? 'Saving…' : 'Save memory'}
             </PremiumButton>
-            <Link href="/memories" className="text-sm font-medium text-blue-800 hover:underline inline-flex items-center gap-1">
+            <Link
+              href="/memories"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary-800 underline-offset-2 transition-colors hover:text-primary-950 hover:underline"
+            >
               View all by person
               <CheckCircle2 className="w-4 h-4" />
             </Link>

@@ -21,7 +21,7 @@ export function HeroLogoLockup() {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
         }`}
       >
-        <SunMotif className="h-10 w-auto md:h-12" aria-hidden />
+        <SunMotif animated={isVisible} className="h-10 w-auto md:h-12" aria-hidden />
       </div>
     </div>
   )
