@@ -7,6 +7,10 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { stripe, STRIPE_CONFIG, validateStripeUrls } from '@/lib/stripe'
+import {
+  getUserSubscriptionStatus as getEffectiveSubscriptionStatus,
+  checkLegacyNoteLimit,
+} from '@/lib/subscription-utils'
 
 /**
  * Create a Stripe checkout session for subscription upgrade
@@ -319,6 +323,7 @@ export async function createPortalSession() {
 export async function getUserSubscriptionStatus(userId: string) {
   try {
     const supabase = await createClient()
+    const effectiveStatus = await getEffectiveSubscriptionStatus(userId)
     
     // Get user's profile with subscription info
     const { data: profile, error: profileError } = await supabase
@@ -337,7 +342,8 @@ export async function getUserSubscriptionStatus(userId: string) {
         status: 'free' as const,
         isActive: false,
         endsAt: null,
-        trialEndsAt: null
+        trialEndsAt: null,
+        accessSource: 'none' as const
       }
     }
 
@@ -352,11 +358,12 @@ export async function getUserSubscriptionStatus(userId: string) {
       .single()
 
     return {
-      plan: profile.plan as 'free' | 'pro' | 'lifetime',
+      plan: effectiveStatus.plan,
       status: subscription?.status || 'free',
-      isActive: subscription?.status === 'active' || subscription?.status === 'trialing',
-      endsAt: subscription?.current_period_end || null,
+      isActive: effectiveStatus.isActive,
+      endsAt: effectiveStatus.accessEndsAt || subscription?.current_period_end || null,
       trialEndsAt: null,
+      accessSource: effectiveStatus.accessSource,
       subscription: subscription || null
     }
 
@@ -367,7 +374,8 @@ export async function getUserSubscriptionStatus(userId: string) {
       status: 'free' as const,
       isActive: false,
       endsAt: null,
-      trialEndsAt: null
+      trialEndsAt: null,
+      accessSource: 'none' as const
     }
   }
 }
@@ -382,54 +390,8 @@ export async function canCreateLegacyNote(userId: string): Promise<{
   message?: string
 }> {
   try {
-    const supabase = await createClient()
-    
-    // Get user's subscription status
-    const subscriptionStatus = await getUserSubscriptionStatus(userId)
-    
-    // Pro and lifetime users have unlimited legacy notes
-    if (subscriptionStatus.plan === 'pro' || subscriptionStatus.plan === 'lifetime') {
-      return {
-        canCreate: true,
-        current: 0,
-        limit: -1
-      }
-    }
-
-    // Count current legacy notes for free users
-    const { data: familyMember } = await supabase
-      .from('family_members')
-      .select('family_id')
-      .eq('user_id', userId)
-      .single()
-
-    if (!familyMember) {
-      return {
-        canCreate: true,
-        current: 0,
-        limit: 3
-      }
-    }
-
-    const { count } = await supabase
-      .from('vault_items')
-      .select('*', { count: 'exact', head: true })
-      .eq('family_id', familyMember.family_id)
-      .eq('owner_id', userId)
-      .eq('kind', 'letter')
-
-    const current = count || 0
-    const limit = 3
-    const canCreate = current < limit
-
-    return {
-      canCreate,
-      current,
-      limit,
-      message: canCreate 
-        ? undefined 
-        : `You've reached your limit of ${limit} legacy notes. Upgrade to Pro for unlimited notes.`
-    }
+    const featureLimit = await checkLegacyNoteLimit(userId)
+    return featureLimit
 
   } catch (error) {
     console.error('Error checking legacy note limit:', error)

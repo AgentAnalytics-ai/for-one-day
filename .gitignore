@@ -43,6 +43,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# private internal planning (not for repo / deployment)
+docs/internal/private/
+
 # IDE
 .vscode/
 .idea/

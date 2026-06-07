@@ -4,10 +4,13 @@
  */
 
 import { createClient } from '@/lib/supabase/server'
+import { getHouseholdEntitlement, householdPlanIsActive } from '@/lib/household-billing'
 
 export interface SubscriptionStatus {
   plan: 'free' | 'pro' | 'lifetime'
   isActive: boolean
+  accessSource: 'none' | 'lifetime' | 'stripe' | 'founder_referral'
+  accessEndsAt: string | null
   limits: {
     legacyNotes: number
     familyConnections: number
@@ -36,16 +39,66 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
     .eq('user_id', userId)
     .single()
 
-  // Get active subscription (if any)
+  // Get paid subscription (if any)
   const { data: subscription } = await supabase
     .from('subscriptions')
-    .select('status')
+    .select('status, current_period_end')
     .eq('user_id', userId)
-    .eq('status', 'active')
+    .in('status', ['active', 'trialing'])
+    .order('current_period_end', { ascending: false })
+    .limit(1)
     .single()
 
-  const plan = profile?.plan || 'free'
-  const isActive = subscription?.status === 'active' || plan === 'lifetime'
+  // Get active founder referral grant (if any)
+  const { data: referralEntitlement } = await supabase
+    .from('referral_entitlements')
+    .select('ends_at')
+    .eq('user_id', userId)
+    .eq('grant_type', 'founder_referral')
+    .eq('status', 'active')
+    .gt('ends_at', new Date().toISOString())
+    .order('ends_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  const household = await getHouseholdEntitlement(supabase, userId)
+  const householdActive = household ? householdPlanIsActive(household) : false
+
+  const storedPlan = (profile?.plan || 'free') as 'free' | 'pro' | 'lifetime'
+  const hasLifetimeAccess = storedPlan === 'lifetime' || household?.plan === 'lifetime'
+  const hasHouseholdPro = householdActive && household?.plan === 'pro'
+  const hasStripeAccess =
+    subscription?.status === 'active' || subscription?.status === 'trialing'
+  const hasReferralAccess = Boolean(referralEntitlement?.ends_at)
+  const hasLegacyProfilePro = storedPlan === 'pro'
+
+  const isActive =
+    hasLifetimeAccess ||
+    hasHouseholdPro ||
+    hasStripeAccess ||
+    hasReferralAccess ||
+    hasLegacyProfilePro
+
+  const effectivePlan: 'free' | 'pro' | 'lifetime' = hasLifetimeAccess
+    ? 'lifetime'
+    : isActive
+      ? 'pro'
+      : 'free'
+
+  let accessSource: SubscriptionStatus['accessSource'] = 'none'
+  if (hasLifetimeAccess) accessSource = 'lifetime'
+  else if (hasHouseholdPro) accessSource = 'stripe'
+  else if (hasStripeAccess || hasLegacyProfilePro) accessSource = 'stripe'
+  else if (hasReferralAccess) accessSource = 'founder_referral'
+
+  const accessEndsAt =
+    accessSource === 'founder_referral'
+      ? referralEntitlement?.ends_at ?? null
+      : hasHouseholdPro
+        ? household?.current_period_end ?? null
+        : accessSource === 'stripe'
+          ? subscription?.current_period_end ?? null
+          : null
 
   // Define limits based on plan
   // Legacy letter attachments: Free = 3 images per letter, Pro = unlimited (images + videos)
@@ -73,9 +126,11 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
   }
 
   return {
-    plan: plan as 'free' | 'pro' | 'lifetime',
+    plan: effectivePlan,
     isActive,
-    limits: limits[plan as keyof typeof limits] || limits.free
+    accessSource,
+    accessEndsAt,
+    limits: limits[effectivePlan as keyof typeof limits] || limits.free
   }
 }
 

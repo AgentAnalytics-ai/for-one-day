@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkLegacyNoteLimit } from '@/lib/subscription-utils'
 
 export async function GET() {
   try {
@@ -56,24 +57,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 })
     }
 
-    // Check if user has reached their limit (free users get 3 notes)
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('plan, family_id, full_name')
-      .eq('user_id', user.id)
-      .single()
-
-    if (profile?.plan === 'free') {
-      const { data: existingNotes } = await supabase
-        .from('vault_items')
-        .select('id')
-        .eq('owner_id', user.id)
-
-      if (existingNotes && existingNotes.length >= 3) {
-        return NextResponse.json({ 
-          error: 'You\'ve reached your limit of 3 legacy notes. Upgrade to Pro for unlimited notes.' 
-        }, { status: 403 })
-      }
+    // Shared entitlement gate: free/pro/lifetime/founder referral
+    const noteLimit = await checkLegacyNoteLimit(user.id)
+    if (!noteLimit.canCreate) {
+      return NextResponse.json(
+        { error: noteLimit.message || 'Legacy note limit reached. Upgrade for more.' },
+        { status: 403 }
+      )
     }
 
     // Create the legacy note

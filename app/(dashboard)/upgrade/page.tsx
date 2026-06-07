@@ -8,7 +8,11 @@ import { PremiumCard } from '@/components/ui/premium-card'
 import { PremiumButton } from '@/components/ui/premium-button'
 import { CardSkeleton } from '@/components/ui/skeleton'
 import { SubscriptionBadge } from '@/components/ui/subscription-badge'
-import { createCheckoutSession, createPortalSession } from '@/app/actions/billing-actions'
+import {
+  createCheckoutSession,
+  createPortalSession,
+  getUserSubscriptionStatus as getSubscriptionStatusAction,
+} from '@/app/actions/billing-actions'
 import { toast } from '@/lib/toast'
 import { ToastContainer } from '@/components/ui/toast'
 import { PageHeader } from '@/components/ui/page-header'
@@ -17,6 +21,10 @@ export default function UpgradePage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentPlan, setCurrentPlan] = useState<'free' | 'pro' | 'lifetime'>('free')
+  const [accessEndsAt, setAccessEndsAt] = useState<string | null>(null)
+  const [accessSource, setAccessSource] = useState<'none' | 'lifetime' | 'stripe' | 'founder_referral'>('none')
+  const [referralCode, setReferralCode] = useState('')
+  const [redeemingCode, setRedeemingCode] = useState(false)
   const [toasts, setToasts] = useState<Array<{ id: string; type: 'success' | 'error' | 'warning' | 'info'; title: string; message?: string }>>([])
 
   useEffect(() => {
@@ -45,39 +53,10 @@ export default function UpgradePage() {
       setUser(user)
 
       if (user) {
-        const { data: profileData, error } = await supabase
-          .from('profiles')
-          .select('plan')
-          .eq('user_id', user.id)
-          .single()
-
-        let profile = profileData
-
-        // If profile doesn't exist, create one
-        if (error && error.code === 'PGRST116') {
-          console.log('Profile not found, creating default profile')
-          const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert({
-              user_id: user.id,
-              plan: 'free',
-              full_name: user.email?.split('@')[0] || 'User'
-            })
-            .select('plan')
-            .single()
-
-          if (newProfile) {
-            profile = newProfile
-          } else if (createError) {
-            console.error('Error creating profile:', createError)
-          }
-        } else if (error) {
-          console.error('Error fetching profile:', error)
-        }
-
-        if (profile) {
-          setCurrentPlan(profile.plan as 'free' | 'pro' | 'lifetime')
-        }
+        const status = await getSubscriptionStatusAction(user.id)
+        setCurrentPlan(status.plan as 'free' | 'pro' | 'lifetime')
+        setAccessEndsAt(status.endsAt)
+        setAccessSource((status.accessSource || 'none') as 'none' | 'lifetime' | 'stripe' | 'founder_referral')
       }
       setLoading(false)
     }
@@ -123,6 +102,13 @@ export default function UpgradePage() {
     )
   }
 
+  const formatDate = (dateValue: string) =>
+    new Date(dateValue).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+
   return (
     <div className="min-h-screen bg-slate-50">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
@@ -148,6 +134,76 @@ export default function UpgradePage() {
         <p className="text-center text-sm text-gray-600 mb-8">
           AI writing tools are included with Pro and Lifetime plans.
         </p>
+        {accessSource === 'founder_referral' && accessEndsAt ? (
+          <div className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
+            Founder referral active until <span className="font-semibold">{formatDate(accessEndsAt)}</span>.
+          </div>
+        ) : null}
+
+        {currentPlan === 'free' ? (
+          <PremiumCard className="mb-8 border border-slate-200 p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="min-w-0 flex-1">
+                <label htmlFor="referral-code" className="mb-1 block text-sm font-medium text-slate-800">
+                  Have a founder referral code?
+                </label>
+                <input
+                  id="referral-code"
+                  value={referralCode}
+                  onChange={(event) => setReferralCode(event.target.value.toUpperCase())}
+                  placeholder="Enter code"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-primary-600"
+                  autoComplete="off"
+                />
+              </div>
+              <PremiumButton
+                onClick={async () => {
+                  const code = referralCode.trim()
+                  if (!code) {
+                    toast.warning('Missing code', 'Enter a referral code to continue.')
+                    return
+                  }
+                  try {
+                    setRedeemingCode(true)
+                    const response = await fetch('/api/referrals/redeem', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ code }),
+                    })
+                    const result = await response.json()
+                    if (!response.ok) {
+                      toast.error('Code not accepted', result?.error || 'Invalid code.')
+                      return
+                    }
+                    setCurrentPlan('pro')
+                    setAccessSource('founder_referral')
+                    setAccessEndsAt(result?.accessEndsAt || null)
+                    setReferralCode('')
+                    toast.success(
+                      'Referral applied',
+                      result?.accessEndsAt
+                        ? `Pro access active until ${formatDate(result.accessEndsAt)}.`
+                        : 'Pro access activated.'
+                    )
+                  } catch (error) {
+                    console.error('Referral redeem failed:', error)
+                    toast.error('Could not redeem', 'Please try again in a moment.')
+                  } finally {
+                    setRedeemingCode(false)
+                  }
+                }}
+                variant="secondary"
+                className="w-full sm:w-auto"
+                disabled={redeemingCode}
+              >
+                {redeemingCode ? 'Applying...' : 'Apply code'}
+              </PremiumButton>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Codes are case-insensitive and may be single-use.
+            </p>
+          </PremiumCard>
+        ) : null}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {/* Free Plan Card */}
