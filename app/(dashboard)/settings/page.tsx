@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ProfileSettingsView } from '@/components/settings/profile-settings-view'
+import { HouseholdSettings } from '@/components/settings/household-settings'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
 import { SupportContactButton } from '@/components/support-contact-button'
@@ -106,8 +107,13 @@ export default function SettingsPage() {
           </>
         }
         title="Account Settings"
-        subtitle="Manage your profile and emergency contact information"
+        subtitle="Manage your household, profile, and billing"
       />
+
+      <div className="mb-6 sm:mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <h2 className="section-title mb-4">Household</h2>
+        <HouseholdSettings />
+      </div>
 
       <div className="bg-white rounded-2xl shadow-lg border-2 border-primary-100 p-6 sm:p-8">
         <ProfileSettingsView 
