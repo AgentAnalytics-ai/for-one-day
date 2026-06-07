@@ -8,12 +8,19 @@ import { Header } from '@/components/header'
  * 🔐 Password Login Page - Traditional Authentication
  * Clean, professional design for users who prefer passwords
  */
-export default async function PasswordLoginPage() {
+export default async function PasswordLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; next?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const { error, next } = await searchParams
 
-  // If already logged in, go to dashboard
   if (user) {
+    if (next?.startsWith('/') && !next.startsWith('//')) {
+      redirect(next)
+    }
     redirect('/dashboard')
   }
 
@@ -34,7 +41,14 @@ export default async function PasswordLoginPage() {
           <div className="mt-6 sm:mt-8">
         <div className="bg-white py-6 sm:py-8 px-4 sm:px-6 md:px-10 shadow-xl rounded-2xl border border-gray-100">
           
+          {error ? (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {decodeURIComponent(error)}
+            </div>
+          ) : null}
+
           <form action={signInWithPassword} className="space-y-6">
+            {next ? <input type="hidden" name="next" value={next} /> : null}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Email address

@@ -42,14 +42,20 @@ export async function signInWithPassword(formData: FormData) {
   const supabase = await createClient()
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  
+  const next = (formData.get('next') as string)?.trim()
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
-    redirect('/auth/login?error=' + encodeURIComponent(error.message))
+    const nextParam = next ? `&next=${encodeURIComponent(next)}` : ''
+    redirect('/auth/password?error=' + encodeURIComponent(error.message) + nextParam)
+  }
+
+  if (next && next.startsWith('/') && !next.startsWith('//')) {
+    redirect(next)
   }
 
   redirect('/dashboard')

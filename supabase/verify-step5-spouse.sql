@@ -84,3 +84,11 @@ SELECT 'S5_7_sara_has_membership' AS gate,
 FROM auth.users u
 JOIN public.family_members fm ON fm.user_id = u.id
 WHERE lower(u.email) = lower('SARA_EMAIL_HERE');
+
+-- S5-8 — Sara's solo home abandoned (no longer owner of another family)
+SELECT 'S5_8_sara_solo_abandoned' AS gate,
+  COUNT(*) AS families_owned,
+  CASE WHEN COUNT(*) = 0 THEN 'PASS' ELSE 'FAIL' END AS status
+FROM public.families f
+JOIN auth.users u ON u.id = f.owner_id
+WHERE lower(u.email) = lower('SARA_EMAIL_HERE');

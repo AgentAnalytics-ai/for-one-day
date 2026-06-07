@@ -268,8 +268,9 @@ export function HouseholdSettings() {
             Invite to household
           </h4>
           <p className="mb-4 text-xs text-gray-500">
-            They&apos;ll get an email to join your home. Pro applies to everyone in this household
-            — no extra charge per person.
+            They&apos;ll get an email to join your home. If they already have a solo free account,
+            accepting replaces their empty home — personal memories stay theirs. Pro applies to
+            everyone here; no extra charge per person.
           </p>
           <form onSubmit={handleInvite} className="space-y-3">
             <div className="grid gap-3 sm:grid-cols-2">

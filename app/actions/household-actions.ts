@@ -44,6 +44,50 @@ export type HouseholdSettings = {
 
 const MAX_HOUSEHOLD_NAME_LENGTH = 80
 
+/** Solo free home (sole owner) — can be abandoned when accepting an invite (Step 5b) */
+async function isAbandonableSoloHousehold(
+  admin: NonNullable<ReturnType<typeof createServiceRoleClient>>,
+  userId: string
+): Promise<boolean> {
+  const { data: family } = await admin
+    .from('families')
+    .select('id')
+    .eq('owner_id', userId)
+    .maybeSingle()
+
+  if (!family) return false
+
+  const { count: memberCount } = await admin
+    .from('family_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('family_id', family.id)
+
+  if (memberCount !== 1) return false
+
+  const { data: entitlement } = await admin
+    .from('family_entitlements')
+    .select('plan, stripe_subscription_id')
+    .eq('family_id', family.id)
+    .maybeSingle()
+
+  if (
+    !entitlement ||
+    entitlement.plan !== 'free' ||
+    entitlement.stripe_subscription_id
+  ) {
+    return false
+  }
+
+  const { data: subscription } = await admin
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', userId)
+    .in('status', ['active', 'trialing'])
+    .maybeSingle()
+
+  return !subscription
+}
+
 async function resolveFamilyId(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string
@@ -319,30 +363,34 @@ export async function inviteHouseholdMember(
 
       const admin = createServiceRoleClient()
       if (admin) {
-        const { data: ownedFamily } = await admin
-          .from('families')
-          .select('id')
-          .eq('owner_id', existingUserId)
-          .maybeSingle()
-
-        if (ownedFamily) {
-          return {
-            success: false,
-            error:
-              'This person already manages their own household. They would need to leave it first.',
-          }
-        }
-
         const { data: otherMembership } = await admin
           .from('family_members')
-          .select('family_id')
+          .select('family_id, role')
           .eq('user_id', existingUserId)
           .maybeSingle()
 
-        if (otherMembership) {
-          return {
-            success: false,
-            error: 'This person is already in another household.',
+        if (otherMembership && otherMembership.family_id !== familyId) {
+          const { data: ownedFamily } = await admin
+            .from('families')
+            .select('id')
+            .eq('owner_id', existingUserId)
+            .eq('id', otherMembership.family_id)
+            .maybeSingle()
+
+          if (ownedFamily) {
+            const canAbandon = await isAbandonableSoloHousehold(admin, existingUserId)
+            if (!canAbandon) {
+              return {
+                success: false,
+                error:
+                  'This person manages a household with Pro, other members, or billing. They need to resolve that first.',
+              }
+            }
+          } else {
+            return {
+              success: false,
+              error: 'This person is already in another household.',
+            }
           }
         }
       }
