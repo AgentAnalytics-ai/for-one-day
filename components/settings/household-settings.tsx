@@ -73,7 +73,7 @@ export function HouseholdSettings() {
   }
 
   return (
-    <div className="space-y-5">
+    <div id="household" className="scroll-mt-24 space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="card-heading">Your household</h3>

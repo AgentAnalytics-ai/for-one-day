@@ -5,6 +5,8 @@ import { signOut } from '@/app/auth/actions'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { NavPillLogo } from '@/components/brand/nav-pill-logo'
+import { HouseholdChrome } from '@/components/dashboard/household-chrome'
+import type { HouseholdSettings } from '@/app/actions/household-actions'
 import { cn } from '@/lib/utils'
 
 interface Profile {
@@ -18,7 +20,13 @@ interface Profile {
  * Uses `lg` (not `md`) for the mobile/desktop split so tablets keep one pattern:
  * desktop header + bottom tabs on smaller screens — avoids a cramped “desktop” pill row on tablets.
  */
-export function SimpleNav({ profile }: { profile: Profile | null }) {
+export function SimpleNav({
+  profile,
+  household,
+}: {
+  profile: Profile | null
+  household: HouseholdSettings | null
+}) {
   const pathname = usePathname()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -82,8 +90,15 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
     <div className="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-slate-200/90 bg-white py-2 shadow-sm sm:w-64">
       <div className="border-b border-slate-100 px-4 py-3">
         <p className="text-sm font-medium text-slate-900">{profile?.full_name || 'User'}</p>
-        <p className="text-xs text-slate-500">
-          {profile?.plan === 'pro' || profile?.plan === 'lifetime' ? 'Pro member' : 'Free plan'}
+        <p className="text-xs text-slate-500 truncate">
+          {household?.name ?? 'Your household'}
+        </p>
+        <p className="text-xs text-slate-400">
+          {household?.plan === 'pro' || household?.plan === 'lifetime'
+            ? `${household.plan === 'lifetime' ? 'Lifetime' : 'Pro'} · household`
+            : profile?.plan === 'pro' || profile?.plan === 'lifetime'
+              ? 'Pro member'
+              : 'Free plan'}
         </p>
       </div>
 
@@ -221,13 +236,16 @@ export function SimpleNav({ profile }: { profile: Profile | null }) {
             })}
             </div>
 
-            {/* Center: brand */}
-            <Link
-              href="/dashboard"
-              className="group justify-self-center rounded-xl px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
-            >
-              <NavPillLogo />
-            </Link>
+            {/* Center: brand + household context (desktop) */}
+            <div className="flex flex-col items-center justify-self-center gap-1 px-2">
+              <Link
+                href="/dashboard"
+                className="group rounded-xl py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+              >
+                <NavPillLogo />
+              </Link>
+              <HouseholdChrome household={household} variant="inline" />
+            </div>
 
             {/* Right: account */}
             <div className="relative flex min-w-0 justify-end" ref={dropdownRef}>

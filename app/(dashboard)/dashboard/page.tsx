@@ -7,7 +7,7 @@ import { MemoryCaptureCard } from '@/components/memories/memory-capture-card'
 import { RecentMemoriesStrip } from '@/components/memories/recent-memories-strip'
 import { getDailyCapturePrompt } from '@/lib/daily-capture-prompts'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
-import { SubscriptionBadge } from '@/components/ui/subscription-badge'
+import { getCachedHouseholdSettings } from '@/app/actions/household-actions'
 import { FirstKeepsakeCelebration } from '@/components/dashboard/first-keepsake-celebration'
 
 export default async function DashboardPage() {
@@ -22,18 +22,30 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
+  const householdResult = await getCachedHouseholdSettings()
+  const household = householdResult.success ? householdResult.household : null
+  const effectivePlan = household?.plan ?? profile?.plan ?? 'free'
+
   const suggestion = getDailyCapturePrompt()
-  const isPro = profile?.plan === 'pro' || profile?.plan === 'lifetime'
+  const isPro = effectivePlan === 'pro' || effectivePlan === 'lifetime'
 
   return (
     <div className="space-y-8 md:space-y-10">
       <ScrollReveal>
         <header className="flex flex-col items-center gap-3 pt-1 text-center md:gap-3.5 md:pt-2">
+          {household ? (
+            <p className="text-[11px] font-medium text-slate-500">
+              <span className="font-semibold uppercase tracking-[0.12em] text-slate-400">
+                At home
+              </span>
+              {' · '}
+              <span className="text-slate-600">{household.name}</span>
+            </p>
+          ) : null}
           <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
             Today
           </span>
           <TimeGreeting />
-          <SubscriptionBadge tier={profile?.plan || 'free'} />
         </header>
       </ScrollReveal>
 

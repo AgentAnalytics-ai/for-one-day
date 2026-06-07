@@ -1,5 +1,6 @@
 'use server'
 
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getHouseholdEntitlement, householdPlanIsActive } from '@/lib/household-billing'
 import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
@@ -132,6 +133,9 @@ export async function getHouseholdSettings(): Promise<{
     return { success: false, error: 'Failed to load household' }
   }
 }
+
+/** Per-request cache — safe to call from layout + page in same render */
+export const getCachedHouseholdSettings = cache(getHouseholdSettings)
 
 export async function updateHouseholdName(name: string): Promise<{
   success: boolean

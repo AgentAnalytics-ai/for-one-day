@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getCachedHouseholdSettings } from '@/app/actions/household-actions'
+import { HouseholdChrome } from '@/components/dashboard/household-chrome'
 import { SimpleNav } from '@/components/dashboard/simple-nav'
 import { SupportFooter } from '@/components/support-footer'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
@@ -58,12 +60,18 @@ export default async function DashboardLayout({
     }
   }
 
+  const householdResult = await getCachedHouseholdSettings()
+  const household = householdResult.success ? householdResult.household ?? null : null
+
   return (
     <div className="flex min-h-[100dvh] min-h-screen flex-col bg-gradient-to-b from-slate-100/90 via-slate-50 to-[#eef2f6]">
       <SkipLink />
       <KeyboardShortcuts />
       <NavigationTour />
-      <SimpleNav profile={profile} />
+      <SimpleNav profile={profile} household={household} />
+
+      {/* Mobile / tablet: household context above content (2027 “which home am I in?”) */}
+      <HouseholdChrome household={household} className="lg:hidden" />
 
       <main
         id="main-content"
