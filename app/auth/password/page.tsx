@@ -21,7 +21,7 @@ export default async function PasswordLoginPage({
     if (next?.startsWith('/') && !next.startsWith('//')) {
       redirect(next)
     }
-    redirect('/dashboard')
+    redirect('/dashboard?welcome=1')
   }
 
   return (

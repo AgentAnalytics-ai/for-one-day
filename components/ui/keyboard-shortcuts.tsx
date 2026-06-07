@@ -32,7 +32,7 @@ export function KeyboardShortcuts() {
         key: 'v',
         ctrl: true,
         action: () => router.push('/vault'),
-        description: 'Go to Vault'
+        description: 'Go to Keepsakes'
       },
       {
         key: 's',
@@ -93,7 +93,7 @@ export function KeyboardShortcutsHelp({ isOpen, onClose }: { isOpen: boolean; on
 
   const shortcuts = [
     { keys: 'Ctrl/Cmd + D', description: 'Go to Dashboard' },
-    { keys: 'Ctrl/Cmd + V', description: 'Go to Vault' },
+    { keys: 'Ctrl/Cmd + V', description: 'Go to Keepsakes' },
     { keys: 'Ctrl/Cmd + S', description: 'Go to Settings' },
     { keys: 'Ctrl/Cmd + U', description: 'Go to Upgrade' },
     { keys: '?', description: 'Show this help' }

@@ -16,23 +16,23 @@ const TOUR_STEPS: TourStep[] = [
   {
     id: 'today',
     title: 'Today',
-    description: 'Capture photos and short notes for someone you love. Optional AI helps polish your words.',
+    description: 'Your daily plan at a glance — schedule, dinner, and our focus for the home.',
     target: 'a[href="/dashboard"]',
     href: '/dashboard'
   },
   {
-    id: 'memories',
-    title: 'Memories',
-    description: 'Review everything you’ve saved, organized by person.',
-    target: 'a[href="/memories"]',
-    href: '/memories'
+    id: 'lists',
+    title: 'Lists',
+    description: 'To do and shopping for the household. Check off from the kitchen or your phone.',
+    target: 'a[href="/lists"]',
+    href: '/lists'
   },
   {
-    id: 'vault',
-    title: 'Vault',
-    description: 'Store legacy letters, videos, and important documents for your family.',
-    target: 'a[href="/vault"]',
-    href: '/vault'
+    id: 'more',
+    title: 'More',
+    description: 'Memories, keepsakes, and capture — reflective work stays on your phone.',
+    target: 'a[href="/more"]',
+    href: '/more'
   },
 ]
 

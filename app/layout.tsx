@@ -1,33 +1,42 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { DM_Sans, Fraunces } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 import { SmoothScroll } from '@/components/ui/smooth-scroll'
 
-const inter = Inter({ subsets: ['latin'] })
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://foroneday.app'),
   title: {
-    default: 'For One Day - Capture Memories for People You Love',
+    default: 'For One Day — Know What Matters Today',
     template: '%s | For One Day'
   },
-  description: 'Capture meaningful memories for people you love. Save notes and photos, stay consistent with daily prompts, and unlock Pro AI writing tools when you are ready.',
+  description:
+    'Your family\'s daily plan for the kitchen wall — schedule, dinner, and lists at a glance. Save memories and keepsakes on your phone when you\'re ready. One Pro plan for your home.',
   applicationName: 'For One Day',
   alternates: {
     canonical: 'https://foroneday.app',
   },
   keywords: [
-    'memory journal app',
-    'capture memories',
+    'family daily planner',
+    'kitchen family calendar',
+    'household schedule app',
+    'family to do list',
+    'dinner planner family',
     'family memories',
-    'daily memory prompts',
-    'memory timeline',
-    'save notes and photos',
-    'loved ones memories',
-    'ai writing assistant',
-    'pro writing tools',
-    'private memory vault'
+    'keepsakes',
+    'memory journal',
   ],
   authors: [{ name: 'For One Day' }],
   creator: 'For One Day',
@@ -45,21 +54,23 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://foroneday.app',
     siteName: 'For One Day',
-    title: 'For One Day - Capture Memories for People You Love',
-    description: 'Capture notes and photos that matter, organized by person, with optional Pro AI writing tools.',
+    title: 'For One Day — Know What Matters Today',
+    description:
+      'Daily plan for your home — schedule, dinner, and lists on the kitchen wall. Memories and keepsakes on your phone.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'For One Day - Capture Memories for People You Love',
+        alt: 'For One Day — Your family\'s daily plan',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Capture Memories for People You Love',
-    description: 'Capture notes and photos that matter, organized by person, with optional Pro AI writing tools.',
+    title: 'For One Day — Know What Matters Today',
+    description:
+      'Daily plan for your home. Save memories and keepsakes when you\'re ready.',
     images: ['/og-image.png'],
   },
   icons: {
@@ -87,7 +98,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${dmSans.variable} ${fraunces.variable} font-sans antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

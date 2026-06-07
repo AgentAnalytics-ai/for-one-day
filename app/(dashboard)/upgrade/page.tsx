@@ -121,11 +121,11 @@ export default function UpgradePage() {
               <svg className="w-5 h-5 text-primary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
-              <span className="text-primary-900">Upgrade</span>
+              <span className="text-primary-900">Plan</span>
             </>
           }
-          title="Upgrade to Pro"
-          subtitle="Unlock unlimited keepsakes, richer family organization, and Pro AI writing tools."
+          title="Run the full week"
+          subtitle="One Pro plan for your home — unlimited keepsakes, shared household features, and AI writing tools on your phone."
         />
 
         <div className="flex justify-center mb-8">
@@ -296,7 +296,7 @@ export default function UpgradePage() {
                 }}
                 className="w-full"
               >
-                Upgrade to Pro - $9.99/month
+                Run the full week — $9.99/month per home
               </PremiumButton>
             ) : (
               <div className="space-y-3">

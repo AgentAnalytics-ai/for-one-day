@@ -61,7 +61,7 @@ export function ProfileSettingsView({ profile, onUpdate }: ProfileSettingsViewPr
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setIsEditing(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+          className="btn-primary gap-2"
         >
           <Edit2 className="w-4 h-4" />
           Edit

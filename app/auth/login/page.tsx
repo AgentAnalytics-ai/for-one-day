@@ -18,7 +18,7 @@ export default async function LoginPage({
 
   // If already logged in, go to dashboard
   if (user) {
-    redirect('/dashboard')
+    redirect('/dashboard?welcome=1')
   }
 
   const resolvedSearchParams = await searchParams

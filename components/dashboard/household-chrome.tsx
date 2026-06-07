@@ -66,7 +66,7 @@ export function HouseholdChrome({
   return (
     <div
       className={cn(
-        'border-b border-slate-200/80 bg-white/95 backdrop-blur',
+        'border-b border-[#E7E2DA]/90 bg-white/90 backdrop-blur-sm',
         className
       )}
     >
@@ -79,8 +79,8 @@ export function HouseholdChrome({
             <Home className="h-4 w-4" aria-hidden />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
-              Your household
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5C6478]">
+              At home
             </span>
             <span className="block truncate text-sm font-semibold text-slate-900">
               {household.name}

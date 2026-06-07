@@ -2,17 +2,17 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/header'
-import { HeroLogoLockup } from '@/components/marketing/hero-logo-lockup'
+import { KitchenWallPreview } from '@/components/marketing/kitchen-wall-preview'
+import { RevealOnScroll } from '@/components/ui/reveal-on-scroll'
 
 /**
- * 🏠 Billion-Dollar UI Landing Page - 2026 Design
- * Smooth-scroll single-page experience with expert-validated sections
+ * 2027 marketing surface — daily plan lead, memories as plus.
+ * Product IA (Step 8) unchanged; outward psychology aligned with brand-vision.
  */
 export default async function HomePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // If already logged in, go to dashboard
   if (user) {
     redirect('/dashboard')
   }
@@ -20,214 +20,238 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="relative flex min-h-[calc(100vh-4.5rem)] items-center justify-center px-6 pb-16 pt-10 md:min-h-[calc(100vh-5rem)] md:px-8 md:pb-24 md:pt-14">
-        <div className="mx-auto max-w-4xl text-center">
-          {/* Sunrise above headline (wordmark is in the header) */}
-          <HeroLogoLockup />
 
-          {/* Hero Copy */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light text-gray-900 mb-8 leading-tight">
-            Hold on to today.<br />
-            <span className="font-medium">Capture what matters for the people you love.</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed">
-            Save meaningful notes and photos, organized by person, with optional Pro AI writing tools when you need them.
-          </p>
-          
-          {/* Primary CTA */}
-          <div className="mb-20">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-              <Link
-                href="/auth/signup"
-                className="inline-flex items-center gap-3 bg-blue-900 hover:bg-blue-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                Start Free Today
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+      {/* Hero */}
+      <section className="relative px-6 pb-20 pt-8 md:px-8 md:pb-28 md:pt-12">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="text-center lg:text-left">
+            <span className="page-eyebrow mb-6">Your family&apos;s daily plan</span>
+
+            <h1 className="text-balance text-4xl font-serif font-light leading-tight text-primary-900 md:text-5xl lg:text-6xl">
+              Know what matters today.
+              <span className="mt-2 block font-medium text-primary-900/90">
+                Keep what matters for one day.
+              </span>
+            </h1>
+
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-[#5C6478] md:text-xl lg:mx-0">
+              Dinner, schedule, and lists — glanceable on the kitchen tablet.
+              Save memories and keepsakes on your phone when you&apos;re ready.
+            </p>
+
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
+              <Link href="/auth/signup" className="btn-primary touch-tablet gap-2 px-8 py-3.5 text-base">
+                Start with Today
+                <ArrowIcon />
               </Link>
-              
-              <Link
-                href="/auth/login"
-                className="inline-flex items-center gap-3 border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-10 py-4 rounded-full text-lg font-medium transition-all duration-300"
-              >
-                Sign In
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                </svg>
+              <Link href="/auth/login" className="btn-secondary touch-tablet px-8 py-3.5 text-base">
+                Sign in
               </Link>
             </div>
-            
+
             <Link
               href="#how"
-              className="block text-gray-600 hover:text-gray-900 transition-colors"
+              className="mt-6 inline-block text-sm font-medium text-[#5C6478] transition-colors hover:text-primary-900"
             >
-              See How It Works
+              See how it works
             </Link>
           </div>
+
+          <KitchenWallPreview className="lg:max-w-none" />
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how" className="py-24 px-6 md:px-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            How It Works
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-12">
-            <HowItWorksCard
-              step="1"
-              title="Write Your Legacy"
-              subtitle="Capture Moments"
-              description="Write a quick memory, add a photo, and save it for someone you love."
-              icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              }
-            />
-            
-            <HowItWorksCard
-              step="2"
-              title="Organize & Share"
-              subtitle="By Person"
-              description="Keep memories organized by name so each person has their own timeline."
-              icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              }
-            />
-            
-            <HowItWorksCard
-              step="3"
-              title="Peace of Mind"
-              subtitle="Private & Secure"
-              description="Your notes and photos stay private, encrypted, and always in your control."
-              icon={
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              }
-            />
+      {/* How it works */}
+      <section id="how" className="border-t border-[#E7E2DA] bg-white/50 px-6 py-20 md:px-8 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <RevealOnScroll>
+            <div className="mb-14 text-center">
+              <p className="section-label mb-3">Three steps</p>
+              <h2 className="text-3xl font-serif font-light text-primary-900 md:text-4xl">
+                Calm at home. Depth on your phone.
+              </h2>
+            </div>
+          </RevealOnScroll>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            <RevealOnScroll stagger={1}>
+              <StepCard
+                step="1"
+                title="Set up your home"
+                description="Name your household and invite your spouse. One plan covers everyone at home."
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={2}>
+              <StepCard
+                step="2"
+                title="Glance at Today"
+                description="Schedule, dinner tonight, and our focus — answered in three seconds on the wall."
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={3}>
+              <StepCard
+                step="3"
+                title="Save what lasts"
+                description="On your phone, save a memory or write a keepsake for the people you love."
+              />
+            </RevealOnScroll>
           </div>
         </div>
       </section>
 
-      {/* Feature Previews Section */}
-      <section id="features" className="py-24 px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            See It In Action
-          </h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeaturePreviewCard
-              title="Daily Reflection"
-              preview="What unexpected blessing did you notice today?"
-              microCTA="Try This"
-              href="/auth/signup"
-            />
-            
-            <FeaturePreviewCard
-              title="Keepsakes"
-              preview="A short memory saved today, ready to revisit later"
-              microCTA="Try This"
-              href="/auth/signup"
-            />
-            
-            <FeaturePreviewCard
-              title="Moments & memories"
-              preview="Photos and notes for the people who matter—organized by name, with optional AI polish"
-              microCTA="Try This"
-              href="/auth/signup"
-            />
+      {/* Wall vs phone */}
+      <section className="px-6 py-20 md:px-8 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <RevealOnScroll>
+            <div className="mb-12 text-center">
+              <p className="section-label mb-3">Wall and phone</p>
+              <h2 className="text-3xl font-serif font-light text-primary-900 md:text-4xl">
+                Different screens. Same household.
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-[#5C6478]">
+                The kitchen wall is for daily ops — not memory browsing.
+                Reflective work lives on your phone, inside More.
+              </p>
+            </div>
+          </RevealOnScroll>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <RevealOnScroll stagger={1}>
+              <div className="surface-card p-6 md:p-8">
+                <span className="page-eyebrow mb-4">Kitchen wall</span>
+                <h3 className="card-heading mb-3">Today · This week · Lists</h3>
+                <p className="text-sm leading-relaxed text-[#5C6478]">
+                  Big type, soft cards, no forms. Dinner and soccer before coffee is poured.
+                  Family settings behind a gear — not a bottom tab.
+                </p>
+              </div>
+            </RevealOnScroll>
+            <RevealOnScroll stagger={2}>
+              <div className="surface-card p-6 md:p-8">
+                <span className="page-eyebrow mb-4">Your phone</span>
+                <h3 className="card-heading mb-3">Today · Lists · This week · More</h3>
+                <p className="text-sm leading-relaxed text-[#5C6478]">
+                  Inside More: memories, keepsakes, and family.
+                  One subtle memory line on Today — tap when you&apos;re ready.
+                </p>
+              </div>
+            </RevealOnScroll>
           </div>
         </div>
       </section>
 
-      {/* Social Proof Section - Removed fake testimonials */}
+      {/* Plus layer */}
+      <section id="features" className="border-t border-[#E7E2DA] bg-white/50 px-6 py-20 md:px-8 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <RevealOnScroll>
+            <div className="mb-12 text-center">
+              <p className="section-label mb-3">The plus</p>
+              <h2 className="text-3xl font-serif font-light text-primary-900 md:text-4xl">
+                Daily plan first. Memories when it matters.
+              </h2>
+            </div>
+          </RevealOnScroll>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            Choose Your Plan
-          </h2>
-          
-          <PricingTable />
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-24 px-6 md:px-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-center text-gray-900 mb-16">
-            Frequently Asked Questions
-          </h2>
-          
-          <div className="space-y-8">
-            <FAQItem
-              question="Is this faith-specific?"
-              answer="No. It is built for anyone who wants to capture meaningful memories."
-            />
-            
-            <FAQItem
-              question="Is my data secure?"
-              answer="Encrypted storage, timed releases, cancel anytime."
-            />
-            
-            <FAQItem
-              question="Can my spouse see it?"
-              answer="You control what is shared and who can access it."
-            />
+          <div className="grid gap-6 md:grid-cols-3">
+            <RevealOnScroll stagger={1}>
+              <FeatureCard
+                title="Schedule & dinner"
+                preview="3:30 PM · Soccer · Tacos tonight"
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={2}>
+              <FeatureCard
+                title="Lists that stick"
+                preview="Groceries · Pack lunches · Call Grandma"
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={3}>
+              <FeatureCard
+                title="Memories & keepsakes"
+                preview="A note for Sara · A keepsake for Josie"
+              />
+            </RevealOnScroll>
           </div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-24 px-6 md:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-serif font-light text-gray-900 mb-8">
-            Start building what lasts
-          </h2>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-            <Link
-              href="/auth/signup"
-              className="bg-gray-900 hover:bg-gray-800 text-white px-10 py-4 rounded-full text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Start Free Today
-            </Link>
-            
-            <Link
-              href="#pricing"
-              className="text-gray-700 hover:text-gray-900 px-10 py-4 rounded-full text-lg font-medium transition-colors border border-gray-300 hover:border-gray-400"
-            >
-              See Pricing
-            </Link>
-          </div>
-          
-          <p className="text-sm text-gray-500">
-            Encrypted storage · Cancel anytime · Your memories, organized for the people who matter most.
-          </p>
+      {/* Pricing */}
+      <section id="pricing" className="px-6 py-20 md:px-8 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <RevealOnScroll>
+            <div className="mb-14 text-center">
+              <p className="section-label mb-3">One home</p>
+              <h2 className="text-3xl font-serif font-light text-primary-900 md:text-4xl">
+                Choose your plan
+              </h2>
+            </div>
+          </RevealOnScroll>
+
+          <RevealOnScroll>
+            <PricingTable />
+          </RevealOnScroll>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 px-6 md:px-8 bg-slate-800 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-8">
-            <h2 className="text-3xl font-serif font-light text-white">
-              For One Day
+      {/* FAQ */}
+      <section className="border-t border-[#E7E2DA] bg-white/50 px-6 py-20 md:px-8 md:py-24">
+        <div className="mx-auto max-w-3xl">
+          <RevealOnScroll>
+            <h2 className="mb-12 text-center text-3xl font-serif font-light text-primary-900 md:text-4xl">
+              Questions
             </h2>
+          </RevealOnScroll>
+
+          <div className="space-y-4">
+            <RevealOnScroll stagger={1}>
+              <FAQItem
+                question="Is this built for a kitchen tablet?"
+                answer="Yes. Today is designed to be glanceable on a wall-mounted tablet — schedule, dinner, and lists without digging through menus."
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={2}>
+              <FAQItem
+                question="Does my spouse get Pro?"
+                answer="One Pro plan covers your household. When you invite your spouse, they inherit Pro — no second subscription."
+              />
+            </RevealOnScroll>
+            <RevealOnScroll stagger={3}>
+              <FAQItem
+                question="Where do memories live?"
+                answer="On your phone, inside More — not as a tab on the kitchen wall. Save a memory or write a keepsake when you're ready."
+              />
+            </RevealOnScroll>
           </div>
-          <p className="text-gray-400 text-sm">
-            Capture what matters. Keep it close.
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="px-6 py-20 md:px-8 md:py-24">
+        <RevealOnScroll>
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-serif font-light text-primary-900 md:text-4xl">
+              Start with Today
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-[#5C6478]">
+              Set up your home&apos;s daily plan free. Add memories and keepsakes whenever you&apos;re ready.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link href="/auth/signup" className="btn-primary touch-tablet px-8 py-3.5 text-base">
+                Start with Today
+              </Link>
+              <Link href="#pricing" className="btn-secondary touch-tablet px-8 py-3.5 text-base">
+                See plans
+              </Link>
+            </div>
+          </div>
+        </RevealOnScroll>
+      </section>
+
+      <footer className="border-t border-[#E7E2DA] bg-primary-900 px-6 py-14 text-white md:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="font-serif text-2xl font-light">For One Day</p>
+          <p className="mt-2 text-sm text-white/70">
+            Know what matters today. Keep what matters for one day.
           </p>
         </div>
       </footer>
@@ -235,136 +259,86 @@ export default async function HomePage() {
   )
 }
 
-function HowItWorksCard({ 
-  step, 
-  title, 
-  subtitle, 
-  description, 
-  icon 
-}: { 
-  step: string
-  title: string
-  subtitle: string
-  description: string
-  icon: React.ReactNode
-}) {
+function ArrowIcon() {
   return (
-    <div className="text-center">
-      <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 text-white rounded-full mb-6 text-xl font-bold">
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  )
+}
+
+function StepCard({ step, title, description }: { step: string; title: string; description: string }) {
+  return (
+    <div className="surface-card p-6 text-center md:p-8">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary-900 text-lg font-semibold text-white">
         {step}
       </div>
-      
-      <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-50 rounded-full mb-6 group-hover:bg-primary-100 transition-colors duration-300">
-        <div className="text-primary-600">
-          {icon}
-        </div>
-      </div>
-      
-      <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
-        {title}
-      </h3>
-      
-      <p className="text-sm text-primary-600 font-medium mb-4">
-        {subtitle}
-      </p>
-      
-      <p className="text-gray-600 leading-relaxed">
-        {description}
-      </p>
+      <h3 className="card-heading mb-3">{title}</h3>
+      <p className="text-sm leading-relaxed text-[#5C6478]">{description}</p>
     </div>
   )
 }
 
-function FeaturePreviewCard({ 
-  title, 
-  preview, 
-  microCTA, 
-  href 
-}: { 
-  title: string
-  preview: string
-  microCTA: string
-  href: string
-}) {
+function FeatureCard({ title, preview }: { title: string; preview: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-      <h3 className="text-lg font-serif font-medium text-gray-900 mb-4">
-        {title}
-      </h3>
-      
-      <div className="bg-gray-50 rounded-lg p-4 mb-4">
-        <p className="text-gray-700 text-sm italic">
-          &ldquo;{preview}&rdquo;
-        </p>
+    <div className="surface-card p-6">
+      <h3 className="card-heading mb-4">{title}</h3>
+      <div className="surface-inset p-4">
+        <p className="text-sm italic text-[#5C6478]">{preview}</p>
       </div>
-      
-      <Link
-        href={href}
-        className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
-      >
-        {microCTA}
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </Link>
     </div>
   )
 }
-
-// TestimonialCard removed - will add real testimonials when available
 
 function PricingTable() {
   return (
-    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+    <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
       <PricingCard
         name="Free"
         price="$0"
-        period=""
-        description="Perfect for getting started"
+        description="Start your home's daily plan"
         features={[
-          "3 saved keepsakes",
-          "10 people in Memories",
-          "Unlimited daily reflections",
-          "Basic support"
+          'Household setup',
+          '3 saved keepsakes',
+          '10 people in Memories',
+          'Daily reflections on phone',
         ]}
-        cta="Start Free"
+        cta="Start with Today"
         href="/auth/signup"
         popular={false}
       />
-      
       <PricingCard
         name="Pro"
         price="$9.99"
-        period="/mo"
-        description="For families who want more"
+        period="/mo per home"
+        description="Run the full week for your household"
         features={[
-          "Unlimited saved keepsakes",
-          "Unlimited people in Memories",
-          "AI writing tools (grammar + expansion)",
-          "Priority support",
-          "Advanced organization"
+          'Spouse inherits Pro — one subscription',
+          'Unlimited keepsakes',
+          'Unlimited people in Memories',
+          'AI writing tools on phone',
         ]}
-        cta="Upgrade to Pro"
+        cta="Run the full week"
         href="/auth/signup"
-        popular={true}
+        popular
       />
     </div>
   )
 }
 
-function PricingCard({ 
-  name, 
-  price, 
-  period, 
-  description, 
-  features, 
-  cta, 
-  href, 
-  popular 
-}: { 
+function PricingCard({
+  name,
+  price,
+  period = '',
+  description,
+  features,
+  cta,
+  href,
+  popular,
+}: {
   name: string
   price: string
-  period: string
+  period?: string
   description: string
   features: string[]
   cta: string
@@ -372,46 +346,34 @@ function PricingCard({
   popular: boolean
 }) {
   return (
-    <div className={`bg-white rounded-xl border-2 p-6 ${popular ? 'border-primary-500 shadow-lg' : 'border-gray-200 shadow-sm'} relative`}>
-      {popular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="bg-primary-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-            Most Popular
-          </span>
-        </div>
-      )}
-      
-      <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
-        {name}
-      </h3>
-      
-      <div className="mb-4">
-        <span className="text-3xl font-bold text-gray-900">{price}</span>
-        <span className="text-gray-600">{period}</span>
+    <div
+      className={`surface-card relative p-6 md:p-8 ${popular ? 'ring-2 ring-accent-500/40' : ''}`}
+    >
+      {popular ? (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-600 px-4 py-1 text-xs font-semibold text-white">
+          For your home
+        </span>
+      ) : null}
+
+      <h3 className="card-heading mb-1">{name}</h3>
+      <div className="mb-3">
+        <span className="text-3xl font-bold text-primary-900">{price}</span>
+        {period ? <span className="text-sm text-[#5C6478]"> {period}</span> : null}
       </div>
-      
-      <p className="text-gray-600 mb-6">
-        {description}
-      </p>
-      
-      <ul className="space-y-3 mb-8">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-start gap-3">
-            <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            <span className="text-gray-700 text-sm">{feature}</span>
+      <p className="mb-6 text-sm text-[#5C6478]">{description}</p>
+
+      <ul className="mb-8 space-y-3">
+        {features.map((feature) => (
+          <li key={feature} className="flex items-start gap-3 text-sm text-[#5C6478]">
+            <CheckIcon />
+            <span>{feature}</span>
           </li>
         ))}
       </ul>
-      
+
       <Link
         href={href}
-        className={`w-full block text-center py-3 px-4 rounded-lg font-medium transition-colors ${
-          popular 
-            ? 'bg-primary-500 hover:bg-primary-600 text-white' 
-            : 'bg-gray-900 hover:bg-gray-800 text-white'
-        }`}
+        className={popular ? 'btn-primary w-full text-center' : 'btn-secondary w-full text-center'}
       >
         {cta}
       </Link>
@@ -419,22 +381,23 @@ function PricingCard({
   )
 }
 
-function FAQItem({ 
-  question, 
-  answer 
-}: { 
-  question: string
-  answer: string
-}) {
+function CheckIcon() {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-medium text-gray-900 mb-3">
-        {question}
-      </h3>
-      <p className="text-gray-600">
-        {answer}
-      </p>
-    </div>
+    <svg className="mt-0.5 h-5 w-5 shrink-0 text-accent-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
+      <path
+        fillRule="evenodd"
+        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+        clipRule="evenodd"
+      />
+    </svg>
   )
 }
 
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <div className="surface-card p-6">
+      <h3 className="mb-2 text-base font-semibold text-primary-900">{question}</h3>
+      <p className="text-sm leading-relaxed text-[#5C6478]">{answer}</p>
+    </div>
+  )
+}

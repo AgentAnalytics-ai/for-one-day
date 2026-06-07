@@ -24,7 +24,7 @@ export default async function SignUpPage({
     if (inviteToken) {
       redirect(`/auth/accept-invite?token=${encodeURIComponent(inviteToken)}`)
     }
-    redirect('/dashboard')
+    redirect('/dashboard?welcome=1')
   }
 
   return (

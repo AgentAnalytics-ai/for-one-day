@@ -1,113 +1,118 @@
-# Product Language Guide
+# Product Language Guide — 2027
 
 ## Purpose
 
-This guide is the source of truth for user-facing language in For One Day.
-Use it to keep product copy, emails, UI labels, and analytics events consistent.
+Source of truth for user-facing language in For One Day.  
+Aligns naming psychology, SEO, and UI copy with the kitchen-tablet + phone model.
 
-Core rule: speak in a simple, warm, modern tone centered on memories and loved ones.
+**Core rule:** lead with *daily plan at home*; memories and keepsakes are the credible plus on phone.
 
 ## One-Line Positioning
 
-For One Day helps people capture meaningful memories for the people they love.
+For One Day helps your family **know what matters today** — and **keep what matters for one day.**
 
 ## Narrative Pillars
 
-- Capture what matters now.
-- Keep it organized by person.
-- Revisit moments over time.
-- Unlock Pro AI writing tools when needed.
+1. **Today at home** — schedule, dinner, lists, our focus (glanceable on tablet).
+2. **One household** — spouse inherits Pro; calm “At home” chrome.
+3. **Phone depth** — save a memory, write a keepsake (inside More, not wall tabs).
+4. **Pro** — run the full week for the whole home.
+
+## Psychology Layers (apply one per surface)
+
+| Layer | Where | Rule |
+|-------|-------|------|
+| 1 Trust & glance | Kitchen wall, Today | 3-second answer; no forms on wall |
+| 2 Naming & framing | Marketing, all copy | Lexicon + Sara sentence test |
+| 3 Calm premium | Visual system | Serif emotion, sans schedule, warm canvas |
+| 4 Meta engagement | Phone memories only | Feedback loops — never on wall |
+
+## Five Gates (10/10 scorecard)
+
+Every surface must pass before ship:
+
+1. **Context** — Wall, phone, or marketing?
+2. **Glance** — Answered in 3 seconds?
+3. **Sara** — Can Sara say this out loud?
+4. **Lexicon** — No “never say” words?
+5. **Layer** — Only the right psychology layer on this screen?
+
+**Sara sentence test:**  
+*On the kitchen wall I see dinner and soccer — that's Today. On my phone I open More to save a memory or write a keepsake.*
 
 ## Approved Vocabulary
 
-- memory / memories
-- keepsake / keepsakes
-- people you love
-- private memory space
-- notes and photos
-- Pro AI writing tools
-- organized by person
-- timeline
+### Brand
+- For One Day
+- Know what matters today
+- Your family's daily plan
+- Home Install (not setup fee)
 
-## Deprecated Vocabulary (Do Not Use In User-Facing Copy)
+### Wall / daily ops
+- Today · This week · Lists
+- Dinner tonight · Schedule · Our focus
+- Add to today · + Add
 
-- legacy vault
-- legacy notes
-- turn the page
-- bible progress
-- enhanced verses
-- devotion journey
-- family connections (as a product label)
+### Phone / reflective
+- More (menu)
+- Save a memory · Write a keepsake
+- Memories for today · Keepsakes for one day
+- People you love
 
-Notes:
-- Internal table names, route names, and historical API identifiers may still contain old words.
-- Do not rename internal identifiers unless part of a dedicated migration.
+### Household
+- At home · Your household · Family (settings label when renamed)
 
-## UX Copy Principles
+### Pro
+- Run the full week
+- One plan for your home ($9.99/mo per household)
 
-- Keep copy outcome-focused: "what users can do now."
-- Prefer concrete language over abstract inspiration.
-- Avoid fear-based framing.
-- Keep CTAs short and direct.
-- Use sentence case for UI labels unless design requires otherwise.
+## Never Say (user-facing)
+
+- Vault · Legacy · Inbox · Hub · OS · Dashboard
+- Family OS · Smart dashboard · Command center
+- Skylight alternative
+- AI family assistant · AI assistant (lead)
+- Family connections (as product label)
+- Begin your legacy · Preserve wisdom forever
+
+Internal route/table names may still use legacy identifiers until a dedicated migration.
 
 ## CTA Standards
 
-- Primary CTA examples:
-  - Start free
-  - Save keepsake
-  - View memories
-  - Upgrade to Pro
-- Avoid vague CTAs:
-  - Begin your legacy
-  - Preserve wisdom forever
+| Context | Primary | Secondary |
+|---------|---------|-----------|
+| Marketing | Start with Today | Sign in |
+| Daily ops | + Add to today | — |
+| Pro | Run the full week | See what's included |
+| Memories | Save a memory | View memories |
+
+Avoid: *Upgrade to Pro*, *Start Free Today* (prefer verb-first warm CTAs).
 
 ## Plan and Monetization Language
 
-- Free plan:
-  - Focus on starting habit and core capture loop.
-- Pro plan:
-  - Emphasize unlimited keepsakes, advanced organization, and AI writing tools.
-- AI policy:
-  - If blocked on free: "AI writing tools are a Pro feature."
+- **Free:** Start your home's daily plan; core capture on phone.
+- **Pro:** Run the full week — unlimited keepsakes, shared household features, AI writing tools on phone.
+- **Household:** One $9.99/mo; members inherit Pro.
+- **AI gating:** "AI writing tools are a Pro feature."
 
-## GTM Event Naming Conventions
+## SEO Keywords (primary)
 
-Use snake_case and product nouns from this guide.
+- family daily planner
+- kitchen family calendar
+- household schedule app
+- family to-do list
+- dinner planner family
 
-Recommended events:
+Secondary (moat): memory journal, keepsakes, family memories.
 
-- memory_capture_started
-- memory_person_selected
-- memory_ai_attempted
-- memory_ai_blocked_pro_required
-- memory_ai_success
-- memory_saved
-- memories_viewed
-- upgrade_viewed
-- upgrade_checkout_started
-- upgrade_success
+## GTM Event Naming
 
-Recommended shared properties:
+Use snake_case. Prefer: `daily_plan_viewed`, `household_invite_sent`, `memory_saved`, `upgrade_viewed`, `upgrade_checkout_started`.
 
-- plan_tier: free | pro | lifetime
-- ai_mode: grammar | expand
-- source_surface: dashboard | memories | upgrade | onboarding
+## PR Checklist
 
-## Email and Notification Tone
-
-- Warm and concise.
-- Practical next step in every message.
-- Avoid heavy "legacy" metaphors.
-- Use consistent nouns: memories, keepsakes, people you love.
-
-## PR and Review Checklist
-
-Before merging copy changes, verify:
-
-- No deprecated vocabulary in user-facing text.
-- Pricing and plan text matches current product policy.
-- AI gating copy matches server behavior.
-- Metadata, landing page, and upgrade page use the same narrative.
-- GTM event names use approved schema.
-
+- [ ] Five gates passed
+- [ ] Metadata, landing, upgrade use same one-liner
+- [ ] No deprecated vocabulary in user-facing text
+- [ ] Wall/marketing never lead with memory-only framing
+- [ ] Pro copy mentions household where relevant

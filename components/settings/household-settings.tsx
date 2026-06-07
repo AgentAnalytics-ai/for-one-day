@@ -108,37 +108,33 @@ export function HouseholdSettings() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary-600" />
+      <div className="flex items-center justify-center py-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#E7E2DA] border-t-primary-800" />
       </div>
     )
   }
 
   if (!household) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-sm text-gray-600">
+      <div className="surface-inset border-dashed p-8 text-center text-sm text-[#5C6478]">
         {error ?? 'Household not available yet.'}
       </div>
     )
   }
 
   return (
-    <div id="household" className="scroll-mt-24 space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">
-            Home hub
-          </p>
-          <p className="text-sm text-gray-600 max-w-md">
-            Daily planning, billing, and who shares Pro. One household — one subscription.
-          </p>
-        </div>
+    <div id="household" className="scroll-mt-24 space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <SubscriptionBadge tier={household.plan} />
+        <p className="text-xs text-[#5C6478]">
+          {household.members.length === 1 ? '1 person' : `${household.members.length} people`}{' '}
+          · one bill
+        </p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-        <div className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-          <Home className="h-3.5 w-3.5" />
+      <div className="surface-inset p-4 sm:p-5">
+        <div className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#5C6478]">
+          <Home className="h-3.5 w-3.5 text-accent-700" aria-hidden />
           Household name
         </div>
 
@@ -149,17 +145,12 @@ export function HouseholdSettings() {
               value={draftName}
               onChange={(e) => setDraftName(e.target.value)}
               maxLength={80}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 outline-none focus:border-primary-600"
+              className="field-input text-base"
               autoFocus
             />
-            {saveError ? <p className="text-sm text-red-600">{saveError}</p> : null}
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary-700 px-4 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50"
-              >
+            {saveError ? <p className="text-sm text-red-700">{saveError}</p> : null}
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={handleSave} disabled={saving} className="btn-primary gap-1.5">
                 <Check className="h-4 w-4" />
                 {saving ? 'Saving…' : 'Save'}
               </button>
@@ -171,7 +162,7 @@ export function HouseholdSettings() {
                   setSaveError(null)
                 }}
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="btn-secondary gap-1.5"
               >
                 <X className="h-4 w-4" />
                 Cancel
@@ -180,7 +171,7 @@ export function HouseholdSettings() {
           </div>
         ) : (
           <div className="flex items-center justify-between gap-3">
-            <p className="text-lg font-semibold text-gray-900">{household.name}</p>
+            <p className="font-serif text-xl font-medium text-primary-900">{household.name}</p>
             {household.isOwner ? (
               <button
                 type="button"
@@ -188,7 +179,7 @@ export function HouseholdSettings() {
                   setDraftName(household.name)
                   setIsEditing(true)
                 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="btn-secondary gap-1.5 px-3 py-1.5 text-xs"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Rename
@@ -199,27 +190,29 @@ export function HouseholdSettings() {
       </div>
 
       <div>
-        <h4 className="mb-1 flex items-center gap-2 text-sm font-semibold text-gray-900">
-          <Users className="h-4 w-4 text-gray-600" />
+        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary-900">
+          <Users className="h-4 w-4 text-[#5C6478]" aria-hidden />
           People with logins
         </h4>
-        <p className="mb-3 text-xs text-gray-500">
-          Members share this home. For memory recipients without logins (kids, grandparents),
-          add them in Memories — not here.
+        <p className="mb-3 text-xs leading-relaxed text-[#5C6478]">
+          Kids and grandparents without logins → add in{' '}
+          <span className="font-medium text-primary-900">Memories</span>, not here.
         </p>
-        <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
-          {household.members.map((member) => (
+        <ul className="overflow-hidden rounded-xl border border-[#E7E2DA] bg-white">
+          {household.members.map((member, i) => (
             <li
               key={member.userId}
-              className="flex items-center justify-between px-4 py-3 text-sm"
+              className={`settings-row rounded-none border-0 border-b border-[#F0EBE3] ${
+                i === household.members.length - 1 ? 'border-b-0' : ''
+              }`}
             >
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {member.fullName || 'Member'}
                 {member.isYou ? (
-                  <span className="ml-2 text-xs font-normal text-gray-500">(you)</span>
+                  <span className="ml-2 text-xs font-normal text-[#5C6478]">(you)</span>
                 ) : null}
               </span>
-              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+              <span className="rounded-full bg-[#E8EEF4] px-2.5 py-0.5 text-xs font-semibold text-primary-800">
                 {formatRole(member.role)}
               </span>
             </li>
@@ -229,19 +222,19 @@ export function HouseholdSettings() {
 
       {household.pendingInvitations.length > 0 ? (
         <div>
-          <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-900">
-            <Clock className="h-4 w-4 text-gray-600" />
+          <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary-900">
+            <Clock className="h-4 w-4 text-accent-700" aria-hidden />
             Pending invites
           </h4>
           <ul className="space-y-2">
             {household.pendingInvitations.map((inv) => (
               <li
                 key={inv.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-sm"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-accent-200/80 bg-accent-50/50 px-4 py-3 text-sm"
               >
                 <div>
-                  <p className="font-medium text-gray-900">{inv.invitedEmail}</p>
-                  <p className="text-xs text-gray-600">
+                  <p className="font-medium text-primary-900">{inv.invitedEmail}</p>
+                  <p className="text-xs text-[#5C6478]">
                     {formatRole(inv.role)} · expires {formatExpiry(inv.expiresAt)}
                   </p>
                 </div>
@@ -250,7 +243,7 @@ export function HouseholdSettings() {
                     type="button"
                     onClick={() => handleCancelInvite(inv.id)}
                     disabled={cancellingId === inv.id}
-                    className="text-xs font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50"
+                    className="text-xs font-semibold text-[#5C6478] hover:text-primary-900 disabled:opacity-50"
                   >
                     {cancellingId === inv.id ? 'Cancelling…' : 'Cancel'}
                   </button>
@@ -262,66 +255,53 @@ export function HouseholdSettings() {
       ) : null}
 
       {household.isOwner && household.canInvite ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h4 className="mb-1 flex items-center gap-2 text-sm font-semibold text-gray-900">
-            <Mail className="h-4 w-4 text-gray-600" />
+        <div className="rounded-xl border border-[#E7E2DA] bg-gradient-to-b from-white to-[#FAF7F2]/40 p-5">
+          <h4 className="mb-1 flex items-center gap-2 text-sm font-semibold text-primary-900">
+            <Mail className="h-4 w-4 text-accent-700" aria-hidden />
             Invite to household
           </h4>
-          <p className="mb-4 text-xs text-gray-500">
-            They&apos;ll get an email to join your home. If they already have a solo free account,
-            accepting replaces their empty home — personal memories stay theirs. Pro applies to
-            everyone here; no extra charge per person.
+          <p className="mb-4 text-xs leading-relaxed text-[#5C6478]">
+            Email them a link to join your home. Solo free accounts merge in automatically.
+            Pro covers everyone here — no per-person charge.
           </p>
-          <form onSubmit={handleInvite} className="space-y-3">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="sm:col-span-2">
-                <label htmlFor="invite-email" className="sr-only">
-                  Email
-                </label>
-                <input
-                  id="invite-email"
-                  type="email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="partner@email.com"
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary-600"
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="invite-role" className="block text-xs font-medium text-gray-600 mb-1">
-                  Role
-                </label>
-                <select
-                  id="invite-role"
-                  value={inviteRole}
-                  onChange={(e) =>
-                    setInviteRole(e.target.value as InvitableHouseholdRole)
-                  }
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary-600"
-                >
-                  {INVITABLE_HOUSEHOLD_ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {inviteRoleLabel(r)}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1.5 text-xs text-gray-500">
-                  {inviteRoleDescription(inviteRole)}
-                </p>
-              </div>
+          <form onSubmit={handleInvite} className="space-y-4">
+            <div>
+              <label htmlFor="invite-email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#5C6478]">
+                Email
+              </label>
+              <input
+                id="invite-email"
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="partner@email.com"
+                required
+                className="field-input"
+              />
             </div>
-            {inviteError ? (
-              <p className="text-sm text-red-600">{inviteError}</p>
-            ) : null}
+            <div>
+              <label htmlFor="invite-role" className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[#5C6478]">
+                Role
+              </label>
+              <select
+                id="invite-role"
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value as InvitableHouseholdRole)}
+                className="field-input"
+              >
+                {INVITABLE_HOUSEHOLD_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {inviteRoleLabel(r)}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs text-[#5C6478]">{inviteRoleDescription(inviteRole)}</p>
+            </div>
+            {inviteError ? <p className="text-sm text-red-700">{inviteError}</p> : null}
             {inviteSuccess ? (
-              <p className="text-sm text-green-700">Invitation sent — check their inbox.</p>
+              <p className="text-sm font-medium text-[#0F5132]">Invitation sent — check their inbox.</p>
             ) : null}
-            <button
-              type="submit"
-              disabled={inviting}
-              className="rounded-full bg-primary-700 px-5 py-2 text-sm font-medium text-white hover:bg-primary-800 disabled:opacity-50"
-            >
+            <button type="submit" disabled={inviting} className="btn-primary">
               {inviting ? 'Sending…' : 'Send invite'}
             </button>
           </form>
@@ -329,14 +309,14 @@ export function HouseholdSettings() {
       ) : null}
 
       {!household.isOwner ? (
-        <p className="text-xs text-gray-500">
-          You&apos;re a member of this household. Pro and billing are managed by the owner.
+        <p className="text-xs text-[#5C6478]">
+          You&apos;re a member. Pro and billing are managed by the household owner.
         </p>
       ) : null}
 
       {household.isOwner && !household.canInvite ? (
-        <p className="text-xs text-gray-500">
-          Member limit reached. Cancel a pending invite or contact support to add more people.
+        <p className="text-xs text-[#5C6478]">
+          Member limit reached. Cancel a pending invite to add someone else.
         </p>
       ) : null}
     </div>

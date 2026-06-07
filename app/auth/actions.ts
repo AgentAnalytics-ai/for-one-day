@@ -55,10 +55,11 @@ export async function signInWithPassword(formData: FormData) {
   }
 
   if (next && next.startsWith('/') && !next.startsWith('//')) {
-    redirect(next)
+    const welcome = next.startsWith('/dashboard') ? (next.includes('?') ? '&welcome=1' : '?welcome=1') : ''
+    redirect(`${next}${welcome}`)
   }
 
-  redirect('/dashboard')
+  redirect('/dashboard?welcome=1')
 }
 
 export async function signUp(formData: FormData) {

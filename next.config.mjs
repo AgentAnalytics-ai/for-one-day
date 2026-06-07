@@ -1,5 +1,14 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url))
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Next 16 + Turbopack: pin root so dev doesn't pick C:\Users\grant\package-lock.json
+  turbopack: {
+    root: projectRoot,
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '60mb', // Increased for video uploads (50MB max + overhead)
@@ -21,7 +30,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: true,
   async headers() {
     return [
       {

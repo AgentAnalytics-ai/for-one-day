@@ -2,77 +2,93 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { BrandLogo } from '@/components/brand/brand-logo'
+import { NavPillLogo } from '@/components/brand/nav-pill-logo'
+import { cn } from '@/lib/utils'
 
 /**
- * 🎨 2026 Expert-Designed Header Component
- * Modern, centered brand with clean professional aesthetics
- * Follows latest UI/UX trends: larger typography, centered layout, minimal navigation
+ * Marketing + auth header — warm 2027 system; landing matches dashboard lockup.
  */
 export function Header() {
   const pathname = usePathname()
+  const [scrolled, setScrolled] = useState(false)
+
   const isAuthPage = pathname?.startsWith('/auth')
   const isLandingPage = pathname === '/'
-  const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/vault') || pathname?.startsWith('/reflection') || pathname?.startsWith('/memories') || pathname?.startsWith('/settings') || pathname?.startsWith('/upgrade')
+  const isDashboard =
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/lists') ||
+    pathname?.startsWith('/week') ||
+    pathname?.startsWith('/more') ||
+    pathname?.startsWith('/vault') ||
+    pathname?.startsWith('/reflection') ||
+    pathname?.startsWith('/memories') ||
+    pathname?.startsWith('/settings') ||
+    pathname?.startsWith('/upgrade')
   const isLegalPage = pathname === '/terms' || pathname === '/privacy'
 
-  const headerClass =
-    'sticky top-0 z-50 backdrop-blur safe-area-inset-top safe-area-x ' +
-    (isLandingPage ? 'bg-white/95 border-b border-transparent shadow-none' : 'bg-white/95 border-b border-slate-200 shadow-sm')
+  useEffect(() => {
+    if (!isLandingPage) return
+    const onScroll = () => setScrolled(window.scrollY > 12)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isLandingPage])
+
+  const headerClass = cn(
+    'sticky top-0 z-50 safe-area-inset-top safe-area-x transition-all duration-300',
+    isLandingPage
+      ? scrolled
+        ? 'border-b border-[#E7E2DA]/80 bg-[#FAF7F2]/95 shadow-[0_4px_24px_rgba(16,42,67,0.04)] backdrop-blur-md'
+        : 'border-b border-transparent bg-transparent'
+      : 'border-b border-[#E7E2DA] bg-white/95 shadow-sm backdrop-blur-md'
+  )
+
+  const navLinkClass =
+    'text-sm font-medium text-[#5C6478] transition-colors hover:text-primary-900 rounded-lg px-3 py-2 hover:bg-[#F3EDE4]/60'
 
   return (
-    <header className={headerClass} style={{ backgroundColor: '#ffffff' }}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-14 items-center justify-between py-3 sm:min-h-16 sm:py-3.5">
+    <header className={headerClass}>
+      <div
+        className={cn(
+          'mx-auto px-4 sm:px-6 lg:px-8',
+          isLandingPage ? 'max-w-6xl' : 'max-w-7xl'
+        )}
+      >
+        <div className="flex min-h-[4.25rem] items-center justify-between py-3 sm:min-h-[4.5rem]">
           <Link
             href={isDashboard ? '/dashboard' : '/'}
-            className="group shrink-0"
+            className="group shrink-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-700 focus-visible:ring-offset-2"
           >
             {isDashboard ? (
-              <div className="relative rounded-lg bg-slate-900 px-4 sm:px-5 py-1.5 sm:py-2 shadow-sm transition-all duration-200 group-hover:shadow-md">
+              <div className="rounded-lg bg-primary-900 px-4 py-1.5 shadow-sm transition-shadow group-hover:shadow-md sm:px-5 sm:py-2">
                 <BrandLogo
                   mark="horizon-a"
                   markClassName="h-6 w-6"
-                  textClassName="font-serif font-light text-white tracking-tight text-lg sm:text-xl md:text-2xl"
+                  textClassName="font-serif font-light text-white tracking-tight text-lg sm:text-xl"
                 />
               </div>
             ) : (
-              <span className="inline-flex items-center justify-center rounded-full bg-[#102A43] px-5 sm:px-6 py-2 shadow-sm transition-all duration-200 group-hover:shadow-md">
-                <span className="font-serif font-light tracking-tight text-white text-base sm:text-lg">
-                  For One Day
-                </span>
-              </span>
+              <NavPillLogo size="nav" />
             )}
           </Link>
 
-          <nav className="flex items-center gap-3 sm:gap-4">
+          <nav className="flex items-center gap-1 sm:gap-2">
             {isLandingPage ? (
               <>
-                <Link
-                  href="/auth/login"
-                  className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
-                >
-                  Sign In
+                <Link href="#how" className={cn(navLinkClass, 'hidden sm:inline-flex')}>
+                  How it works
                 </Link>
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center px-3 sm:px-5 py-1.5 sm:py-2 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-slate-800 transition-all duration-200 shadow-sm hover:shadow-md"
-                >
-                  Start Free
+                <Link href="#pricing" className={cn(navLinkClass, 'hidden md:inline-flex')}>
+                  Plans
+                </Link>
+                <Link href="/auth/login" className={navLinkClass}>
+                  Sign in
                 </Link>
               </>
-            ) : isAuthPage ? (
-              <Link
-                href="/"
-                className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
-              >
-                <span className="hidden sm:inline">← </span>Home
-              </Link>
-            ) : isLegalPage ? (
-              <Link
-                href="/"
-                className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-slate-100"
-              >
+            ) : isAuthPage || isLegalPage ? (
+              <Link href="/" className={navLinkClass}>
                 <span className="hidden sm:inline">← </span>Home
               </Link>
             ) : null}
@@ -82,4 +98,3 @@ export function Header() {
     </header>
   )
 }
-

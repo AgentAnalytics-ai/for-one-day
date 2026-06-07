@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-fraunces)', 'Georgia', 'Cambria', 'serif'],
+        sans: ['var(--font-dm-sans)', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Custom colors from CSS variables

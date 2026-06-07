@@ -7,6 +7,8 @@ import { SupportFooter } from '@/components/support-footer'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
 import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts'
 import { SkipLink } from '@/components/ui/skip-link'
+import { Suspense } from 'react'
+import { BrandEntrance } from '@/components/dashboard/brand-entrance'
 
 /**
  * 🏠 Dashboard layout - Simplified
@@ -64,9 +66,12 @@ export default async function DashboardLayout({
   const household = householdResult.success ? householdResult.household ?? null : null
 
   return (
-    <div className="flex min-h-[100dvh] min-h-screen flex-col bg-gradient-to-b from-slate-100/90 via-slate-50 to-[#eef2f6]">
+    <div id="app-shell" className="flex min-h-[100dvh] min-h-screen flex-col bg-transparent">
       <SkipLink />
       <KeyboardShortcuts />
+      <Suspense fallback={null}>
+        <BrandEntrance />
+      </Suspense>
       <NavigationTour />
       <SimpleNav profile={profile} household={household} />
 
@@ -75,7 +80,7 @@ export default async function DashboardLayout({
 
       <main
         id="main-content"
-        className="flex w-full flex-1 px-4 py-4 pb-[calc(5.75rem+env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:py-7 md:py-9 lg:px-8 lg:pb-12 lg:pt-5"
+        className="flex w-full flex-1 px-4 py-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] pt-3 sm:px-6 sm:py-7 md:py-9 lg:px-8 lg:pb-12 lg:pt-5"
       >
         <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>

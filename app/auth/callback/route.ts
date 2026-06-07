@@ -26,7 +26,9 @@ export async function GET(request: Request) {
     await acceptPendingHouseholdInvitation()
   }
 
-  const joined = inviteToken ? '?joined=household' : ''
-  return NextResponse.redirect(`${origin}/dashboard${joined}`)
+  const params = new URLSearchParams()
+  params.set('welcome', '1')
+  if (inviteToken) params.set('joined', 'household')
+  return NextResponse.redirect(`${origin}/dashboard?${params.toString()}`)
 }
 
