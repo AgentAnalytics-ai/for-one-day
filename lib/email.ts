@@ -216,6 +216,57 @@ export function weeklyDigestEmail(
 /**
  * Welcome email for new users
  */
+/**
+ * Household member invitation (Step 5)
+ */
+export async function sendHouseholdInviteEmail({
+  to,
+  inviterName,
+  householdName,
+  role,
+  inviteUrl,
+}: {
+  to: string
+  inviterName: string
+  householdName: string
+  role: string
+  inviteUrl: string
+}) {
+  const roleLabel =
+    role === 'spouse'
+      ? 'partner'
+      : role === 'child'
+        ? 'family member'
+        : 'household member'
+
+  const subject = `${inviterName} invited you to ${householdName} on For One Day`
+  const html = `
+    <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
+      <h1 style="color: #1f2937; font-size: 24px; margin-bottom: 12px;">
+        Join ${householdName}
+      </h1>
+      <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+        <strong>${inviterName}</strong> invited you to join their household on For One Day as a ${roleLabel}.
+        You'll share the same home for daily planning — and Pro benefits if their household has Pro.
+      </p>
+      <a href="${inviteUrl}"
+         style="display: inline-block; background: #1e3a5f; color: white; padding: 14px 28px;
+                text-decoration: none; border-radius: 999px; font-weight: 600; margin: 24px 0;">
+        Accept invitation
+      </a>
+      <p style="color: #6b7280; font-size: 13px; line-height: 1.5;">
+        This link expires in 14 days. If you already have an account, sign in with <strong>${to}</strong> when prompted.
+      </p>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 28px 0;">
+      <p style="color: #9ca3af; font-size: 12px;">
+        For One Day — memories and your household home hub.
+      </p>
+    </div>
+  `
+
+  return sendEmail({ to, subject, html })
+}
+
 export async function sendWelcomeEmail({
   to,
   name,

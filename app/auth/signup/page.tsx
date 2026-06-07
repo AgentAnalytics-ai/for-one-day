@@ -11,20 +11,21 @@ import { Header } from '@/components/header'
 export default async function SignUpPage({ 
   searchParams 
 }: { 
-  searchParams: Promise<{ error?: string; invite?: string; role?: string }> 
+  searchParams: Promise<{ error?: string; token?: string }> 
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // If already logged in, go to dashboard
-  if (user) {
-    redirect('/dashboard')
-  }
-
   const resolvedSearchParams = await searchParams
   const error = resolvedSearchParams.error
-  const inviteFamilyId = resolvedSearchParams.invite
-  const inviteRole = resolvedSearchParams.role || 'spouse'
+  const inviteToken = resolvedSearchParams.token?.trim()
+
+  if (user) {
+    if (inviteToken) {
+      redirect(`/auth/accept-invite?token=${encodeURIComponent(inviteToken)}`)
+    }
+    redirect('/dashboard')
+  }
 
   return (
     <main className="min-h-screen bg-white flex flex-col">
@@ -35,12 +36,12 @@ export default async function SignUpPage({
           {/* Hero Section - More spacing */}
           <div className="text-center mb-10 sm:mb-12">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-light text-gray-900 mb-4 sm:mb-5 leading-tight tracking-tight">
-              {inviteFamilyId ? 'Join your family' : 'Start your memory journey'}
+              {inviteToken ? 'Join your household' : 'Start your memory journey'}
             </h1>
             
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-sm mx-auto font-light">
-              {inviteFamilyId 
-                ? 'You\'ve been invited to join a family on For One Day.'
+              {inviteToken 
+                ? 'You\'ve been invited to a home on For One Day. Sign up with the same email that received the invite.'
                 : 'Join people capturing memories that matter.'
               }
             </p>
@@ -69,13 +70,9 @@ export default async function SignUpPage({
 
           {/* Email Signup Form */}
           <form action={signUp} className="space-y-6">
-            {/* Hidden fields for invitation */}
-            {inviteFamilyId && (
-              <>
-                <input type="hidden" name="invite" value={inviteFamilyId} />
-                <input type="hidden" name="role" value={inviteRole} />
-              </>
-            )}
+            {inviteToken ? (
+              <input type="hidden" name="invite-token" value={inviteToken} />
+            ) : null}
             
             <div>
               <label htmlFor="full-name" className="block text-sm font-medium text-gray-900 mb-2.5">

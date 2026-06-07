@@ -31,9 +31,35 @@ interface Profile {
   executor_relationship?: string
 }
 
+function SettingsSection({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id?: string
+  title: string
+  description?: string
+  children: React.ReactNode
+}) {
+  return (
+    <section
+      id={id}
+      className="scroll-mt-24 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6"
+    >
+      <div className="mb-5">
+        <h2 className="section-title">{title}</h2>
+        {description ? (
+          <p className="mt-1 text-sm text-gray-500 max-w-lg">{description}</p>
+        ) : null}
+      </div>
+      {children}
+    </section>
+  )
+}
+
 /**
- * ⚙️ Settings Page - User Profile & Emergency Contact
- * Simple, professional settings interface
+ * Settings — expert IA: Household → Profile/Legacy → Billing → Account → Support
  */
 export default function SettingsPage() {
   const router = useRouter()
@@ -83,7 +109,6 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="h-6 w-32 bg-gray-200 rounded animate-pulse" />
               <div className="h-12 w-full bg-gray-200 rounded-xl animate-pulse" />
-              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse" />
             </div>
           </div>
         </div>
@@ -92,7 +117,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-12">
       <ToastContainer toasts={toasts} onRemove={(id) => toast.remove(id)} />
       <PageHeader
         className="mb-8"
@@ -106,104 +131,51 @@ export default function SettingsPage() {
             <span className="text-primary-900">Settings</span>
           </>
         }
-        title="Account Settings"
-        subtitle="Manage your household, profile, and billing"
+        title="Settings"
+        subtitle="Household, your profile, and billing — kept separate on purpose."
       />
 
-      <div className="mb-6 sm:mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="section-title mb-4">Household</h2>
-        <HouseholdSettings />
-      </div>
+      <div className="space-y-6 sm:space-y-8">
+        <SettingsSection
+          title="Household"
+          description="Your home hub — who shares daily planning and Pro. Not the same as memory recipients."
+        >
+          <HouseholdSettings />
+        </SettingsSection>
 
-      <div className="bg-white rounded-2xl shadow-lg border-2 border-primary-100 p-6 sm:p-8">
-        <ProfileSettingsView 
-          profile={profile} 
-          onUpdate={loadProfile}
-        />
-      </div>
+        <SettingsSection
+          id="profile"
+          title="Your profile & legacy"
+          description="About you, plus emergency and executor contacts for keepsakes — personal, not shared on the wall."
+        >
+          <ProfileSettingsView profile={profile} onUpdate={loadProfile} />
+        </SettingsSection>
 
-      {/* Subscription Management */}
-      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="section-title mb-4">Subscription Management</h2>
-        <SubscriptionManagement />
-      </div>
+        <SettingsSection
+          id="billing"
+          title="Plan & billing"
+          description="One subscription per household. Members inherit Pro without a separate charge."
+        >
+          <SubscriptionManagement />
+        </SettingsSection>
 
-      {/* Account Management */}
-      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="section-title mb-4">Account Management</h2>
-        <AccountManagement profile={profile} />
-      </div>
+        <SettingsSection title="Account">
+          <AccountManagement profile={profile} />
+        </SettingsSection>
 
-      {/* Support Contact - Redesigned */}
-      <div className="mt-6 sm:mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="section-title mb-4">Support</h2>
-        
-        <div className="space-y-4">
-          {/* Priority Support */}
-          <div className="flex items-start p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="flex-shrink-0 mr-3">
-              <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-gray-900 mb-1">
-                For urgent family access requests
-              </p>
-              <SupportContactButton />
-              <p className="text-xs text-gray-600 mt-1">
-                Mon-Fri 9am-6pm CST • Response within 24 hours
-              </p>
-            </div>
-          </div>
-
-          {/* General Support */}
-          <div className="flex items-start p-4 bg-gray-50 rounded-lg">
-            <div className="flex-shrink-0 mr-3">
-              <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-gray-900 mb-2">
-                General questions and support
-              </p>
-              <SupportContactButton />
-              <p className="text-xs text-gray-600 mt-2">
-                Response within 24 hours
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Emergency Contact Info */}
-      <div className="mt-6 sm:mt-8 bg-blue-50 rounded-lg border border-blue-200 p-4 sm:p-6">
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
-            <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <h3 className="mb-2 text-base font-serif font-semibold text-blue-900 md:text-lg">
-              Emergency Access
-            </h3>
-            <p className="text-blue-800 text-sm mb-3">
-              If something happens to you, your emergency contact can request access to your keepsakes.
-              This helps ensure your family receives your important messages.
+        <SettingsSection title="Support">
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Questions, billing help, or urgent family access requests.
             </p>
-            <div className="text-blue-700 text-sm">
-              <p><strong>How it works:</strong></p>
-              <ul className="list-disc list-inside mt-1 space-y-1">
-                <li>Your emergency contact emails our support team</li>
-                <li>We verify their identity and relationship to you</li>
-                <li>We securely deliver your keepsakes to them</li>
-                <li>This process typically takes 1-2 business days</li>
-              </ul>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <SupportContactButton />
+              <p className="text-xs text-gray-500">
+                Mon–Fri 9am–6pm CST · typically within 24 hours
+              </p>
             </div>
           </div>
-        </div>
+        </SettingsSection>
       </div>
     </div>
   )

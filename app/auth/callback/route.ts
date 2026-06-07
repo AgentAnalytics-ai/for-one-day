@@ -1,5 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import {
+  acceptHouseholdInvitation,
+  acceptPendingHouseholdInvitation,
+} from '@/app/actions/household-actions'
 
 /**
  * 🔗 Auth callback handler
@@ -8,6 +12,7 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const inviteToken = requestUrl.searchParams.get('invite_token')
   const origin = requestUrl.origin
 
   if (code) {
@@ -15,7 +20,13 @@ export async function GET(request: Request) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // Redirect to dashboard after successful auth
-  return NextResponse.redirect(`${origin}/dashboard`)
+  if (inviteToken?.trim()) {
+    await acceptHouseholdInvitation(inviteToken.trim())
+  } else {
+    await acceptPendingHouseholdInvitation()
+  }
+
+  const joined = inviteToken ? '?joined=household' : ''
+  return NextResponse.redirect(`${origin}/dashboard${joined}`)
 }
 

@@ -78,13 +78,17 @@ export async function signUp(formData: FormData) {
     redirect('/auth/signup?error=' + encodeURIComponent('Invalid name. URLs are not allowed.'))
   }
   
-  // Family invites removed
-  
+  const inviteToken = (formData.get('invite-token') as string)?.trim() || ''
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.foroneday.app'
+  const callbackUrl = inviteToken
+    ? `${siteUrl}/auth/callback?invite_token=${encodeURIComponent(inviteToken)}`
+    : `${siteUrl}/auth/callback`
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: callbackUrl,
       data: { full_name: fullName },
     },
   })
