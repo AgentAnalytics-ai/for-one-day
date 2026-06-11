@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kitchen Wall Phases — For One Day Whiteboard</title>
+  <style>
+    :root {
+      --ink: #1e3a5f;
+      --muted: #5c6478;
+      --canvas: #faf7f2;
+      --line: #e7e2da;
+      --white: #ffffff;
+      --green: #166534;
+      --green-bg: #ecfdf5;
+      --amber: #92400e;
+      --amber-bg: #fffbeb;
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+      --blue-bg: #eff6ff;
+      --serif: Georgia, "Times New Roman", serif;
+      --sans: system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--sans); background: var(--canvas); color: var(--ink); line-height: 1.55; font-size: 0.95rem; }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    h1 { font-family: var(--serif); font-size: 2rem; font-weight: 500; margin: 0.35rem 0 0.5rem; }
+    h2 { font-family: var(--serif); font-size: 1.35rem; font-weight: 500; margin: 2.25rem 0 0.75rem; }
+    h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 0.5rem; }
+    .lead { font-size: 1.05rem; color: var(--muted); max-width: 44rem; }
+    .north-star {
+      background: var(--white); border: 2px solid var(--ink); border-radius: 1rem;
+      padding: 1.25rem 1.5rem; margin: 1.75rem 0;
+    }
+    .north-star p { margin: 0; font-family: var(--serif); font-size: 1.15rem; }
+    .grid-2 { display: grid; gap: 1rem; }
+    @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .card {
+      background: var(--white); border: 1px solid var(--line); border-radius: 1rem;
+      padding: 1.1rem 1.25rem;
+    }
+    .card.in { border-color: #86efac; background: var(--green-bg); }
+    .card.next { border-color: #fcd34d; background: var(--amber-bg); }
+    .card.out { border-color: #fecaca; background: var(--red-bg); }
+    .badge {
+      display: inline-block; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 999px; margin-bottom: 0.5rem;
+    }
+    .badge.ship { background: #dcfce7; color: var(--green); }
+    .badge.now { background: #fef3c7; color: var(--amber); }
+    .badge.later { background: #e2e8f0; color: var(--muted); }
+    .badge.no { background: #fee2e2; color: var(--red); }
+    ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+    li { margin: 0.35rem 0; }
+    .flow {
+      background: var(--white); border: 1px solid var(--line); border-radius: 1rem;
+      padding: 1.25rem 1.5rem; margin: 1rem 0; font-size: 0.88rem;
+    }
+    .flow-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
+    .node {
+      background: var(--blue-bg); border: 1px solid #bfdbfe; border-radius: 0.6rem;
+      padding: 0.45rem 0.75rem; font-weight: 500; white-space: nowrap;
+    }
+    .node.data { background: #f5f2ec; border-color: var(--line); font-weight: 400; font-size: 0.82rem; }
+    .arrow { color: var(--muted); font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: var(--white); border-radius: 1rem; overflow: hidden; border: 1px solid var(--line); margin: 1rem 0; }
+    th, td { text-align: left; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: #f5f2ec; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    tr:last-child td { border-bottom: none; }
+    .yes { color: var(--green); font-weight: 600; }
+    .no { color: var(--red); }
+    .fence {
+      border-left: 4px solid var(--red); padding: 0.75rem 1rem; margin: 1rem 0;
+      background: var(--red-bg); border-radius: 0 0.5rem 0.5rem 0; font-size: 0.9rem;
+    }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { padding: 0.4rem 0; padding-left: 1.5rem; position: relative; }
+    .checklist li::before { content: "☐"; position: absolute; left: 0; color: var(--muted); }
+    code { font-size: 0.85em; background: #f5f2ec; padding: 0.1rem 0.35rem; border-radius: 0.25rem; }
+    footer { margin-top: 2.5rem; font-size: 0.8rem; color: var(--muted); }
+    a { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">For One Day · Internal whiteboard · June 2026</p>
+    <h1>Kitchen wall — every page</h1>
+    <p class="lead">
+      One household daily plan at home. Each surface has a <strong>phase</strong>: what ships now, what it must feel like (2027 psychology), and what is explicitly out.
+      No scrolling on the wall. No empty cards. No “Nothing scheduled.”
+    </p>
+
+    <div class="north-star">
+      <p><strong>North star:</strong> Kitchen tablet = glance in 3 seconds, tap to act. Phone = save photos &amp; depth in More. Calendar = read from Google; meals &amp; lists = edit here.</p>
+    </div>
+
+    <!-- PAGE PHASES -->
+    <h2>Page phases (what each should look like)</h2>
+    <table>
+      <thead>
+        <tr><th>Page</th><th>Feels like</th><th>Ship now</th><th>Next phase</th><th>Never on wall</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Today</strong></td>
+          <td>One calm screen. Greeting + what matters tonight. No scroll.</td>
+          <td>
+            Dinner card (tap → walk-through)<br>
+            Schedule <em>only if</em> events today or needs connect<br>
+            Lists <em>only if</em> open items<br>
+            One-line focus
+          </td>
+          <td><strong>Tablet slideshow</strong> — rotating saved photos between greeting and cards (Step 8A)</td>
+          <td>Empty schedule · “Nothing scheduled” · duplicate This week card · memory browser</td>
+        </tr>
+        <tr>
+          <td><strong>Lists</strong></td>
+          <td>Shop + to-do for the home. Tap to check off.</td>
+          <td>Shared shopping + todo, sync both phones</td>
+          <td>Quiet empty states</td>
+          <td>Orphan tasks table · gamification</td>
+        </tr>
+        <tr>
+          <td><strong>This week</strong></td>
+          <td>Plan dinners. See merged household events.</td>
+          <td>Meal rows + Google read-only schedule panel</td>
+          <td>Week nudge (“busy Thursday”) — invisible one line</td>
+          <td><strong>Add calendar events here</strong> — use Google Calendar app</td>
+        </tr>
+        <tr>
+          <td><strong>More (phone)</strong></td>
+          <td>Depth when you have a moment.</td>
+          <td>Save a memory · keepsakes · settings</td>
+          <td>Tag photo as <strong>Tablet slideshow</strong> when saving</td>
+          <td>Full memory grid on kitchen tablet</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Tablet slideshow photo (Step 8A — planned)</h3>
+    <div class="card next">
+      <span class="badge later">Not built yet</span>
+      <ul>
+        <li><strong>Not “memories” on the wall</strong> — label: <em>Tablet slideshow photo</em> when saving from phone</li>
+        <li>Household picks which saved photos rotate on Today (landscape tablet)</li>
+        <li>Calm crossfade — no UI chrome, no captions required</li>
+        <li>Data: tag on existing memory/media rows or <code>wall_slideshow</code> flag</li>
+        <li>Sits <em>above</em> dinner/lists — warmth without a second product</li>
+      </ul>
+    </div>
+
+    <h3>Calendar truth (avoid confusion)</h3>
+    <div class="principle" style="background:var(--white);border:1px solid var(--line);border-radius:1rem;padding:1.25rem 1.5rem;margin:1rem 0;">
+      <strong>This week does not create Google events.</strong> Grant &amp; Sara add future events in Google Calendar (or phone calendar). For One Day <em>merges and shows</em> them. Meals and lists are edited in-app. Say this once in This week subtitle — not on Today.
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <h2>One pipeline (keep this)</h2>
+    <div class="flow">
+      <div class="flow-row">
+        <span class="node">Today / Week tap</span>
+        <span class="arrow">→</span>
+        <span class="node">Pick saved chip OR one line + notes</span>
+        <span class="arrow">→</span>
+        <span class="node">Walk me through it</span>
+      </div>
+      <div class="flow-row">
+        <span class="node data">meal_ideas (bookmark)</span>
+        <span class="arrow">+</span>
+        <span class="node data">name · notes · time</span>
+        <span class="arrow">→</span>
+        <span class="node data">server action → gpt-4o-mini → JSON</span>
+        <span class="arrow">→</span>
+        <span class="node data">meal_plans + list_items</span>
+      </div>
+      <p style="margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted);">
+        Link today = <strong>household bookmark</strong> for humans. Model is told it cannot open URLs — plan comes from name + notes + time. Honest and clean.
+      </p>
+    </div>
+
+    <!-- SHIPPED -->
+    <h2>Shipped (in scope, done)</h2>
+    <div class="grid-2">
+      <div class="card in">
+        <span class="badge ship">Live</span>
+        <h3>Step 5 · Household</h3>
+        <ul>
+          <li>Spouse invite, one <code>family_id</code>, Pro per home</li>
+        </ul>
+      </div>
+      <div class="card in">
+        <span class="badge ship">Live</span>
+        <h3>Step 6 · Lists + meals</h3>
+        <ul>
+          <li>Shared shopping + todo</li>
+          <li>Meal plan per night</li>
+        </ul>
+      </div>
+      <div class="card in">
+        <span class="badge ship">Live</span>
+        <h3>Step 6D · Walk-through</h3>
+        <ul>
+          <li>Bottom sheet, invisible-help copy</li>
+          <li>Right now → timeline → save</li>
+        </ul>
+      </div>
+      <div class="card in">
+        <span class="badge ship">Code shipped</span>
+        <h3>Step 6E · Saved recipes</h3>
+        <ul>
+          <li><code>meal_ideas</code> chips — pick, don’t paste</li>
+          <li><strong>Run 009 migration on prod</strong></li>
+        </ul>
+      </div>
+      <div class="card in">
+        <span class="badge ship">Live</span>
+        <h3>Step 7 · Calendar</h3>
+        <ul>
+          <li>Google read-only, household merge</li>
+          <li>No AI on calendar</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AI TIERS -->
+    <h2>Dinner AI — three tiers (honest)</h2>
+    <table>
+      <thead>
+        <tr><th>Tier</th><th>What</th><th>Clean?</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td>Name + notes + time → personalized playbook</td>
+          <td class="yes">Yes — core product</td>
+          <td><span class="badge ship">Now</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Adapt to home (Sara’s name, servings, GF, freezer)</td>
+          <td class="yes">Yes — prompt + household data</td>
+          <td><span class="badge now">Next small</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td>Fetch URL → extract recipe text → enrich prompt</td>
+          <td>Only with silent fallback</td>
+          <td><span class="badge later">6F later</span></td>
+        </tr>
+        <tr>
+          <td>—</td>
+          <td>“AI read Pinterest” / browse web / recipe rewriter brand</td>
+          <td class="no">No — brittle + off-brand</td>
+          <td><span class="badge no">Out</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- NEXT STEPS -->
+    <h2>Cleanest next steps (in order)</h2>
+    <p class="lead" style="margin-bottom: 1rem;">Do these before new features. Each passes the Sara test and stays inside one household thread.</p>
+
+    <table>
+      <thead>
+        <tr><th>#</th><th>Step</th><th>Why</th><th>Scope?</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Run <code>009_meal_ideas.sql</code> on prod</strong></td>
+          <td>6E chips won’t persist until migration runs</td>
+          <td class="yes">Yes</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Two-phone test</strong> (Grant + Sara): save link → chip → walk-through → Lists sync</td>
+          <td>Close Step 6 before building more</td>
+          <td class="yes">Yes</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Spouse name in steps</strong> (“Text Sara…”) from household profile</td>
+          <td>Tier 2 — no new tables, better plans</td>
+          <td class="yes">Yes</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Real <code>OPENAI_API_KEY</code></strong> in Vercel + local</td>
+          <td>Walk-through must work in prod for real users</td>
+          <td class="yes">Yes</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>6F optional URL extract</strong> (recipe blogs only, 5s timeout, fail silent)</td>
+          <td>Bonus enrichment — never required for a plan</td>
+          <td class="yes">Yes, later</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Week nudge</strong> (“You’ve got a lot Thursday”) — invisible, one line</td>
+          <td>After dinner thread is solid</td>
+          <td class="yes">Yes, later</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- OUT OF SCOPE -->
+    <h2>Scope fence (not now)</h2>
+    <div class="fence">
+      <strong>Stop if we’re tempted to build these before #1–4 above:</strong>
+      <ul>
+        <li>Pinterest API / OAuth / “import my boards”</li>
+        <li>iOS Share Extension from Pinterest app</li>
+        <li>Claiming “AI read your pin” without real extract</li>
+        <li>ForDinner / ForPlanning sub-brands</li>
+        <li>Calendar write-back, Outlook (7D), gamified tasks</li>
+        <li>LangChain, multi-agent, browse-on-every-tap</li>
+        <li>Full recipe editor / “AI chef rewrote your recipe” UI</li>
+      </ul>
+    </div>
+
+    <!-- ALIGNMENT CHECK -->
+    <h2>Alignment check</h2>
+    <div class="grid-2">
+      <div class="card next">
+        <span class="badge now">Question we asked</span>
+        <p style="margin:0;"><strong>Can AI read the link and write a better recipe?</strong></p>
+        <p style="margin:0.5rem 0 0; font-size:0.9rem; color:var(--muted);">
+          <strong>Aligned answer:</strong> AI already writes tonight’s playbook from name + notes. Link stays a bookmark. “Better” = right for <em>your home tonight</em>, not beating the blogger. URL read is optional tier 3 later — not the foundation.
+        </p>
+      </div>
+      <div class="card next">
+        <span class="badge now">Question we asked</span>
+        <p style="margin:0;"><strong>Save Pinterest without copy-paste every time?</strong></p>
+        <p style="margin:0.5rem 0 0; font-size:0.9rem; color:var(--muted);">
+          <strong>Aligned answer:</strong> Yes — 6E saved chips. Save once, pick many. Not the same as Pinterest living inside our app (that’s out of scope).
+        </p>
+      </div>
+    </div>
+
+    <!-- CLOSE STEP 6 -->
+    <h2>Close Step 6 checklist</h2>
+    <ul class="checklist">
+      <li>009 migration on prod</li>
+      <li>Grant saves mushroom pasta link → appears as chip</li>
+      <li>Sara sees same chip on her phone</li>
+      <li>Walk-through → “Set for tonight” → Today shows title</li>
+      <li>Shopping items → Lists → both phones</li>
+      <li>No ForDinner copy on prod (hard refresh)</li>
+    </ul>
+
+    <!-- DECISION -->
+    <h2>Decision log</h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Decision</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jun 2026</td>
+          <td>No forced AI sub-brands</td>
+          <td>Invisible help — verbs on UI, OpenAI internal</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td>One dinner card on Today, portaled sheet</td>
+          <td>Fix duplicate cards + modal clipping</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td><code>meal_ideas</code> = bookmark inbox, not recipe parser</td>
+          <td>Pick > paste; parse later with fallback</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td>Defer Pinterest read / share extension</td>
+          <td>Brittle, separate project; tier 1 already works</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td>Hide empty schedule on Today</td>
+          <td>No “Nothing scheduled” — silence beats noise</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td>Calendar read-only; meals editable in-app</td>
+          <td>Clear mental model per page</td>
+        </tr>
+        <tr>
+          <td>Jun 2026</td>
+          <td>Tablet slideshow photo (not wall memories)</td>
+          <td>Step 8A — rotate tagged photos on Today</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer>
+      Open in browser: <code>docs/internal/dinner-scope-whiteboard.html</code><br>
+      Copy: <a href="for-ai-brand-map.html">for-ai-brand-map.html</a> ·
+      <code>product-language-guide.md</code>
+    </footer>
+  </div>
+</body>
+</html>

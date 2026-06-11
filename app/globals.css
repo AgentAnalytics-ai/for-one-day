@@ -370,6 +370,13 @@
     }
   }
 
+  /* Today glance — fit kitchen wall without scroll (landscape tablet) */
+  @media (orientation: landscape) and (min-width: 1024px) {
+    .today-glance {
+      max-height: calc(100dvh - 11rem);
+    }
+  }
+
   /* Dinner walk-through — warm accent, distinct from schedule glance */
   .kw-dinner-glance-card {
     @apply rounded-2xl border-2 border-amber-200/80 bg-gradient-to-br from-amber-50/70 via-white to-white transition-smooth;

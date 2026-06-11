@@ -59,6 +59,10 @@ Every surface must pass before ship:
 - Memories for today · Keepsakes for one day
 - People you love
 
+### Tablet wall (kitchen)
+- **Tablet slideshow photo** — tagged saves that rotate on Today (not “memories browser” on wall)
+- Save from phone in More; wall only shows the rotation
+
 ### Household
 - At home · Your household · Family (settings label when renamed)
 
@@ -89,7 +93,7 @@ Best help feels like a calm friend — not a product line. **No sub-brand names*
 **Never say:** AI · assistant · chatbot · GPT · branded *ForX* names (user-facing).  
 **Sara test:** *I’m frazzled at 5 — I tap need a hand, it tells me what to do first. I didn’t think about AI.*
 
-Reference: `docs/internal/for-ai-brand-map.html` (invisible-help principles)
+Reference: `docs/internal/for-ai-brand-map.html` (invisible-help principles) · `docs/internal/dinner-scope-whiteboard.html` (scope & next steps)
 
 ## Never Say (user-facing)
 

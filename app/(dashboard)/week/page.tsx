@@ -25,7 +25,7 @@ export default async function WeekPage({ searchParams }: WeekPageProps) {
         <PageHeader
           eyebrow={<span className="text-primary-900">This week</span>}
           title="Meals & schedule"
-          subtitle="One place for the week — dinners you choose, events from Google."
+          subtitle="Plan dinners here. Events sync from Google Calendar — add or edit future events in Google, not in this app."
         />
       </ScrollReveal>
 
