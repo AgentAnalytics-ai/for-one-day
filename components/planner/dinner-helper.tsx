@@ -117,7 +117,7 @@ export function DinnerHelper({
         className="inline-flex items-center gap-1.5 text-xs font-medium text-[#5C6478] hover:text-primary-900"
       >
         <ChefHat className="h-3.5 w-3.5" />
-        ForDinner — Pro
+        Help with dinner — Pro
       </Link>
     )
   }
@@ -134,7 +134,7 @@ export function DinnerHelper({
           className="inline-flex items-center gap-1.5 rounded-full border border-amber-200/90 bg-amber-50/80 px-3 py-1.5 text-xs font-medium text-amber-950 transition-colors hover:bg-amber-100/90"
         >
           <ChefHat className="h-3.5 w-3.5" />
-          ForDinner
+          Help with dinner
         </button>
       ) : (
         <button
@@ -146,12 +146,12 @@ export function DinnerHelper({
           className="surface-card flex w-full items-center justify-between px-5 py-4 text-left transition-smooth hover:border-[#D4CFC6] kw-card-dinner"
         >
           <span>
-            <span className="section-label mb-1 block">ForDinner</span>
+            <span className="section-label mb-1 block">Dinner tonight</span>
             <span className="font-serif text-lg font-medium text-primary-900">
-              Step through tonight
+              Walk me through it
             </span>
             <span className="mt-1 block text-sm text-[#5C6478]">
-              Paste a link · cook now · groceries to Lists
+              Paste a recipe link if you have one — groceries go to Lists
             </span>
           </span>
           <ChefHat className="h-6 w-6 shrink-0 text-amber-800/70" />
@@ -173,10 +173,10 @@ export function DinnerHelper({
             <header className="flex items-start justify-between gap-3 border-b border-[#E7E2DA] px-5 py-4">
               <div>
                 <h2 id="dinner-helper-title" className="font-serif text-xl font-medium text-primary-900">
-                  ForDinner
+                  Tonight&apos;s dinner
                 </h2>
                 <p className="mt-0.5 text-sm text-[#5C6478]">
-                  Step through tonight · save to This week · shop on Lists
+                  What to do now — then save for the home and shop
                 </p>
               </div>
               <button

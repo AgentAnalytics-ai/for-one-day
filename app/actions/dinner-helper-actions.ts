@@ -9,7 +9,7 @@ import { setMealPlan } from '@/app/actions/meal-actions'
 import { addListItem } from '@/app/actions/list-actions'
 
 const UPGRADE_MESSAGE =
-  'ForDinner is included with Pro for your home.'
+  'Meal help is included with Pro for your home.'
 
 function householdNowLabel(): string {
   return new Date().toLocaleString('en-US', {

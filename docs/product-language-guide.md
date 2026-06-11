@@ -66,21 +66,20 @@ Every surface must pass before ship:
 - Run the full week
 - One plan for your home ($9.99/mo per household)
 
-### For™ AI (helpful moments — not “AI assistant”)
-Parent pattern: **For + moment** inside For One Day. Users say the moment name; “AI” stays in Pro/legal sublines.
+### Invisible help (AI backend, human front)
+Best help feels like a calm friend — not a product line. **No sub-brand names** (no ForDinner, ForPlanning, etc.). Use **verbs** on the surface; OpenAI stays internal.
 
-| Product name | Tagline | Status | Connects to |
-|--------------|---------|--------|-------------|
-| **ForDinner** | Step through tonight | Ship (6D) | Today · This week · Lists · meal_plans |
-| **ForDinner** save | Paste a recipe, use again | Next (6E–6F) | meal_ideas · Shopping |
-| **ForPlanning** | Shape your week | Later (6G) | This week · schedule · meals |
-| **ForWrite** | Polish a keepsake (optional) | Ship | Memories · phone only |
+| Moment | User sees | Status | Connects to |
+|--------|-----------|--------|-------------|
+| Dinner coach | “Walk me through it” · “Tonight’s dinner” | Ship (6D) | Today · This week · Lists |
+| Saved recipes | “Save this recipe” (future) | 6E–6F | meal_ideas · Shopping |
+| Week nudge | “Light week ahead” (future) | Later | This week · schedule |
 
-**Say:** “Open ForDinner” · “Step through tonight” · “For tools for your home” (Pro).  
-**Don’t say:** ForDinner AI · AI assistant · chatbot · GPT (user-facing).  
-**Sara test:** *I tap ForDinner on the wall and it tells me what to do now; groceries go to Lists.*
+**Say:** “Help with dinner” · “What to do now” · “Add to shopping.”  
+**Never say:** AI · assistant · chatbot · GPT · branded *ForX* names (user-facing).  
+**Sara test:** *I tap walk me through dinner and it tells me what to do — I didn’t think about AI.*
 
-Full brand map: `docs/internal/for-ai-brand-map.html`
+Reference: `docs/internal/for-ai-brand-map.html` (invisible-help principles)
 
 ## Never Say (user-facing)
 
@@ -107,9 +106,9 @@ Avoid: *Upgrade to Pro*, *Start Free Today* (prefer verb-first warm CTAs).
 ## Plan and Monetization Language
 
 - **Free:** Start your home's daily plan; core capture on phone.
-- **Pro:** Run the full week — unlimited keepsakes, shared household, **For tools** (ForDinner, ForWrite on phone).
+- **Pro:** Run the full week — unlimited keepsakes, shared household, meal walk-through and writing help on phone.
 - **Household:** One $9.99/mo; members inherit Pro.
-- **For gating:** "ForDinner is included with Pro for your home."
+- **Help gating:** "Included with Pro for your home" — never lead with AI.
 
 ## SEO Keywords (primary)
 

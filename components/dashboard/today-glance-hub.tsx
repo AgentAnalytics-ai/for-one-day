@@ -186,10 +186,10 @@ function buildDinnerDetail(
     return `${shoppingCount} on shopping · tap to edit the week`
   }
   if (hasMeal) {
-    return 'ForDinner below · groceries on Lists'
+    return 'Need a hand? Walk-through below · Lists for groceries'
   }
   if (mealGlance?.canEdit) {
-    return 'ForDinner below — or plan on This week'
+    return 'Walk me through it below — or plan on This week'
   }
   return 'Pro unlocks shared meal planning for your home'
 }
