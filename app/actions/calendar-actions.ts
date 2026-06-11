@@ -4,7 +4,7 @@ import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service-role'
 import {
-  fetchGoogleCalendarEvents,
+  fetchGoogleCalendarsEvents,
   refreshGoogleAccessToken,
 } from '@/lib/google-calendar'
 import {
@@ -29,7 +29,15 @@ type ConnectionRow = {
   access_token: string | null
   token_expires_at: string | null
   calendar_id: string
+  calendar_ids: string[] | null
   display_color: string
+}
+
+function connectionCalendarIds(connection: ConnectionRow): string[] {
+  if (connection.calendar_ids && connection.calendar_ids.length > 0) {
+    return connection.calendar_ids
+  }
+  return [connection.calendar_id || 'primary']
 }
 
 export type GoogleCalendarStatus = {
@@ -148,7 +156,7 @@ async function fetchHouseholdGoogleEvents(): Promise<{
   const { data: connections } = await admin
     .from('calendar_connections')
     .select(
-      'id, user_id, provider, account_email, refresh_token, access_token, token_expires_at, calendar_id, display_color'
+      'id, user_id, provider, account_email, refresh_token, access_token, token_expires_at, calendar_id, calendar_ids, display_color'
     )
     .in('user_id', memberIds)
     .eq('provider', 'google')
@@ -167,15 +175,15 @@ async function fetchHouseholdGoogleEvents(): Promise<{
     memberUserId: string
     memberName: string
     displayColor: string
-    events: Awaited<ReturnType<typeof fetchGoogleCalendarEvents>>
+    events: Awaited<ReturnType<typeof fetchGoogleCalendarsEvents>>
   }> = []
 
   for (const connection of googleConnections) {
     try {
       const accessToken = await getValidGoogleAccessToken(admin, connection)
-      const events = await fetchGoogleCalendarEvents(
+      const events = await fetchGoogleCalendarsEvents(
         accessToken,
-        connection.calendar_id,
+        connectionCalendarIds(connection),
         timeMin,
         timeMax,
         HOUSEHOLD_TZ

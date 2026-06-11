@@ -75,8 +75,10 @@ export function CalendarSettings() {
             Your calendar
           </h2>
           <p className="mt-1 text-sm text-[#5C6478]">
-            Connect Google to merge your schedule on Today and This week. Each person connects their
-            own account — spouse calendars combine for the home.
+            Connect Google to merge your schedule on Today and This week — including{' '}
+            <strong className="font-medium text-primary-900">Primary</strong> and{' '}
+            <strong className="font-medium text-primary-900">Birthdays</strong> from Contacts.
+            Each person connects their own account; spouse calendars combine for the home.
           </p>
         </div>
       </div>

@@ -9,6 +9,14 @@ SELECT 'S7_1_table' AS gate,
     WHERE table_schema = 'public' AND table_name = 'calendar_connections'
   ) THEN 'PASS' ELSE 'FAIL — run 007' END AS status;
 
+SELECT 'S7_1b_calendar_ids_column' AS gate,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'calendar_connections'
+      AND column_name = 'calendar_ids'
+  ) THEN 'PASS' ELSE 'RUN 008_calendar_ids.sql' END AS status;
+
 SELECT 'S7_2_grant_connection' AS gate,
   COUNT(*) AS google_connections,
   CASE WHEN COUNT(*) >= 0 THEN 'CHECK — connect in Settings → Profile' END AS status

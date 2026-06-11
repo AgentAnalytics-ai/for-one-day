@@ -5,6 +5,8 @@ import { createServiceRoleClient } from '@/lib/supabase/service-role'
 import {
   exchangeGoogleCodeForTokens,
   fetchGoogleAccountEmail,
+  listGoogleCalendars,
+  pickDefaultGoogleCalendarIds,
 } from '@/lib/google-calendar'
 import { pickMemberColor } from '@/lib/calendar-merge'
 
@@ -70,6 +72,14 @@ export async function GET(request: Request) {
 
     const displayColor = existing?.display_color ?? pickMemberColor(0)
 
+    let calendarIds = ['primary']
+    try {
+      const calendars = await listGoogleCalendars(tokens.access_token)
+      calendarIds = pickDefaultGoogleCalendarIds(calendars)
+    } catch (listError) {
+      console.error('Google calendarList on connect:', listError)
+    }
+
     const { error: upsertError } = await admin.from('calendar_connections').upsert(
       {
         user_id: user.id,
@@ -78,7 +88,8 @@ export async function GET(request: Request) {
         refresh_token: refreshToken,
         access_token: tokens.access_token,
         token_expires_at: tokenExpiresAt,
-        calendar_id: 'primary',
+        calendar_id: calendarIds[0] ?? 'primary',
+        calendar_ids: calendarIds,
         display_color: displayColor,
         updated_at: new Date().toISOString(),
       },

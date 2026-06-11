@@ -111,6 +111,13 @@ export async function fetchGoogleAccountEmail(accessToken: string): Promise<stri
   return data.email ?? null
 }
 
+export type GoogleCalendarListEntry = {
+  id: string
+  summary: string
+  primary?: boolean
+  selected?: boolean
+}
+
 export type GoogleCalendarEvent = {
   id: string
   title: string
@@ -119,6 +126,89 @@ export type GoogleCalendarEvent = {
   allDay: boolean
   location: string | null
   htmlLink: string | null
+}
+
+/** List calendars the user granted read access to. */
+export async function listGoogleCalendars(
+  accessToken: string
+): Promise<GoogleCalendarListEntry[]> {
+  const response = await fetch(
+    'https://www.googleapis.com/calendar/v3/users/me/calendarList?minAccessRole=reader',
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+
+  if (!response.ok) {
+    const err = await response.text()
+    throw new Error(`Google calendarList error: ${err.slice(0, 200)}`)
+  }
+
+  const data = (await response.json()) as {
+    items?: Array<{ id: string; summary?: string; primary?: boolean; selected?: boolean }>
+  }
+
+  return (data.items ?? []).map((item) => ({
+    id: item.id,
+    summary: item.summary?.trim() || 'Calendar',
+    primary: item.primary,
+    selected: item.selected,
+  }))
+}
+
+/**
+ * Primary + Google Contacts birthdays (and similar) for household glance.
+ * Anniversaries in Contacts often share the birthdays calendar layer.
+ */
+export function pickDefaultGoogleCalendarIds(
+  calendars: GoogleCalendarListEntry[]
+): string[] {
+  const ids = new Set<string>()
+
+  const primary = calendars.find((c) => c.primary)
+  if (primary) ids.add(primary.id)
+
+  for (const calendar of calendars) {
+    const summary = calendar.summary.toLowerCase()
+    const isBirthdaysLayer =
+      summary.includes('birthday') ||
+      calendar.id.includes('addressbook#contacts') ||
+      summary.includes('anniversary')
+    if (isBirthdaysLayer) {
+      ids.add(calendar.id)
+    }
+  }
+
+  if (ids.size === 0 && calendars[0]) {
+    ids.add(calendars[0].id)
+  }
+
+  return Array.from(ids)
+}
+
+export async function fetchGoogleCalendarsEvents(
+  accessToken: string,
+  calendarIds: string[],
+  timeMin: string,
+  timeMax: string,
+  timeZone?: string
+): Promise<GoogleCalendarEvent[]> {
+  const merged = new Map<string, GoogleCalendarEvent>()
+
+  for (const calendarId of calendarIds) {
+    const events = await fetchGoogleCalendarEvents(
+      accessToken,
+      calendarId,
+      timeMin,
+      timeMax,
+      timeZone
+    )
+    for (const event of events) {
+      merged.set(`${calendarId}:${event.id}`, event)
+    }
+  }
+
+  return Array.from(merged.values()).sort(
+    (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime()
+  )
 }
 
 export async function fetchGoogleCalendarEvents(
