@@ -14,6 +14,7 @@ import {
 } from '@/lib/calendar-merge'
 import {
   getHouseholdWeekDateKeys,
+  householdDayRfc3339,
   HOUSEHOLD_TZ,
   toHouseholdDateKey,
 } from '@/lib/household-dates'
@@ -68,8 +69,8 @@ export type WeekScheduleData = {
 function weekFetchBounds(): { timeMin: string; timeMax: string } {
   const keys = getHouseholdWeekDateKeys()
   return {
-    timeMin: `${keys[0]}T00:00:00`,
-    timeMax: `${keys[6]}T23:59:59`,
+    timeMin: householdDayRfc3339(keys[0], 'start', HOUSEHOLD_TZ),
+    timeMax: householdDayRfc3339(keys[6], 'end', HOUSEHOLD_TZ),
   }
 }
 

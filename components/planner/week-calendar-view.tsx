@@ -84,6 +84,7 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
             day={day}
             canEdit={canEdit}
             events={eventsByDate[day.dateKey] ?? []}
+            calendarConnected={connectedMembers > 0}
           />
         ))}
       </div>

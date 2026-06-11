@@ -10,9 +10,10 @@ type WeekMealRowProps = {
   day: HouseholdWeekDay & { meal: MealPlanRow | null }
   canEdit: boolean
   events: HouseholdScheduleEvent[]
+  calendarConnected?: boolean
 }
 
-export function WeekMealRow({ day, canEdit, events }: WeekMealRowProps) {
+export function WeekMealRow({ day, canEdit, events, calendarConnected = false }: WeekMealRowProps) {
   const [meal, setMeal] = useState(day.meal)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(day.meal?.title ?? '')
@@ -178,7 +179,9 @@ export function WeekMealRow({ day, canEdit, events }: WeekMealRowProps) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-[#5C6478]/80">No events — connect Google in Settings → Profile.</p>
+        <p className="text-sm text-[#5C6478]/80">
+          {calendarConnected ? 'No events this day' : 'No events — connect Google in Settings → Profile'}
+        </p>
       )}
 
       {error ? (

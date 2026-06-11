@@ -194,15 +194,19 @@ export async function fetchGoogleCalendarsEvents(
   const merged = new Map<string, GoogleCalendarEvent>()
 
   for (const calendarId of calendarIds) {
-    const events = await fetchGoogleCalendarEvents(
-      accessToken,
-      calendarId,
-      timeMin,
-      timeMax,
-      timeZone
-    )
-    for (const event of events) {
-      merged.set(`${calendarId}:${event.id}`, event)
+    try {
+      const events = await fetchGoogleCalendarEvents(
+        accessToken,
+        calendarId,
+        timeMin,
+        timeMax,
+        timeZone
+      )
+      for (const event of events) {
+        merged.set(`${calendarId}:${event.id}`, event)
+      }
+    } catch (error) {
+      console.warn(`Google Calendar fetch skipped for ${calendarId}:`, error)
     }
   }
 
@@ -233,7 +237,7 @@ export async function fetchGoogleCalendarEvents(
 
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
-    next: { revalidate: 300 },
+    cache: 'no-store',
   })
 
   if (!response.ok) {
