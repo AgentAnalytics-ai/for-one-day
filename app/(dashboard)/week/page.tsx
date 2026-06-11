@@ -15,12 +15,12 @@ export default async function WeekPage() {
   ])
 
   return (
-    <div className="mx-auto max-w-3xl space-y-10 pb-8">
+    <div className="mx-auto max-w-6xl space-y-10 pb-8">
       <ScrollReveal>
         <PageHeader
           eyebrow={<span className="text-primary-900">This week</span>}
-          title="Calendar & meals"
-          subtitle="Plan dinners here — groceries stay on Lists. Events merge at Step 7."
+          title="Meals & schedule"
+          subtitle="Plan dinners on the left. Your household Google calendars merge on the right."
         />
       </ScrollReveal>
 

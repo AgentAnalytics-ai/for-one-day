@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { WeekMealRow } from '@/components/planner/week-meal-row'
+import { WeekSchedulePanel } from '@/components/planner/week-schedule-panel'
 import type { WeekMealsData } from '@/app/actions/meal-actions'
 import type { WeekScheduleData } from '@/app/actions/calendar-actions'
 
@@ -12,6 +13,7 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
   const { days, canEdit } = weekData
   const { eventsByDate, connectedMembers, householdMembers } = scheduleData
   const monthLabel = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  const calendarConnected = connectedMembers > 0
 
   if (!weekData.success) {
     return (
@@ -21,51 +23,76 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="font-serif text-xl font-medium text-primary-900">{monthLabel}</h2>
-        <span className="text-xs font-medium text-[#5C6478]">
-          {connectedMembers > 0
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="font-serif text-2xl font-medium tracking-tight text-primary-900 md:text-3xl">
+            {monthLabel}
+          </h2>
+          <p className="mt-1 text-sm text-[#5C6478]">
+            Dinners you plan here · schedule from Google
+          </p>
+        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${
+            calendarConnected
+              ? 'bg-emerald-50 text-emerald-800'
+              : 'bg-[#FAF7F2] text-[#5C6478]'
+          }`}
+        >
+          {calendarConnected
             ? `${connectedMembers}/${householdMembers} calendars`
-            : 'Connect Google in Settings'}
+            : 'Calendar not linked'}
         </span>
       </div>
 
       <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
-        {days.map((day) => (
-          <a
-            key={day.dateKey}
-            href={day.isToday ? '#today' : `#meal-${day.dateKey}`}
-            className={`min-w-[4.5rem] flex-shrink-0 snap-center rounded-xl px-3 py-2.5 text-center transition-colors ${
-              day.isToday
-                ? 'bg-primary-900 text-white'
-                : 'border border-[#E7E2DA] bg-white hover:border-[#D4CFC6]'
-            }`}
-          >
-            <p
-              className={`text-[10px] font-semibold uppercase ${
-                day.isToday ? 'text-white/75' : 'text-[#5C6478]'
+        {days.map((day) => {
+          const eventCount = eventsByDate[day.dateKey]?.length ?? 0
+          return (
+            <a
+              key={day.dateKey}
+              href={day.isToday ? '#today' : `#meal-${day.dateKey}`}
+              className={`relative min-w-[4.75rem] flex-shrink-0 snap-center rounded-2xl px-3.5 py-3 text-center transition-all ${
+                day.isToday
+                  ? 'bg-primary-900 text-white shadow-md shadow-primary-900/15'
+                  : 'border border-[#E7E2DA] bg-white hover:border-[#D4CFC6] hover:shadow-sm'
               }`}
             >
-              {day.weekdayShort}
-            </p>
-            <p
-              className={`font-serif text-lg font-medium ${
-                day.isToday ? 'text-white' : 'text-primary-900'
-              }`}
-            >
-              {day.dateNum}
-            </p>
-            {day.meal ? (
               <p
-                className={`mt-1 truncate text-[9px] font-medium ${
-                  day.isToday ? 'text-amber-200' : 'text-amber-800'
+                className={`text-[10px] font-semibold uppercase tracking-wide ${
+                  day.isToday ? 'text-white/75' : 'text-[#5C6478]'
                 }`}
               >
-                {day.meal.title}
+                {day.weekdayShort}
               </p>
-            ) : null}
-          </a>
-        ))}
+              <p
+                className={`font-serif text-xl font-medium ${
+                  day.isToday ? 'text-white' : 'text-primary-900'
+                }`}
+              >
+                {day.dateNum}
+              </p>
+              {day.meal ? (
+                <p
+                  className={`mt-1.5 truncate text-[9px] font-medium ${
+                    day.isToday ? 'text-amber-200' : 'text-amber-800'
+                  }`}
+                >
+                  {day.meal.title}
+                </p>
+              ) : null}
+              {eventCount > 0 ? (
+                <span
+                  className={`absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold ${
+                    day.isToday ? 'bg-amber-400 text-primary-900' : 'bg-primary-100 text-primary-900'
+                  }`}
+                >
+                  {eventCount}
+                </span>
+              ) : null}
+            </a>
+          )
+        })}
       </div>
 
       {!canEdit ? (
@@ -77,16 +104,38 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
         </div>
       ) : null}
 
-      <div className="space-y-3">
-        {days.map((day) => (
-          <WeekMealRow
-            key={day.dateKey}
-            day={day}
-            canEdit={canEdit}
-            events={eventsByDate[day.dateKey] ?? []}
-            calendarConnected={connectedMembers > 0}
+      {/* Mobile: full schedule module above meals */}
+      <div className="lg:hidden">
+        <WeekSchedulePanel
+          days={days}
+          eventsByDate={eventsByDate}
+          connectedMembers={connectedMembers}
+          householdMembers={householdMembers}
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)] xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+        <div className="space-y-3">
+          {days.map((day) => (
+            <WeekMealRow
+              key={day.dateKey}
+              day={day}
+              canEdit={canEdit}
+              events={eventsByDate[day.dateKey] ?? []}
+              calendarConnected={calendarConnected}
+              showInlineEvents={false}
+            />
+          ))}
+        </div>
+
+        <div className="hidden lg:block">
+          <WeekSchedulePanel
+            days={days}
+            eventsByDate={eventsByDate}
+            connectedMembers={connectedMembers}
+            householdMembers={householdMembers}
           />
-        ))}
+        </div>
       </div>
 
       <p className="text-center text-xs text-[#5C6478]">
@@ -94,7 +143,7 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
         <Link href="/lists" className="font-medium text-primary-900 hover:underline">
           Lists
         </Link>
-        . Tap an event to open in Google Calendar.
+        . Tap any event to open in Google Calendar.
       </p>
     </div>
   )
