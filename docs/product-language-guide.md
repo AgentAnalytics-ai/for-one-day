@@ -82,7 +82,7 @@ Best help feels like a calm friend — not a product line. **No sub-brand names*
 | Moment | User sees | Status | Connects to |
 |--------|-----------|--------|-------------|
 | Dinner walk-through | “Need a hand with dinner?” → “Walk me through it” | Ship (6D) | Today · This week · Lists |
-| Saved recipes | “Save this recipe” (future) | 6E–6F | meal_ideas · Shopping |
+| Saved recipes | “Saved for your home” · “Save a Pinterest link” | Ship (6E) | meal_ideas · walk-through |
 | Week nudge | “You’ve got a lot Thursday” (future) | Later | This week · schedule |
 
 **Say:** “Need a hand with dinner?” · “Right now” · “Still need from the store.”  

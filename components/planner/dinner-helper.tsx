@@ -2,13 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
-import { ChefHat, Loader2, ShoppingBag, X } from 'lucide-react'
+import { ChefHat, ChevronDown, Link2, Loader2, Pin, Plus, ShoppingBag, X } from 'lucide-react'
 import Link from 'next/link'
 import {
   applyDinnerHelperResults,
   runDinnerHelper,
 } from '@/app/actions/dinner-helper-actions'
+import {
+  getMealIdeas,
+  saveMealIdea,
+  type MealIdea,
+} from '@/app/actions/meal-idea-actions'
 import type { DinnerHelperPlan } from '@/lib/dinner-helper-ai'
+import { shouldShowCookSteps } from '@/lib/dinner-helper-format'
 
 type DinnerHelperProps = {
   planDate: string
@@ -43,6 +49,12 @@ export function DinnerHelper({
   const [selectedShop, setSelectedShop] = useState<Set<number>>(new Set())
   const [error, setError] = useState<string | null>(null)
   const [savedBanner, setSavedBanner] = useState<string | null>(null)
+  const [mealIdeas, setMealIdeas] = useState<MealIdea[]>([])
+  const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null)
+  const [showDetails, setShowDetails] = useState(false)
+  const [showSaveLink, setShowSaveLink] = useState(false)
+  const [saveForNextTime, setSaveForNextTime] = useState(true)
+  const [ideasLoading, setIdeasLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
   const mealInputRef = useRef<HTMLInputElement>(null)
 
@@ -62,6 +74,11 @@ export function DinnerHelper({
     setSelectedShop(new Set())
     setError(null)
     setSavedBanner(null)
+    setSelectedIdeaId(null)
+    setShowDetails(false)
+    setShowSaveLink(false)
+    setRecipeLink('')
+    setNotes('')
   }, [])
 
   useEffect(() => setMounted(true), [])
@@ -99,10 +116,84 @@ export function DinnerHelper({
     }
   }, [open, resetPlan, plan])
 
+  useEffect(() => {
+    if (!open || !canUse) return
+    setIdeasLoading(true)
+    getMealIdeas()
+      .then((res) => {
+        if (res.success) setMealIdeas(res.ideas)
+      })
+      .finally(() => setIdeasLoading(false))
+  }, [open, canUse])
+
+  const selectIdea = (idea: MealIdea) => {
+    setSelectedIdeaId(idea.id)
+    setMealHint(idea.title)
+    setRecipeLink(idea.sourceUrl ?? '')
+    setNotes(idea.notes ?? '')
+    setShowSaveLink(false)
+    setError(null)
+  }
+
+  const handleMealChange = (value: string) => {
+    setMealHint(value)
+    if (selectedIdeaId) setSelectedIdeaId(null)
+  }
+
+  const handleMealPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData('text').trim()
+    if (/^https?:\/\//i.test(text)) {
+      e.preventDefault()
+      setRecipeLink(text)
+      setShowDetails(true)
+      setSaveForNextTime(true)
+      if (!mealHint.trim()) setMealHint('Tonight\'s dinner')
+    }
+  }
+
+  const handleQuickSaveLink = () => {
+    if (!recipeLink.trim() || !mealHint.trim()) {
+      setError('Add a name and link to save this recipe.')
+      return
+    }
+    setError(null)
+    startTransition(async () => {
+      const result = await saveMealIdea({
+        title: mealHint.trim(),
+        sourceUrl: recipeLink.trim(),
+        notes: notes.trim() || undefined,
+      })
+      if (!result.success || !result.idea) {
+        setError(result.error ?? 'Could not save recipe')
+        return
+      }
+      setMealIdeas((prev) => [result.idea!, ...prev.filter((i) => i.id !== result.idea!.id)])
+      setSelectedIdeaId(result.idea.id)
+      setShowSaveLink(false)
+    })
+  }
+
   const handleRun = () => {
     setError(null)
     setSavedBanner(null)
     startTransition(async () => {
+      if (
+        saveForNextTime &&
+        recipeLink.trim() &&
+        mealHint.trim() &&
+        !selectedIdeaId
+      ) {
+        const saved = await saveMealIdea({
+          title: mealHint.trim(),
+          sourceUrl: recipeLink.trim(),
+          notes: notes.trim() || undefined,
+        })
+        if (saved.success && saved.idea) {
+          setMealIdeas((prev) => [saved.idea!, ...prev])
+          setSelectedIdeaId(saved.idea.id)
+        }
+      }
+
       const result = await runDinnerHelper({
         mealHint,
         recipeLink: recipeLink || undefined,
@@ -234,47 +325,156 @@ export function DinnerHelper({
 
                 {!plan ? (
                   <div className="space-y-4 pb-2">
+                    {mealIdeas.length > 0 ? (
+                      <div>
+                        <p className="section-label mb-2">Saved for your home</p>
+                        <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
+                          {mealIdeas.map((idea) => {
+                            const selected = selectedIdeaId === idea.id
+                            return (
+                              <button
+                                key={idea.id}
+                                type="button"
+                                onClick={() => selectIdea(idea)}
+                                className={`snap-start shrink-0 rounded-full border px-3.5 py-2 text-left text-sm font-medium transition-smooth ${
+                                  selected
+                                    ? 'border-amber-400 bg-amber-100/90 text-amber-950'
+                                    : 'border-[#E7E2DA] bg-white text-primary-900 hover:border-amber-200'
+                                }`}
+                              >
+                                <span className="flex items-center gap-1.5">
+                                  {idea.sourceUrl?.includes('pinterest') ? (
+                                    <Pin className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                                  ) : idea.sourceUrl ? (
+                                    <Link2 className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                                  ) : null}
+                                  {idea.title}
+                                </span>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ) : ideasLoading ? (
+                      <p className="text-sm text-[#5C6478]">Loading saved recipes…</p>
+                    ) : null}
+
                     <label className="block">
                       <span className="section-label mb-1.5 block">What&apos;s cooking?</span>
                       <input
                         ref={mealInputRef}
                         type="text"
                         value={mealHint}
-                        onChange={(e) => setMealHint(e.target.value)}
-                        placeholder="Garlic butter steak, tacos…"
-                        className="field-input"
+                        onChange={(e) => handleMealChange(e.target.value)}
+                        onPaste={handleMealPaste}
+                        placeholder={
+                          mealIdeas.length > 0
+                            ? 'Pick above or type tonight\'s meal…'
+                            : 'Garlic butter steak, tacos…'
+                        }
+                        className="field-input text-base"
                         autoComplete="off"
                       />
+                      {selectedIdeaId && recipeLink ? (
+                        <p className="mt-1.5 flex items-center gap-1 text-xs text-[#5C6478]">
+                          <Pin className="h-3 w-3" />
+                          Recipe link attached
+                        </p>
+                      ) : null}
                     </label>
-                    <label className="block">
-                      <span className="section-label mb-1.5 block">Got a recipe link?</span>
-                      <input
-                        type="url"
-                        value={recipeLink}
-                        onChange={(e) => setRecipeLink(e.target.value)}
-                        placeholder="Pinterest or recipe URL"
-                        className="field-input"
+
+                    {!selectedIdeaId && !showSaveLink ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowSaveLink(true)}
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-[#5C6478] transition-smooth hover:text-primary-900"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Save a Pinterest link
+                      </button>
+                    ) : null}
+
+                    {showSaveLink && !selectedIdeaId ? (
+                      <div className="space-y-3 rounded-xl border border-[#E7E2DA] bg-white/80 p-3.5">
+                        <label className="block">
+                          <span className="section-label mb-1.5 block">Paste link</span>
+                          <input
+                            type="url"
+                            value={recipeLink}
+                            onChange={(e) => {
+                              setRecipeLink(e.target.value)
+                              setSaveForNextTime(true)
+                            }}
+                            placeholder="pinterest.com/pin/…"
+                            className="field-input"
+                          />
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={handleQuickSaveLink}
+                            disabled={isPending || !recipeLink.trim() || !mealHint.trim()}
+                            className="btn-secondary text-xs"
+                          >
+                            Save for your home
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowSaveLink(false)}
+                            className="text-xs font-medium text-[#5C6478] hover:text-primary-900"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <button
+                      type="button"
+                      onClick={() => setShowDetails((v) => !v)}
+                      className="flex w-full items-center justify-between rounded-xl border border-[#E7E2DA]/80 bg-white/50 px-3.5 py-2.5 text-left text-sm font-medium text-[#5C6478] transition-smooth hover:border-[#D4CFC6]"
+                    >
+                      <span>Anything to add?</span>
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
                       />
-                    </label>
-                    <label className="block">
-                      <span className="section-label mb-1.5 block">What should we know?</span>
-                      <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Feeding 4, have steak in the freezer, one gluten-free…"
-                        rows={2}
-                        className="field-input resize-none"
-                      />
-                    </label>
-                    <label className="block">
-                      <span className="section-label mb-1.5 block">Plates on the table by</span>
-                      <input
-                        type="text"
-                        value={servingTime}
-                        onChange={(e) => setServingTime(e.target.value)}
-                        className="field-input max-w-[10rem]"
-                      />
-                    </label>
+                    </button>
+
+                    {showDetails ? (
+                      <div className="space-y-3 rounded-xl border border-[#E7E2DA]/80 bg-white/50 p-3.5">
+                        <label className="block">
+                          <span className="section-label mb-1.5 block">Notes</span>
+                          <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Feeding 6, one gluten-free — text Sara to pull mushrooms from freezer…"
+                            rows={2}
+                            className="field-input resize-none"
+                          />
+                        </label>
+                        <label className="block">
+                          <span className="section-label mb-1.5 block">Plates on the table by</span>
+                          <input
+                            type="text"
+                            value={servingTime}
+                            onChange={(e) => setServingTime(e.target.value)}
+                            className="field-input max-w-[10rem]"
+                          />
+                        </label>
+                        {recipeLink.trim() && !selectedIdeaId ? (
+                          <label className="flex cursor-pointer items-center gap-2 text-sm text-[#5C6478]">
+                            <input
+                              type="checkbox"
+                              checked={saveForNextTime}
+                              onChange={(e) => setSaveForNextTime(e.target.checked)}
+                              className="h-4 w-4 rounded border-[#D4CFC6]"
+                            />
+                            Save link for next time
+                          </label>
+                        ) : null}
+                      </div>
+                    ) : null}
+
                     {error ? (
                       <p className="text-sm text-red-700" role="alert">
                         {error}
@@ -283,6 +483,15 @@ export function DinnerHelper({
                   </div>
                 ) : (
                   <div className="space-y-5 pb-4">
+                    <div className="rounded-xl border border-amber-200/70 bg-amber-50/50 px-4 py-3">
+                      <p className="font-serif text-lg font-medium text-primary-900">
+                        {plan.mealTitle}
+                      </p>
+                      <p className="mt-0.5 text-sm text-[#5C6478]">
+                        Plates by {servingTime || '6:00 PM'}
+                      </p>
+                    </div>
+
                     <section>
                       <h3 className="section-label mb-2">Right now</h3>
                       <ul className="space-y-2">
@@ -318,14 +527,21 @@ export function DinnerHelper({
                       </section>
                     ) : null}
 
-                    <section>
-                      <h3 className="section-label mb-2">At the stove</h3>
-                      <ol className="list-decimal space-y-1.5 pl-5 text-sm text-[#5C6478]">
-                        {plan.cookSteps.map((step) => (
-                          <li key={step}>{step}</li>
-                        ))}
-                      </ol>
-                    </section>
+                    {shouldShowCookSteps(plan.timeline, plan.cookSteps) ? (
+                      <section>
+                        <h3 className="section-label mb-2">At the stove</h3>
+                        <ul className="space-y-2">
+                          {plan.cookSteps.map((step) => (
+                            <li
+                              key={step}
+                              className="rounded-xl border border-[#E7E2DA] bg-white px-3 py-2.5 text-sm text-[#5C6478]"
+                            >
+                              {step}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ) : null}
 
                     {plan.shoppingSuggestions.length > 0 ? (
                       <section>

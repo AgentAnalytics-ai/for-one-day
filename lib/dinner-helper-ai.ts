@@ -1,4 +1,5 @@
 import { openai } from '@/lib/ai'
+import { stripStepPrefix } from '@/lib/dinner-helper-format'
 
 export type DinnerHelperPlan = {
   mealTitle: string
@@ -23,10 +24,21 @@ export async function generateDinnerHelperPlan(params: {
   const notes = params.notes?.trim()
 
   const system = `You help a busy parent get dinner on the table tonight — like a calm friend in the kitchen, not a chef or an app.
-Give practical, time-aware guidance: what to do right now, then a simple timeline, then stove steps.
-Affirm they can do this; never talk down. Be concise. Plain language only.
-They may paste a Pinterest or recipe link you cannot open — rely on the meal hint and their notes.
-Return ONLY valid JSON matching the schema. No markdown.`
+Write ONE playbook, not three versions of the same recipe.
+
+Structure:
+1. rightNow — 2-3 immediate actions only (text someone, pull from freezer, start water). Use their notes literally when they ask ("text wife to pull mushrooms out").
+2. timeline — the full evening in clock order from current time until plates hit the table. Include prep AND cooking here. Each step is one short sentence. Labels must be realistic times between now and dinner.
+3. cookSteps — ONLY detailed stove technique that does NOT fit a timed line (empty array is fine and preferred when timeline covers cooking).
+4. shoppingSuggestions — only items they might still need to buy.
+
+Rules:
+- Never repeat the same instruction in timeline and cookSteps.
+- Do not number steps in strings (no "1." prefix).
+- mealTitle: short title case (e.g. "Mushroom cream pasta"), not ALL CAPS.
+- Plain language. They can do this.
+They may paste a Pinterest link you cannot open — rely on meal hint and notes.
+Return ONLY valid JSON. No markdown.`
 
   const user = `Household timezone: ${params.timezone}
 Current local time: ${params.nowLabel}
@@ -38,11 +50,11 @@ ${notes ? `What they told you: ${notes}` : ''}
 
 JSON schema:
 {
-  "mealTitle": "short name for tonight's dinner card",
-  "rightNow": ["2-4 bullets for what to do immediately at current time"],
-  "timeline": [{"label": "5:30 PM", "step": "what to do then"}, ...],
-  "cookSteps": ["numbered-style short steps at the stove"],
-  "shoppingSuggestions": ["only items they might still need to buy — empty array if none"]
+  "mealTitle": "short title for tonight's dinner card",
+  "rightNow": ["2-3 immediate actions"],
+  "timeline": [{"label": "5:30 PM", "step": "single action at this time"}, ...],
+  "cookSteps": ["optional extra stove detail — empty array if timeline is enough"],
+  "shoppingSuggestions": ["items to buy — empty array if none"]
 }`
 
   try {
@@ -63,14 +75,29 @@ JSON schema:
     const parsed = JSON.parse(raw) as DinnerHelperPlan
     if (!parsed.mealTitle || !Array.isArray(parsed.rightNow)) return null
 
+    const titleCase = (s: string) =>
+      s
+        .trim()
+        .toLowerCase()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+
     return {
-      mealTitle: String(parsed.mealTitle).trim(),
-      rightNow: (parsed.rightNow ?? []).map(String).filter(Boolean).slice(0, 5),
+      mealTitle: titleCase(String(parsed.mealTitle)),
+      rightNow: (parsed.rightNow ?? [])
+        .map((s) => stripStepPrefix(String(s)))
+        .filter(Boolean)
+        .slice(0, 4),
       timeline: (parsed.timeline ?? [])
         .filter((t) => t?.step)
-        .map((t) => ({ label: String(t.label || ''), step: String(t.step) }))
+        .map((t) => ({
+          label: String(t.label || '').trim(),
+          step: stripStepPrefix(String(t.step)),
+        }))
+        .slice(0, 10),
+      cookSteps: (parsed.cookSteps ?? [])
+        .map((s) => stripStepPrefix(String(s)))
+        .filter(Boolean)
         .slice(0, 8),
-      cookSteps: (parsed.cookSteps ?? []).map(String).filter(Boolean).slice(0, 12),
       shoppingSuggestions: (parsed.shoppingSuggestions ?? [])
         .map(String)
         .filter(Boolean)
