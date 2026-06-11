@@ -66,6 +66,22 @@ Every surface must pass before ship:
 - Run the full week
 - One plan for your home ($9.99/mo per household)
 
+### For™ AI (helpful moments — not “AI assistant”)
+Parent pattern: **For + moment** inside For One Day. Users say the moment name; “AI” stays in Pro/legal sublines.
+
+| Product name | Tagline | Status | Connects to |
+|--------------|---------|--------|-------------|
+| **ForDinner** | Step through tonight | Ship (6D) | Today · This week · Lists · meal_plans |
+| **ForDinner** save | Paste a recipe, use again | Next (6E–6F) | meal_ideas · Shopping |
+| **ForPlanning** | Shape your week | Later (6G) | This week · schedule · meals |
+| **ForWrite** | Polish a keepsake (optional) | Ship | Memories · phone only |
+
+**Say:** “Open ForDinner” · “Step through tonight” · “For tools for your home” (Pro).  
+**Don’t say:** ForDinner AI · AI assistant · chatbot · GPT (user-facing).  
+**Sara test:** *I tap ForDinner on the wall and it tells me what to do now; groceries go to Lists.*
+
+Full brand map: `docs/internal/for-ai-brand-map.html`
+
 ## Never Say (user-facing)
 
 - Vault · Legacy · Inbox · Hub · OS · Dashboard
@@ -91,9 +107,9 @@ Avoid: *Upgrade to Pro*, *Start Free Today* (prefer verb-first warm CTAs).
 ## Plan and Monetization Language
 
 - **Free:** Start your home's daily plan; core capture on phone.
-- **Pro:** Run the full week — unlimited keepsakes, shared household features, AI writing tools on phone.
+- **Pro:** Run the full week — unlimited keepsakes, shared household, **For tools** (ForDinner, ForWrite on phone).
 - **Household:** One $9.99/mo; members inherit Pro.
-- **AI gating:** "AI writing tools are a Pro feature."
+- **For gating:** "ForDinner is included with Pro for your home."
 
 ## SEO Keywords (primary)
 

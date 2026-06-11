@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>For™ AI — Brand Map · For One Day</title>
+  <style>
+    :root {
+      --ink: #1e3a5f;
+      --muted: #5c6478;
+      --canvas: #faf7f2;
+      --line: #e7e2da;
+      --amber: #b45309;
+      --emerald: #047857;
+      --white: #ffffff;
+      --serif: "Georgia", "Times New Roman", serif;
+      --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--canvas);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .eyebrow {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 500;
+      margin: 0.35rem 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .lead { font-size: 1.05rem; color: var(--muted); max-width: 42rem; }
+    .rule { border: none; border-top: 1px solid var(--line); margin: 2rem 0; }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+      margin: 0 0 1rem;
+    }
+    .grid { display: grid; gap: 1rem; }
+    @media (min-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      padding: 1.25rem 1.35rem;
+    }
+    .card.ship { border-color: #a7f3d0; box-shadow: 0 1px 0 rgba(4, 120, 87, 0.08); }
+    .card.future { opacity: 0.92; border-style: dashed; }
+    .name {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      margin: 0 0 0.15rem;
+    }
+    .tag { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+    .pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      margin-bottom: 0.65rem;
+    }
+    .pill.live { background: #ecfdf5; color: var(--emerald); }
+    .pill.next { background: #fffbeb; color: var(--amber); }
+    .pill.later { background: #f3f4f6; color: var(--muted); }
+    ul { margin: 0.5rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.92rem; }
+    li { margin: 0.35rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: var(--white);
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { background: #f5f2ec; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    tr:last-child td { border-bottom: none; }
+    code { font-size: 0.82em; background: #f5f2ec; padding: 0.1rem 0.35rem; border-radius: 0.25rem; }
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.75rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+    .flow span {
+      background: var(--white);
+      border: 1px solid var(--line);
+      padding: 0.35rem 0.65rem;
+      border-radius: 0.5rem;
+      color: var(--ink);
+    }
+    .arrow { color: var(--muted); }
+    .never { color: #b91c1c; font-size: 0.88rem; }
+    footer { margin-top: 2.5rem; font-size: 0.8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">For One Day · Internal brand system</p>
+    <h1>For™ AI</h1>
+    <p class="lead">
+      A family of <strong>helpful moments</strong> inside For One Day — not a chatbot brand.
+      Users see <em>ForDinner</em>, not “AI assistant.” Engineering keeps <code>for-dinner</code> routes;
+      marketing may say “smart help” where Sara wouldn’t say “AI” out loud.
+    </p>
+
+    <hr class="rule" />
+
+    <h2>Architecture</h2>
+    <div class="grid grid-3">
+      <div class="card ship">
+        <span class="pill live">Ship · Step 6D</span>
+        <p class="name">ForDinner</p>
+        <p class="tag">Step through tonight</p>
+        <ul>
+          <li>Today + This week entry</li>
+          <li>Right now → timeline → cook</li>
+          <li>Confirm → <strong>Lists</strong> + <strong>meal_plans</strong></li>
+        </ul>
+      </div>
+      <div class="card future">
+        <span class="pill next">Next · Step 6E–6F</span>
+        <p class="name">ForDinner</p>
+        <p class="tag">+ saved recipes & shop</p>
+        <ul>
+          <li>Paste link → save idea</li>
+          <li>Reuse on any night</li>
+          <li>Ingredients → Shopping (confirm)</li>
+        </ul>
+      </div>
+      <div class="card future">
+        <span class="pill later">Later</span>
+        <p class="name">ForPlanning</p>
+        <p class="tag">Shape your week</p>
+        <ul>
+          <li>Meals + schedule + lists glance</li>
+          <li>“Light week” suggestions</li>
+          <li>Never replaces Google calendar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow" aria-label="Connected data flow">
+      <span>Today</span><span class="arrow">→</span>
+      <span>ForDinner</span><span class="arrow">→</span>
+      <span>This week</span><span class="arrow">→</span>
+      <span>Lists</span>
+      <span class="arrow">·</span>
+      <span>Google schedule (read)</span>
+    </div>
+
+    <hr class="rule" />
+
+    <h2>Naming rules</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Use</th>
+          <th>Example</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ForDinner</strong></td>
+          <td>“Open ForDinner” · “Step through tonight”</td>
+          <td>Extends “For One Day”; dinner is the wedge</td>
+        </tr>
+        <tr>
+          <td><strong>ForPlanning</strong></td>
+          <td>“ForPlanning for your week” (future)</td>
+          <td>Week orchestration without “assistant”</td>
+        </tr>
+        <tr>
+          <td><strong>ForWrite</strong> (optional)</td>
+          <td>Memory polish on phone</td>
+          <td>Same family; not on kitchen wall</td>
+        </tr>
+        <tr>
+          <td>Subline only</td>
+          <td>“Included with Pro for your home”</td>
+          <td>AI is mechanism, not headline</td>
+        </tr>
+        <tr>
+          <td class="never">Avoid user-facing</td>
+          <td>ForDinner AI · GPT · AI assistant · chatbot</td>
+          <td>Fails Sara test & trust on wall</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="rule" />
+
+    <h2>Surface copy</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Surface</th>
+          <th>Headline</th>
+          <th>Support</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Today tile</td>
+          <td>ForDinner</td>
+          <td>Step through tonight · sends groceries to Lists</td>
+        </tr>
+        <tr>
+          <td>Modal</td>
+          <td>ForDinner</td>
+          <td>Cook now · save tonight · shop on Lists</td>
+        </tr>
+        <tr>
+          <td>This week (today)</td>
+          <td>Help with dinner</td>
+          <td>Button opens ForDinner</td>
+        </tr>
+        <tr>
+          <td>Pro / upgrade</td>
+          <td>For tools for your home</td>
+          <td>ForDinner today · ForPlanning coming</td>
+        </tr>
+        <tr>
+          <td>Analytics</td>
+          <td><code>for_dinner_opened</code> · <code>for_dinner_saved</code></td>
+          <td>Never <code>ai_chat</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="rule" />
+
+    <h2>Roadmap alignment</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Brand</th>
+          <th>Connects</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>6D ✅</td><td>ForDinner v1</td><td>meal_plans + list_items</td></tr>
+        <tr><td>6E</td><td>ForDinner save</td><td>meal_ideas + link paste</td></tr>
+        <tr><td>6F</td><td>ForDinner shop</td><td>ingredients → Lists</td></tr>
+        <tr><td>7 ✅</td><td>—</td><td>Google read → Household schedule</td></tr>
+        <tr><td>6G (new)</td><td>ForPlanning</td><td>Week view intelligence</td></tr>
+        <tr><td>7D</td><td>—</td><td>Outlook read (same panel)</td></tr>
+      </tbody>
+    </table>
+
+    <footer>
+      Parent: <strong>For One Day</strong> · Pattern: <strong>For + moment</strong> ·
+      Internal doc — open in browser for brand reviews. Last updated: June 2026.
+    </footer>
+  </div>
+</body>
+</html>
