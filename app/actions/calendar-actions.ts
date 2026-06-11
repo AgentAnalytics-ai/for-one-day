@@ -5,7 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceRoleClient } from '@/lib/supabase/service-role'
 import {
   fetchGoogleCalendarsEvents,
+  getGoogleCalendarConfig,
   refreshGoogleAccessToken,
+  tokenHasCalendarScope,
 } from '@/lib/google-calendar'
 import {
   mergeHouseholdEvents,
@@ -19,7 +21,6 @@ import {
   toHouseholdDateKey,
 } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
-import { getGoogleCalendarConfig } from '@/lib/google-calendar'
 
 type ConnectionRow = {
   id: string
@@ -46,6 +47,8 @@ export type GoogleCalendarStatus = {
   connected: boolean
   email: string | null
   canConnect: boolean
+  /** Connected row exists but token lacks calendar.readonly — user must reconnect. */
+  needsCalendarPermission: boolean
 }
 
 export type TodayScheduleGlance = {
@@ -217,31 +220,60 @@ export async function getGoogleCalendarStatus(): Promise<GoogleCalendarStatus> {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return { configured, connected: false, email: null, canConnect: false }
+      return {
+        configured,
+        connected: false,
+        email: null,
+        canConnect: false,
+        needsCalendarPermission: false,
+      }
     }
 
     const canConnect = await householdHasSharedPlan(supabase, user.id)
     const admin = createServiceRoleClient()
     if (!admin) {
-      return { configured, connected: false, email: null, canConnect }
+      return {
+        configured,
+        connected: false,
+        email: null,
+        canConnect,
+        needsCalendarPermission: false,
+      }
     }
 
     const { data } = await admin
       .from('calendar_connections')
-      .select('account_email')
+      .select('account_email, refresh_token')
       .eq('user_id', user.id)
       .eq('provider', 'google')
       .maybeSingle()
+
+    let needsCalendarPermission = false
+    if (data?.refresh_token) {
+      try {
+        const refreshed = await refreshGoogleAccessToken(data.refresh_token)
+        needsCalendarPermission = !tokenHasCalendarScope(refreshed.scope)
+      } catch {
+        needsCalendarPermission = true
+      }
+    }
 
     return {
       configured,
       connected: Boolean(data),
       email: data?.account_email ?? null,
       canConnect,
+      needsCalendarPermission,
     }
   } catch (error) {
     console.error('getGoogleCalendarStatus error:', error)
-    return { configured, connected: false, email: null, canConnect: false }
+    return {
+      configured,
+      connected: false,
+      email: null,
+      canConnect: false,
+      needsCalendarPermission: false,
+    }
   }
 }
 

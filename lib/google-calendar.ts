@@ -2,10 +2,18 @@
  * Google Calendar OAuth + read-only API helpers (server-only).
  */
 
+export const GOOGLE_CALENDAR_READONLY_SCOPE =
+  'https://www.googleapis.com/auth/calendar.readonly'
+
 export const GOOGLE_CALENDAR_SCOPES = [
-  'https://www.googleapis.com/auth/calendar.readonly',
+  GOOGLE_CALENDAR_READONLY_SCOPE,
   'https://www.googleapis.com/auth/userinfo.email',
 ].join(' ')
+
+export function tokenHasCalendarScope(scope?: string): boolean {
+  if (!scope) return false
+  return scope.split(/\s+/).includes(GOOGLE_CALENDAR_READONLY_SCOPE)
+}
 
 export function getGoogleCalendarRedirectUri(): string {
   const base = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
@@ -34,7 +42,6 @@ export function buildGoogleCalendarAuthUrl(state: string): string | null {
     scope: GOOGLE_CALENDAR_SCOPES,
     access_type: 'offline',
     prompt: 'consent',
-    include_granted_scopes: 'true',
     state,
   })
 

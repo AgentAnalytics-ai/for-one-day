@@ -6,6 +6,8 @@ import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import { WeekCalendarView } from '@/components/planner/week-calendar-view'
 import { FocusView } from '@/components/planner/focus-view'
 
+export const dynamic = 'force-dynamic'
+
 export default async function WeekPage() {
   const [weekData, scheduleData] = await Promise.all([
     getCachedWeekMealsData(),

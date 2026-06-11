@@ -7,6 +7,8 @@ import {
   fetchGoogleAccountEmail,
   listGoogleCalendars,
   pickDefaultGoogleCalendarIds,
+  refreshGoogleAccessToken,
+  tokenHasCalendarScope,
 } from '@/lib/google-calendar'
 import { pickMemberColor } from '@/lib/calendar-merge'
 
@@ -53,6 +55,10 @@ export async function GET(request: Request) {
   try {
     const tokens = await exchangeGoogleCodeForTokens(code)
 
+    if (!tokenHasCalendarScope(tokens.scope)) {
+      return redirectError('scope_denied')
+    }
+
     const { data: existing } = await admin
       .from('calendar_connections')
       .select('refresh_token, display_color')
@@ -60,7 +66,14 @@ export async function GET(request: Request) {
       .eq('provider', 'google')
       .maybeSingle()
 
-    const refreshToken = tokens.refresh_token ?? existing?.refresh_token
+    let refreshToken = tokens.refresh_token ?? null
+    if (!refreshToken && existing?.refresh_token) {
+      const refreshed = await refreshGoogleAccessToken(existing.refresh_token)
+      if (tokenHasCalendarScope(refreshed.scope)) {
+        refreshToken = existing.refresh_token
+      }
+    }
+
     if (!refreshToken) {
       return redirectError('no_refresh')
     }
@@ -72,12 +85,13 @@ export async function GET(request: Request) {
 
     const displayColor = existing?.display_color ?? pickMemberColor(0)
 
-    let calendarIds = ['primary']
+    let calendarIds: string[]
     try {
       const calendars = await listGoogleCalendars(tokens.access_token)
       calendarIds = pickDefaultGoogleCalendarIds(calendars)
     } catch (listError) {
       console.error('Google calendarList on connect:', listError)
+      return redirectError('scope_denied')
     }
 
     const { error: upsertError } = await admin.from('calendar_connections').upsert(

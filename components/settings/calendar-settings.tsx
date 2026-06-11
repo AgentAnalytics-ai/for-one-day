@@ -30,6 +30,10 @@ export function CalendarSettings() {
       setBanner('Google access was not granted. You can try again anytime.')
     } else if (calendar === 'unconfigured') {
       setBanner('Calendar connect is not configured on the server yet.')
+    } else if (calendar === 'scope_denied') {
+      setBanner(
+        'Google did not grant calendar read access. In Google Cloud, add the Calendar scope under Data Access, then disconnect and connect again — check both permission boxes on the Google screen.'
+      )
     }
     if (calendar) {
       params.delete('calendar')
@@ -97,16 +101,33 @@ export function CalendarSettings() {
         </div>
       ) : null}
 
+      {status?.needsCalendarPermission ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          Calendar read permission is missing on this Google link. Disconnect below, then connect
+          again and approve <strong className="font-medium">See your calendar events</strong> on the
+          Google screen.
+        </div>
+      ) : null}
+
       {connected ? (
         <div className="rounded-2xl border border-[#E7E2DA] bg-white px-4 py-4">
           <div className="flex items-center gap-2 text-sm font-medium text-primary-900">
-            <Check className="h-4 w-4 text-emerald-600" />
-            Google Calendar connected
+            <Check
+              className={`h-4 w-4 ${status?.needsCalendarPermission ? 'text-amber-600' : 'text-emerald-600'}`}
+            />
+            {status?.needsCalendarPermission
+              ? 'Google linked — calendar permission needed'
+              : 'Google Calendar connected'}
           </div>
           {status?.email ? (
             <p className="mt-1 text-sm text-[#5C6478]">{status.email}</p>
           ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
+            {status?.needsCalendarPermission ? (
+              <a href="/api/calendar/google/connect" className="btn-primary inline-flex">
+                Reconnect Google Calendar
+              </a>
+            ) : null}
             <a
               href="https://calendar.google.com"
               target="_blank"
