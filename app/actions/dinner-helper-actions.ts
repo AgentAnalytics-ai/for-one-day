@@ -9,7 +9,7 @@ import { setMealPlan } from '@/app/actions/meal-actions'
 import { addListItem } from '@/app/actions/list-actions'
 
 const UPGRADE_MESSAGE =
-  'Meal help is included with Pro for your home.'
+  'Dinner walk-throughs are included with Pro for your home.'
 
 function householdNowLabel(): string {
   return new Date().toLocaleString('en-US', {
@@ -55,7 +55,10 @@ export async function runDinnerHelper(input: {
 
     const mealHint = input.mealHint.trim()
     if (!mealHint && !input.notes?.trim()) {
-      return { success: false, error: 'Tell us what you’re making — or paste a link and a quick note.' }
+      return {
+        success: false,
+        error: 'What are you making tonight? A name, a link, or a quick note is enough.',
+      }
     }
 
     const plan = await generateDinnerHelperPlan({
@@ -70,7 +73,7 @@ export async function runDinnerHelper(input: {
     if (!plan) {
       return {
         success: false,
-        error: 'Could not build a plan right now. Check OPENAI_API_KEY or try again.',
+        error: 'Couldn’t pull this together — give it another try in a moment.',
       }
     }
 

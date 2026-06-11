@@ -370,6 +370,83 @@
     }
   }
 
+  /* Dinner walk-through — warm accent, distinct from schedule glance */
+  .kw-dinner-glance-card {
+    @apply rounded-2xl border-2 border-amber-200/80 bg-gradient-to-br from-amber-50/70 via-white to-white transition-smooth;
+    box-shadow: 0 4px 24px rgba(180, 83, 9, 0.08);
+  }
+
+  .kw-dinner-glance-card:hover {
+    border-color: rgba(251, 191, 36, 0.65);
+    box-shadow: 0 6px 28px rgba(180, 83, 9, 0.12);
+  }
+
+  .kw-dinner-glance-card:focus-visible {
+    @apply outline-none ring-2 ring-amber-400/55 ring-offset-2 ring-offset-[#FAF7F2];
+  }
+
+  .kw-dinner-glance-card:active {
+    transform: scale(0.992);
+  }
+
+  .kitchen-wall--animate .kw-dinner-glance-card {
+    animation: wall-card-breathe 6.2s ease-in-out infinite 0.4s;
+  }
+
+  /* Bottom sheet — portal modal (avoids ScrollReveal transform trap) */
+  @keyframes sheet-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes sheet-slide-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes sheet-scale-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+
+  .sheet-backdrop-enter {
+    animation: sheet-backdrop-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .sheet-panel-enter {
+    animation: sheet-slide-up 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  @media (min-width: 640px) {
+    .sheet-panel-enter {
+      animation: sheet-scale-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kitchen-wall--animate .kw-dinner-glance-card,
+    .sheet-backdrop-enter,
+    .sheet-panel-enter {
+      animation: none;
+    }
+
+    .kw-dinner-glance-card:active {
+      transform: none;
+    }
+  }
+
   /* Cinematic brand entrance on login */
   @keyframes brand-cinematic-veil {
     from { opacity: 0; }

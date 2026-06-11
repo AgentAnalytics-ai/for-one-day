@@ -22,9 +22,10 @@ export async function generateDinnerHelperPlan(params: {
   const link = params.recipeLink?.trim()
   const notes = params.notes?.trim()
 
-  const system = `You are a calm home-cooking coach for busy parents — like a helpful friend, not a chef school.
-Give practical step-by-step guidance for ONE dinner tonight. Be concise. Use plain language.
-Assume the user may only have a Pinterest link as reference (you cannot browse it) — rely on meal hint and notes.
+  const system = `You help a busy parent get dinner on the table tonight — like a calm friend in the kitchen, not a chef or an app.
+Give practical, time-aware guidance: what to do right now, then a simple timeline, then stove steps.
+Affirm they can do this; never talk down. Be concise. Plain language only.
+They may paste a Pinterest or recipe link you cannot open — rely on the meal hint and their notes.
 Return ONLY valid JSON matching the schema. No markdown.`
 
   const user = `Household timezone: ${params.timezone}

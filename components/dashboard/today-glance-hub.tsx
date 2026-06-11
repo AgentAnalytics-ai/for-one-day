@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
-import { DinnerHelper } from '@/components/planner/dinner-helper'
+import { DinnerTonightGlance } from '@/components/dashboard/dinner-tonight-glance'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import type { TodayScheduleGlance } from '@/app/actions/calendar-actions'
 import type { TodayListGlance } from '@/app/actions/list-actions'
@@ -33,7 +33,7 @@ export function TodayGlanceHub({
     minute: '2-digit',
   })
 
-  const dinnerTitle = mealGlance?.title?.trim() || 'Plan dinner'
+  const dinnerTitle = mealGlance?.title?.trim() || 'What’s for dinner?'
   const dinnerDetail = buildDinnerDetail(mealGlance, listGlance)
   const scheduleCopy = buildScheduleCopy(scheduleGlance)
 
@@ -65,29 +65,16 @@ export function TodayGlanceHub({
             accent="schedule"
             mutedTitle={scheduleCopy.muted}
           />
-          <GlanceCardLink
-            href="/week#today"
-            label="Dinner tonight"
+          <DinnerTonightGlance
+            planDate={mealGlance?.planDate ?? ''}
+            initialMealTitle={mealGlance?.title}
             title={dinnerTitle}
             detail={dinnerDetail}
-            accent="dinner"
+            canEdit={Boolean(mealGlance?.canEdit)}
             mutedTitle={!mealGlance?.title}
           />
         </div>
       </ScrollReveal>
-
-      {mealGlance?.canEdit ? (
-        <ScrollReveal delay={100}>
-          <div className="mx-auto w-full max-w-3xl">
-            <DinnerHelper
-              variant="inline"
-              planDate={mealGlance.planDate}
-              initialMealTitle={mealGlance.title}
-              canUse={mealGlance.canEdit}
-            />
-          </div>
-        </ScrollReveal>
-      ) : null}
 
       {listGlance?.success ? (
         <ScrollReveal delay={120}>
@@ -183,15 +170,15 @@ function buildDinnerDetail(
   const shoppingCount = listGlance?.shopping.openCount ?? 0
 
   if (hasMeal && shoppingCount > 0) {
-    return `${shoppingCount} on shopping · tap to edit the week`
+    return `${shoppingCount} on Shopping · steps below if you want them`
   }
   if (hasMeal) {
-    return 'Need a hand? Walk-through below · Lists for groceries'
+    return 'Tap for a walk-through — steps and groceries lined up'
   }
   if (mealGlance?.canEdit) {
-    return 'Walk me through it below — or plan on This week'
+    return 'Tap for a walk-through — or plan on This week'
   }
-  return 'Pro unlocks shared meal planning for your home'
+  return 'Pro unlocks dinner walk-throughs for your home'
 }
 
 function GlanceCardLink({

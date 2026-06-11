@@ -67,17 +67,27 @@ Every surface must pass before ship:
 - One plan for your home ($9.99/mo per household)
 
 ### Invisible help (AI backend, human front)
-Best help feels like a calm friend — not a product line. **No sub-brand names** (no ForDinner, ForPlanning, etc.). Use **verbs** on the surface; OpenAI stays internal.
+Best help feels like a calm friend — not a product line. **No sub-brand names** (no ForDinner, ForPlanning, etc.). OpenAI stays internal.
+
+**Dinner arc (recognition → partnership → completion):**
+
+| Stage | Psychology | Copy pattern | Example |
+|-------|------------|--------------|---------|
+| Glance | Mirror their thought | Soft question | “What’s for dinner?” |
+| Entry | Invite, don’t sell | “Need a hand…?” | “Need a hand with dinner?” |
+| Commit | First-person agency | Verb they’d say | “Walk me through it” |
+| In progress | Thinking *with* them | No “AI” or “planning” | “Figuring out the order…” |
+| Result | Competence + household | Outcome, not feature | “Set for tonight — everyone sees it on Today” |
 
 | Moment | User sees | Status | Connects to |
 |--------|-----------|--------|-------------|
-| Dinner coach | “Walk me through it” · “Tonight’s dinner” | Ship (6D) | Today · This week · Lists |
+| Dinner walk-through | “Need a hand with dinner?” → “Walk me through it” | Ship (6D) | Today · This week · Lists |
 | Saved recipes | “Save this recipe” (future) | 6E–6F | meal_ideas · Shopping |
-| Week nudge | “Light week ahead” (future) | Later | This week · schedule |
+| Week nudge | “You’ve got a lot Thursday” (future) | Later | This week · schedule |
 
-**Say:** “Help with dinner” · “What to do now” · “Add to shopping.”  
+**Say:** “Need a hand with dinner?” · “Right now” · “Still need from the store.”  
 **Never say:** AI · assistant · chatbot · GPT · branded *ForX* names (user-facing).  
-**Sara test:** *I tap walk me through dinner and it tells me what to do — I didn’t think about AI.*
+**Sara test:** *I’m frazzled at 5 — I tap need a hand, it tells me what to do first. I didn’t think about AI.*
 
 Reference: `docs/internal/for-ai-brand-map.html` (invisible-help principles)
 
