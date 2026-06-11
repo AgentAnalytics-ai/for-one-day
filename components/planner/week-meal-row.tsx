@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { Check, Pencil, Plus, UtensilsCrossed, X } from 'lucide-react'
 import { clearMealPlan, setMealPlan, type MealPlanRow } from '@/app/actions/meal-actions'
+import { DinnerHelper } from '@/components/planner/dinner-helper'
 import { ScheduleEventRow } from '@/components/planner/schedule-event-row'
 import type { HouseholdScheduleEvent } from '@/lib/calendar-merge'
 import type { HouseholdWeekDay } from '@/lib/household-dates'
@@ -14,6 +15,7 @@ type WeekMealRowProps = {
   calendarConnected?: boolean
   /** When false, events live in the schedule panel only (desktop layout). */
   showInlineEvents?: boolean
+  openDinnerHelper?: boolean
 }
 
 export function WeekMealRow({
@@ -22,6 +24,7 @@ export function WeekMealRow({
   events,
   calendarConnected = false,
   showInlineEvents = true,
+  openDinnerHelper = false,
 }: WeekMealRowProps) {
   const [meal, setMeal] = useState(day.meal)
   const [editing, setEditing] = useState(false)
@@ -169,6 +172,17 @@ export function WeekMealRow({
           <p className="font-serif text-lg font-medium text-primary-900">{meal.title}</p>
         ) : null}
       </div>
+
+      {day.isToday && canEdit ? (
+        <div className="mb-3">
+          <DinnerHelper
+            planDate={day.dateKey}
+            initialMealTitle={meal?.title}
+            canUse={canEdit}
+            defaultOpen={openDinnerHelper}
+          />
+        </div>
+      ) : null}
 
       {showInlineEvents ? (
         events.length > 0 ? (

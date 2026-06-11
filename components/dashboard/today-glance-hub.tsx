@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
+import { DinnerHelper } from '@/components/planner/dinner-helper'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import type { TodayScheduleGlance } from '@/app/actions/calendar-actions'
 import type { TodayListGlance } from '@/app/actions/list-actions'
@@ -74,6 +75,19 @@ export function TodayGlanceHub({
           />
         </div>
       </ScrollReveal>
+
+      {mealGlance?.canEdit ? (
+        <ScrollReveal delay={100}>
+          <div className="mx-auto w-full max-w-3xl">
+            <DinnerHelper
+              variant="inline"
+              planDate={mealGlance.planDate}
+              initialMealTitle={mealGlance.title}
+              canUse={mealGlance.canEdit}
+            />
+          </div>
+        </ScrollReveal>
+      ) : null}
 
       {listGlance?.success ? (
         <ScrollReveal delay={120}>
@@ -172,10 +186,10 @@ function buildDinnerDetail(
     return `${shoppingCount} on shopping · tap to edit the week`
   }
   if (hasMeal) {
-    return 'Need groceries? Add them on Lists →'
+    return 'Dinner Helper below · groceries on Lists'
   }
   if (mealGlance?.canEdit) {
-    return 'Tap to plan tonight on This week'
+    return 'Dinner Helper below — or plan on This week'
   }
   return 'Pro unlocks shared meal planning for your home'
 }

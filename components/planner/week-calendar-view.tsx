@@ -7,6 +7,7 @@ import type { WeekScheduleData } from '@/app/actions/calendar-actions'
 type WeekCalendarViewProps = {
   weekData: WeekMealsData
   scheduleData: WeekScheduleData
+  openDinnerHelper?: boolean
 }
 
 function calendarLinkLabel(connectedMembers: number, householdMembers: number): string {
@@ -15,7 +16,11 @@ function calendarLinkLabel(connectedMembers: number, householdMembers: number): 
   return `${connectedMembers} of ${householdMembers} linked`
 }
 
-export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewProps) {
+export function WeekCalendarView({
+  weekData,
+  scheduleData,
+  openDinnerHelper = false,
+}: WeekCalendarViewProps) {
   const { days, canEdit } = weekData
   const { eventsByDate, connectedMembers, householdMembers } = scheduleData
   const monthLabel = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -131,6 +136,7 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
               events={eventsByDate[day.dateKey] ?? []}
               calendarConnected={calendarConnected}
               showInlineEvents={false}
+              openDinnerHelper={openDinnerHelper && day.isToday}
             />
           ))}
         </div>
@@ -162,7 +168,6 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
             .
           </p>
         ) : null}
-        <p className="text-[#5C6478]/70">Saved recipes for dinner — coming soon.</p>
       </div>
     </div>
   )

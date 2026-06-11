@@ -8,7 +8,12 @@ import { FocusView } from '@/components/planner/focus-view'
 
 export const dynamic = 'force-dynamic'
 
-export default async function WeekPage() {
+type WeekPageProps = {
+  searchParams: Promise<{ helper?: string }>
+}
+
+export default async function WeekPage({ searchParams }: WeekPageProps) {
+  const sp = await searchParams
   const [weekData, scheduleData] = await Promise.all([
     getCachedWeekMealsData(),
     getCachedWeekScheduleData(),
@@ -25,7 +30,11 @@ export default async function WeekPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={80}>
-        <WeekCalendarView weekData={weekData} scheduleData={scheduleData} />
+        <WeekCalendarView
+          weekData={weekData}
+          scheduleData={scheduleData}
+          openDinnerHelper={sp.helper === '1'}
+        />
       </ScrollReveal>
 
       <ScrollReveal delay={120}>
