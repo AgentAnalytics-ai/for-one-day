@@ -1,13 +1,16 @@
 import Link from 'next/link'
 import { WeekMealRow } from '@/components/planner/week-meal-row'
 import type { WeekMealsData } from '@/app/actions/meal-actions'
+import type { WeekScheduleData } from '@/app/actions/calendar-actions'
 
 type WeekCalendarViewProps = {
   weekData: WeekMealsData
+  scheduleData: WeekScheduleData
 }
 
-export function WeekCalendarView({ weekData }: WeekCalendarViewProps) {
+export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewProps) {
   const { days, canEdit } = weekData
+  const { eventsByDate, connectedMembers, householdMembers } = scheduleData
   const monthLabel = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
   if (!weekData.success) {
@@ -20,7 +23,11 @@ export function WeekCalendarView({ weekData }: WeekCalendarViewProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h2 className="font-serif text-xl font-medium text-primary-900">{monthLabel}</h2>
-        <span className="text-xs font-medium text-[#5C6478]">Meals live · Calendar Step 7</span>
+        <span className="text-xs font-medium text-[#5C6478]">
+          {connectedMembers > 0
+            ? `${connectedMembers}/${householdMembers} calendars`
+            : 'Connect Google in Settings'}
+        </span>
       </div>
 
       <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
@@ -72,7 +79,12 @@ export function WeekCalendarView({ weekData }: WeekCalendarViewProps) {
 
       <div className="space-y-3">
         {days.map((day) => (
-          <WeekMealRow key={day.dateKey} day={day} canEdit={canEdit} />
+          <WeekMealRow
+            key={day.dateKey}
+            day={day}
+            canEdit={canEdit}
+            events={eventsByDate[day.dateKey] ?? []}
+          />
         ))}
       </div>
 
@@ -81,7 +93,7 @@ export function WeekCalendarView({ weekData }: WeekCalendarViewProps) {
         <Link href="/lists" className="font-medium text-primary-900 hover:underline">
           Lists
         </Link>
-        . Google Calendar merges at Step 7.
+        . Tap an event to open in Google Calendar.
       </p>
     </div>
   )

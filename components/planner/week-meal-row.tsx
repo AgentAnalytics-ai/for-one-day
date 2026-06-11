@@ -3,14 +3,16 @@
 import { useState, useTransition } from 'react'
 import { Check, Pencil, Plus, UtensilsCrossed, X } from 'lucide-react'
 import { clearMealPlan, setMealPlan, type MealPlanRow } from '@/app/actions/meal-actions'
+import type { HouseholdScheduleEvent } from '@/lib/calendar-merge'
 import type { HouseholdWeekDay } from '@/lib/household-dates'
 
 type WeekMealRowProps = {
   day: HouseholdWeekDay & { meal: MealPlanRow | null }
   canEdit: boolean
+  events: HouseholdScheduleEvent[]
 }
 
-export function WeekMealRow({ day, canEdit }: WeekMealRowProps) {
+export function WeekMealRow({ day, canEdit, events }: WeekMealRowProps) {
   const [meal, setMeal] = useState(day.meal)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(day.meal?.title ?? '')
@@ -154,7 +156,30 @@ export function WeekMealRow({ day, canEdit }: WeekMealRowProps) {
         )}
       </div>
 
-      <p className="text-sm text-[#5C6478]/80">Events merge here at Step 7.</p>
+      {events.length > 0 ? (
+        <ul className="space-y-2">
+          {events.map((event) => (
+            <li key={event.id}>
+              {event.htmlLink ? (
+                <a
+                  href={event.htmlLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 rounded-xl bg-[#FAF7F2]/80 px-3 py-2.5 transition-colors hover:bg-[#FAF7F2]"
+                >
+                  <ScheduleEventContent event={event} />
+                </a>
+              ) : (
+                <div className="flex items-start gap-3 rounded-xl bg-[#FAF7F2]/80 px-3 py-2.5">
+                  <ScheduleEventContent event={event} />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-[#5C6478]/80">No events — connect Google in Settings → Profile.</p>
+      )}
 
       {error ? (
         <p className="mt-2 text-sm text-red-700" role="alert">
@@ -162,5 +187,24 @@ export function WeekMealRow({ day, canEdit }: WeekMealRowProps) {
         </p>
       ) : null}
     </article>
+  )
+}
+
+function ScheduleEventContent({ event }: { event: HouseholdScheduleEvent }) {
+  return (
+    <>
+      <span
+        className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+        style={{ backgroundColor: event.displayColor }}
+        aria-hidden
+      />
+      <span className="shrink-0 font-mono text-sm font-semibold text-primary-900">
+        {event.timeLabel}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm text-[#5C6478]">{event.title}</span>
+        <span className="text-xs text-[#5C6478]/70">{event.memberName}</span>
+      </span>
+    </>
   )
 }

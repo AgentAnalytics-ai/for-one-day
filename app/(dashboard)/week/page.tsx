@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { getCachedWeekScheduleData } from '@/app/actions/calendar-actions'
 import { getCachedWeekMealsData } from '@/app/actions/meal-actions'
 import { PageHeader } from '@/components/ui/page-header'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
@@ -6,7 +7,10 @@ import { WeekCalendarView } from '@/components/planner/week-calendar-view'
 import { FocusView } from '@/components/planner/focus-view'
 
 export default async function WeekPage() {
-  const weekData = await getCachedWeekMealsData()
+  const [weekData, scheduleData] = await Promise.all([
+    getCachedWeekMealsData(),
+    getCachedWeekScheduleData(),
+  ])
 
   return (
     <div className="mx-auto max-w-3xl space-y-10 pb-8">
@@ -19,7 +23,7 @@ export default async function WeekPage() {
       </ScrollReveal>
 
       <ScrollReveal delay={80}>
-        <WeekCalendarView weekData={weekData} />
+        <WeekCalendarView weekData={weekData} scheduleData={scheduleData} />
       </ScrollReveal>
 
       <ScrollReveal delay={120}>

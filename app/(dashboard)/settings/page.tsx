@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { CalendarSettings } from '@/components/settings/calendar-settings'
 import { ProfileSettingsView } from '@/components/settings/profile-settings-view'
 import { HouseholdSettings } from '@/components/settings/household-settings'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
@@ -125,7 +126,12 @@ export default function SettingsPage() {
       <div className="surface-card p-5 sm:p-6">
         {activeTab === 'household' && <HouseholdSettings />}
         {activeTab === 'profile' && (
-          <ProfileSettingsView profile={profile} onUpdate={loadProfile} />
+          <div className="space-y-8">
+            <ProfileSettingsView profile={profile} onUpdate={loadProfile} />
+            <div className="border-t border-[#F0EBE3] pt-8">
+              <CalendarSettings />
+            </div>
+          </div>
         )}
         {activeTab === 'billing' && <SubscriptionManagement />}
         {activeTab === 'account' && (

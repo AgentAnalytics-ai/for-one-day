@@ -3,6 +3,7 @@ import { TimeGreeting } from '@/components/dashboard/time-greeting'
 import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
+import type { TodayScheduleGlance } from '@/app/actions/calendar-actions'
 import type { TodayListGlance } from '@/app/actions/list-actions'
 import type { TonightMealGlance } from '@/app/actions/meal-actions'
 
@@ -10,12 +11,18 @@ type TodayGlanceHubProps = {
   householdName: string | null
   listGlance: TodayListGlance | null
   mealGlance: TonightMealGlance | null
+  scheduleGlance: TodayScheduleGlance | null
 }
 
 /**
  * Today hub — glance (read) → This week (plan meals) → Lists (shop).
  */
-export function TodayGlanceHub({ householdName, listGlance, mealGlance }: TodayGlanceHubProps) {
+export function TodayGlanceHub({
+  householdName,
+  listGlance,
+  mealGlance,
+  scheduleGlance,
+}: TodayGlanceHubProps) {
   const now = new Date()
   const timeLabel = now.toLocaleString('en-US', {
     weekday: 'long',
@@ -27,6 +34,7 @@ export function TodayGlanceHub({ householdName, listGlance, mealGlance }: TodayG
 
   const dinnerTitle = mealGlance?.title?.trim() || 'Plan dinner'
   const dinnerDetail = buildDinnerDetail(mealGlance, listGlance)
+  const scheduleCopy = buildScheduleCopy(scheduleGlance)
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -49,11 +57,12 @@ export function TodayGlanceHub({ householdName, listGlance, mealGlance }: TodayG
       <ScrollReveal delay={80}>
         <div className="mx-auto grid w-full max-w-3xl gap-3 sm:grid-cols-2 sm:gap-4">
           <GlanceCardLink
-            href="/week"
+            href={scheduleGlance?.needsConnect ? '/settings#profile' : '/week#today'}
             label="Schedule"
-            title="3:30 PM · Soccer"
-            detail="Full calendar on This week — merged for your home at Step 7."
+            title={scheduleCopy.title}
+            detail={scheduleCopy.detail}
             accent="schedule"
+            mutedTitle={scheduleCopy.muted}
           />
           <GlanceCardLink
             href="/week#today"
@@ -109,6 +118,47 @@ export function TodayGlanceHub({ householdName, listGlance, mealGlance }: TodayG
       </ScrollReveal>
     </div>
   )
+}
+
+function buildScheduleCopy(scheduleGlance: TodayScheduleGlance | null): {
+  title: string
+  detail: string
+  muted: boolean
+} {
+  if (!scheduleGlance?.success) {
+    return { title: 'Schedule', detail: 'Could not load calendar', muted: true }
+  }
+
+  if (scheduleGlance.needsConnect) {
+    return {
+      title: 'Connect calendar',
+      detail: 'Link Google in Settings → Profile. Sara connects hers too.',
+      muted: true,
+    }
+  }
+
+  if (scheduleGlance.nextEvent) {
+    const e = scheduleGlance.nextEvent
+    return {
+      title: `${e.timeLabel} · ${e.title}`,
+      detail: `${scheduleGlance.todayCount} today · ${e.memberName} · tap for week`,
+      muted: false,
+    }
+  }
+
+  if (scheduleGlance.todayCount > 0) {
+    return {
+      title: `${scheduleGlance.todayCount} events today`,
+      detail: 'Open This week for your home schedule',
+      muted: false,
+    }
+  }
+
+  return {
+    title: 'Nothing scheduled',
+    detail: 'Free evening — plan dinner on This week',
+    muted: true,
+  }
 }
 
 function buildDinnerDetail(
