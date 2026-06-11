@@ -40,8 +40,10 @@ export function WeekSchedulePanel({
               </h2>
               <p className="mt-0.5 text-xs text-[#5C6478]">
                 {connected
-                  ? `${totalEvents} event${totalEvents === 1 ? '' : 's'} · ${connectedMembers}/${householdMembers} linked`
-                  : 'Merge Google calendars for the home'}
+                  ? totalEvents === 0
+                    ? 'Primary + birthdays from Google'
+                    : `${totalEvents} this week`
+                  : 'Link Google — each person adds their own'}
               </p>
             </div>
           </div>

@@ -9,6 +9,12 @@ type WeekCalendarViewProps = {
   scheduleData: WeekScheduleData
 }
 
+function calendarLinkLabel(connectedMembers: number, householdMembers: number): string {
+  if (connectedMembers === 0) return 'Link Google'
+  if (connectedMembers >= householdMembers) return 'All calendars linked'
+  return `${connectedMembers} of ${householdMembers} linked`
+}
+
 export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewProps) {
   const { days, canEdit } = weekData
   const { eventsByDate, connectedMembers, householdMembers } = scheduleData
@@ -28,20 +34,21 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
           <h2 className="font-serif text-2xl font-medium tracking-tight text-primary-900 md:text-3xl">
             {monthLabel}
           </h2>
-          <p className="mt-1 text-sm text-[#5C6478]">
-            Dinners you plan here · schedule from Google
-          </p>
+          <p className="mt-1 text-sm text-[#5C6478]">Dinners on the left · Google on the right</p>
         </div>
         <span
+          title={
+            connectedMembers > 0 && connectedMembers < householdMembers
+              ? 'Each household member connects their own Google account in Settings'
+              : undefined
+          }
           className={`rounded-full px-3 py-1 text-xs font-medium ${
             calendarConnected
               ? 'bg-emerald-50 text-emerald-800'
               : 'bg-[#FAF7F2] text-[#5C6478]'
           }`}
         >
-          {calendarConnected
-            ? `${connectedMembers}/${householdMembers} calendars`
-            : 'Calendar not linked'}
+          {calendarLinkLabel(connectedMembers, householdMembers)}
         </span>
       </div>
 
@@ -138,13 +145,25 @@ export function WeekCalendarView({ weekData, scheduleData }: WeekCalendarViewPro
         </div>
       </div>
 
-      <p className="text-center text-xs text-[#5C6478]">
-        Groceries for the week live on{' '}
-        <Link href="/lists" className="font-medium text-primary-900 hover:underline">
-          Lists
-        </Link>
-        . Tap any event to open in Google Calendar.
-      </p>
+      <div className="space-y-2 text-center text-xs text-[#5C6478]">
+        <p>
+          Groceries on{' '}
+          <Link href="/lists" className="font-medium text-primary-900 hover:underline">
+            Lists
+          </Link>
+          . Tap an event to open Google Calendar.
+        </p>
+        {connectedMembers > 0 && connectedMembers < householdMembers ? (
+          <p>
+            Spouse can link their calendar in{' '}
+            <Link href="/settings#profile" className="font-medium text-primary-900 hover:underline">
+              Settings
+            </Link>
+            .
+          </p>
+        ) : null}
+        <p className="text-[#5C6478]/70">Saved recipes for dinner — coming soon.</p>
+      </div>
     </div>
   )
 }

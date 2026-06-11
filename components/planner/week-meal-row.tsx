@@ -99,11 +99,19 @@ export function WeekMealRow({
         ) : null}
       </div>
 
-      <div className="mb-4 rounded-2xl border border-[#FDE68A]/80 bg-gradient-to-br from-amber-50/90 to-white px-4 py-3.5">
-        <div className="mb-1 flex items-center gap-2">
-          <UtensilsCrossed className="h-4 w-4 text-amber-800/80" strokeWidth={2} />
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#5C6478]">Dinner</p>
-        </div>
+      <div
+        className={
+          meal || editing
+            ? 'mb-4 rounded-2xl border border-[#FDE68A]/80 bg-gradient-to-br from-amber-50/90 to-white px-4 py-3.5'
+            : 'mb-1 px-1 py-1'
+        }
+      >
+        {(meal || editing) && (
+          <div className="mb-1 flex items-center gap-2">
+            <UtensilsCrossed className="h-4 w-4 text-amber-800/80" strokeWidth={2} />
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#5C6478]">Dinner</p>
+          </div>
+        )}
 
         {editing ? (
           <div className="space-y-2">
@@ -159,11 +167,7 @@ export function WeekMealRow({
           </div>
         ) : meal ? (
           <p className="font-serif text-lg font-medium text-primary-900">{meal.title}</p>
-        ) : (
-          <p className="text-sm text-[#5C6478]">
-            {canEdit ? 'Tap + to plan dinner' : 'No dinner planned'}
-          </p>
-        )}
+        ) : null}
       </div>
 
       {showInlineEvents ? (
@@ -182,11 +186,6 @@ export function WeekMealRow({
               : 'No events — connect Google in Settings → Profile'}
           </p>
         )
-      ) : events.length > 0 ? (
-        <p className="text-xs text-[#5C6478]">
-          {events.length} event{events.length === 1 ? '' : 's'} in{' '}
-          <span className="font-medium text-primary-900">Household schedule</span> →
-        </p>
       ) : null}
 
       {error ? (
