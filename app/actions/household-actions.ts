@@ -13,6 +13,7 @@ import {
   type InvitableHouseholdRole,
 } from '@/lib/household-invite'
 import { sendHouseholdInviteEmail } from '@/lib/email'
+import { resolveFamilyId } from '@/lib/household'
 import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
 import { revalidatePath } from 'next/cache'
 
@@ -86,30 +87,6 @@ async function isAbandonableSoloHousehold(
     .maybeSingle()
 
   return !subscription
-}
-
-async function resolveFamilyId(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string
-): Promise<string | null> {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('primary_family_id')
-    .eq('user_id', userId)
-    .maybeSingle()
-
-  if (profile?.primary_family_id) {
-    return profile.primary_family_id
-  }
-
-  const { data: membership } = await supabase
-    .from('family_members')
-    .select('family_id')
-    .eq('user_id', userId)
-    .limit(1)
-    .maybeSingle()
-
-  return membership?.family_id ?? null
 }
 
 export async function getHouseholdSettings(): Promise<{
@@ -420,7 +397,16 @@ export async function inviteHouseholdMember(
 
     if (insertError) {
       console.error('inviteHouseholdMember insert:', insertError)
-      return { success: false, error: 'Failed to create invitation' }
+      const hint =
+        insertError.code === '42501'
+          ? 'Database permission denied — confirm household owner and run migration 001.'
+          : insertError.code === '42P01'
+            ? 'family_invitations table missing — run migration 001 on prod.'
+            : null
+      return {
+        success: false,
+        error: hint ?? `Failed to create invitation (${insertError.message})`,
+      }
     }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.foroneday.app'
@@ -442,9 +428,10 @@ export async function inviteHouseholdMember(
       })
     } catch (err) {
       console.error('inviteHouseholdMember email:', err)
+      const msg = err instanceof Error ? err.message : 'Unknown email error'
       return {
         success: false,
-        error: 'Invitation created but email failed to send. Try again or contact support.',
+        error: `Invitation saved but email failed: ${msg}. Check Vercel RESEND_API_KEY and FROM_EMAIL.`,
       }
     }
 

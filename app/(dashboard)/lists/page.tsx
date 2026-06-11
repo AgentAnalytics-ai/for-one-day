@@ -1,22 +1,62 @@
 import Link from 'next/link'
+import { getListPageData } from '@/app/actions/list-actions'
+import { ListsUpgradeBanner } from '@/components/lists/lists-upgrade-banner'
+import { SharedListSection } from '@/components/lists/shared-list-section'
 import { PageHeader } from '@/components/ui/page-header'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 
-export default function ListsPage() {
+export default async function ListsPage() {
+  const result = await getListPageData()
+
+  if (!result.success) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-6">
+        <PageHeader title="Lists" subtitle="Could not load your household lists." />
+        <p className="text-sm text-red-700">{result.error}</p>
+      </div>
+    )
+  }
+
+  const { canEdit, shopping, todos } = result
+
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <ScrollReveal>
         <PageHeader
           eyebrow={<span className="text-primary-900">Lists</span>}
           title="To do & shopping"
-          subtitle="Check off from the kitchen wall or your phone. Shared lists arrive at Step 6."
+          subtitle={
+            canEdit
+              ? 'Shared with everyone in your home — check off from the wall or your phone.'
+              : 'Upgrade to Pro to share groceries and to-dos with your household.'
+          }
         />
       </ScrollReveal>
 
+      {!canEdit ? (
+        <ScrollReveal delay={50}>
+          <ListsUpgradeBanner />
+        </ScrollReveal>
+      ) : null}
+
       <ScrollReveal delay={100}>
         <div className="surface-card divide-y divide-[#F0EBE3]">
-          <ListSection title="To do today" empty="Add your first task when shared lists ship." />
-          <ListSection title="Shopping" empty="Groceries for tonight's dinner will show here." />
+          <SharedListSection
+            title="To do today"
+            kind="todo"
+            items={todos}
+            canEdit={canEdit}
+            emptyMessage="Nothing on the list yet — add a task your household can see."
+            addLabel="Add a task for today"
+          />
+          <SharedListSection
+            title="Shopping"
+            kind="shopping"
+            items={shopping}
+            canEdit={canEdit}
+            emptyMessage="Groceries for tonight's dinner show up here."
+            addLabel="Add to shopping list"
+          />
         </div>
       </ScrollReveal>
 
@@ -27,24 +67,6 @@ export default function ListsPage() {
           </Link>
         </p>
       </ScrollReveal>
-    </div>
-  )
-}
-
-function ListSection({ title, empty }: { title: string; empty: string }) {
-  return (
-    <div className="p-5 sm:p-6">
-      <h2 className="section-label mb-4">{title}</h2>
-      <div className="rounded-xl border border-dashed border-[#E7E2DA] bg-[#FAF7F2]/50 px-4 py-8 text-center">
-        <p className="text-sm text-[#5C6478]">{empty}</p>
-        <button
-          type="button"
-          disabled
-          className="btn-secondary mt-4 cursor-not-allowed opacity-60"
-        >
-          + Add to today
-        </button>
-      </div>
     </div>
   )
 }

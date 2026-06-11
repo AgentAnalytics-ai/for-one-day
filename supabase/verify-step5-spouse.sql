@@ -28,7 +28,7 @@ FROM (
 CROSS JOIN (
   SELECT fm.family_id FROM auth.users u
   JOIN public.family_members fm ON fm.user_id = u.id
-  WHERE lower(u.email) = lower('SARA_EMAIL_HERE')
+  WHERE lower(u.email) = lower('sarawalton278@gmail.com')
 ) s;
 
 -- S5-3 — Both user_has_pro (replace Sara email)
@@ -43,7 +43,7 @@ FROM (
   SELECT id FROM auth.users WHERE lower(email) = lower('grantdecker22@hotmail.com')
 ) g
 CROSS JOIN (
-  SELECT id FROM auth.users WHERE lower(email) = lower('SARA_EMAIL_HERE')
+  SELECT id FROM auth.users WHERE lower(email) = lower('sarawalton278@gmail.com')
 ) s;
 
 -- S5-4 — Exactly one entitlement row for the household
@@ -73,7 +73,7 @@ SELECT 'S5_6_invite_accepted' AS gate,
   fi.status,
   CASE WHEN fi.status = 'accepted' THEN 'PASS' ELSE 'FAIL' END AS status
 FROM public.family_invitations fi
-WHERE lower(fi.invited_email) = lower('SARA_EMAIL_HERE')
+WHERE lower(fi.invited_email) = lower('sarawalton278@gmail.com')
 ORDER BY fi.created_at DESC
 LIMIT 1;
 
@@ -83,7 +83,7 @@ SELECT 'S5_7_sara_has_membership' AS gate,
   CASE WHEN COUNT(*) = 1 THEN 'PASS' ELSE 'FAIL' END AS status
 FROM auth.users u
 JOIN public.family_members fm ON fm.user_id = u.id
-WHERE lower(u.email) = lower('SARA_EMAIL_HERE');
+WHERE lower(u.email) = lower('sarawalton278@gmail.com');
 
 -- S5-8 — Sara's solo home abandoned (no longer owner of another family)
 SELECT 'S5_8_sara_solo_abandoned' AS gate,
@@ -91,4 +91,4 @@ SELECT 'S5_8_sara_solo_abandoned' AS gate,
   CASE WHEN COUNT(*) = 0 THEN 'PASS' ELSE 'FAIL' END AS status
 FROM public.families f
 JOIN auth.users u ON u.id = f.owner_id
-WHERE lower(u.email) = lower('SARA_EMAIL_HERE');
+WHERE lower(u.email) = lower('sarawalton278@gmail.com');

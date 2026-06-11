@@ -73,21 +73,31 @@ export default async function AcceptInvitePage({
       <h1 className="text-2xl font-serif font-light text-gray-900 mb-3">
         Couldn&apos;t join household
       </h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 mb-4">
         {result.error || queryError || 'This invitation may have expired.'}
+      </p>
+      <p className="mb-6 text-xs leading-relaxed text-gray-500">
+        Sign in with the <strong>same email</strong> the invite was sent to. If you already had a
+        free solo home, migration 003 must be on prod. Try the invite link again after signing in.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
         <Link
-          href="/dashboard"
+          href={`/auth/accept-invite?token=${encodedToken}`}
           className="rounded-full bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800"
+        >
+          Try again
+        </Link>
+        <Link
+          href="/dashboard"
+          className="rounded-full border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           Go to dashboard
         </Link>
         <Link
-          href="/settings#household"
+          href={`/auth/password?next=${encodeURIComponent(returnPath)}`}
           className="rounded-full border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
-          Household settings
+          Sign in again
         </Link>
       </div>
     </InviteShell>

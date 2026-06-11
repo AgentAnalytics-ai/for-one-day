@@ -18,22 +18,22 @@ export async function sendEmail({
   headers?: Record<string, string>
 }) {
   if (!resend) {
-    console.warn('Resend not configured, skipping email')
-    return null
+    throw new Error(
+      'RESEND_API_KEY is not configured on the server. Add it in Vercel env vars.'
+    )
   }
 
   try {
     const fromEmail = process.env.FROM_EMAIL || 'hello@foroneday.app'
-    
-    // Log for debugging (in production, you might want to remove this)
+
     console.log('Sending email via Resend:', {
       to,
       from: fromEmail,
       subject,
-      hasApiKey: !!process.env.RESEND_API_KEY
+      hasApiKey: !!process.env.RESEND_API_KEY,
     })
-    
-    const data = await resend.emails.send({
+
+    const { data, error } = await resend.emails.send({
       from: `For One Day <${fromEmail}>`,
       to,
       subject,
@@ -41,8 +41,17 @@ export async function sendEmail({
       replyTo: fromEmail,
       headers: headers || {},
     })
-    
-    console.log('Resend response:', data)
+
+    if (error) {
+      console.error('Resend API error:', error)
+      throw new Error(error.message || 'Resend rejected the email')
+    }
+
+    if (!data?.id) {
+      throw new Error('Resend did not return a message id')
+    }
+
+    console.log('Resend sent:', data.id)
     return data
   } catch (error) {
     console.error('Failed to send email:', error)

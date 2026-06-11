@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { sendWelcomeEmail } from '@/lib/email'
+import { acceptPendingHouseholdInvitation } from '@/app/actions/household-actions'
 
 const emailSchema = z.string().email()
 
@@ -54,9 +55,20 @@ export async function signInWithPassword(formData: FormData) {
     redirect('/auth/password?error=' + encodeURIComponent(error.message) + nextParam)
   }
 
+  // Invite accept page handles token explicitly
+  if (next?.startsWith('/auth/accept-invite')) {
+    redirect(next)
+  }
+
   if (next && next.startsWith('/') && !next.startsWith('//')) {
     const welcome = next.startsWith('/dashboard') ? (next.includes('?') ? '&welcome=1' : '?welcome=1') : ''
     redirect(`${next}${welcome}`)
+  }
+
+  // Generic login: accept pending invite by email (Sara path if token was lost)
+  const pending = await acceptPendingHouseholdInvitation()
+  if (pending.familyId) {
+    redirect('/dashboard?joined=household&welcome=1')
   }
 
   redirect('/dashboard?welcome=1')

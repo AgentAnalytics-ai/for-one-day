@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/header'
+import { acceptPendingHouseholdInvitation } from '@/app/actions/household-actions'
 // Removed Google and Magic Link authentication
 
 /**
@@ -16,8 +17,11 @@ export default async function LoginPage({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // If already logged in, go to dashboard
   if (user) {
+    const pending = await acceptPendingHouseholdInvitation()
+    if (pending.familyId) {
+      redirect('/dashboard?joined=household')
+    }
     redirect('/dashboard?welcome=1')
   }
 
