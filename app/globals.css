@@ -344,6 +344,10 @@
     animation: wall-card-breathe 6.2s ease-in-out infinite 0.4s;
   }
 
+  .kitchen-wall--animate .kw-card-lists {
+    animation: wall-card-breathe 6.8s ease-in-out infinite 0.8s;
+  }
+
   .kitchen-wall--animate .kw-focus-line {
     animation: wall-focus-pulse 7s ease-in-out infinite;
   }
@@ -352,6 +356,7 @@
     .kitchen-wall--animate .kw-tab-active,
     .kitchen-wall--animate .kw-card-schedule,
     .kitchen-wall--animate .kw-card-dinner,
+    .kitchen-wall--animate .kw-card-lists,
     .kitchen-wall--animate .kw-focus-line {
       animation: none;
     }

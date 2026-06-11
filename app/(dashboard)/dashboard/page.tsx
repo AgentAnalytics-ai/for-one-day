@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { TodayGlanceHub } from '@/components/dashboard/today-glance-hub'
 import { getCachedHouseholdSettings } from '@/app/actions/household-actions'
+import { getCachedTodayListGlance } from '@/app/actions/list-actions'
 import { FirstKeepsakeCelebration } from '@/components/dashboard/first-keepsake-celebration'
 
 export default async function DashboardPage() {
@@ -9,13 +10,16 @@ export default async function DashboardPage() {
 
   if (!user) return null
 
-  const householdResult = await getCachedHouseholdSettings()
+  const [householdResult, listGlance] = await Promise.all([
+    getCachedHouseholdSettings(),
+    getCachedTodayListGlance(),
+  ])
   const household = householdResult.success ? householdResult.household : null
 
   return (
     <>
       <FirstKeepsakeCelebration />
-      <TodayGlanceHub householdName={household?.name ?? null} />
+      <TodayGlanceHub householdName={household?.name ?? null} listGlance={listGlance} />
     </>
   )
 }

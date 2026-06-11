@@ -1,17 +1,19 @@
 import Link from 'next/link'
 import { TimeGreeting } from '@/components/dashboard/time-greeting'
+import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
+import type { TodayListGlance } from '@/app/actions/list-actions'
 
 type TodayGlanceHubProps = {
   householdName: string | null
+  listGlance: TodayListGlance | null
 }
 
 /**
- * Step 8 Today hub — glance-first daily plan (Skylight-caliber, FOD warm).
- * Shared widgets wire in at Steps 6–7; shells ship now.
+ * Today hub — glance-first daily plan. Lists wire live at Step 6A½; meals/calendar at 6C/7.
  */
-export function TodayGlanceHub({ householdName }: TodayGlanceHubProps) {
+export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProps) {
   const now = new Date()
   const timeLabel = now.toLocaleString('en-US', {
     weekday: 'long',
@@ -52,13 +54,21 @@ export function TodayGlanceHub({ householdName }: TodayGlanceHubProps) {
             href="/week"
             label="Dinner tonight"
             title="Tacos"
-            detail="Meal plan lives in This week. Shared editing at Step 6."
+            detail="Meal plan lands at Step 6C. Lists below are live."
             accent="dinner"
           />
         </div>
       </ScrollReveal>
 
-      <ScrollReveal delay={120}>
+      {listGlance?.success ? (
+        <ScrollReveal delay={120}>
+          <div className="mx-auto w-full max-w-3xl">
+            <TodayListsGlance glance={listGlance} />
+          </div>
+        </ScrollReveal>
+      ) : null}
+
+      <ScrollReveal delay={160}>
         <div className="mx-auto w-full max-w-3xl">
           <Link
             href="/week#focus"
@@ -73,21 +83,11 @@ export function TodayGlanceHub({ householdName }: TodayGlanceHubProps) {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal delay={160}>
-        <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href="/lists"
-            className="surface-card touch-tablet flex flex-1 items-center justify-between px-5 py-4 transition-smooth hover:border-[#D4CFC6]"
-          >
-            <span>
-              <span className="section-label block">Lists</span>
-              <span className="text-sm font-medium text-primary-900">To do & shopping</span>
-            </span>
-            <Chevron />
-          </Link>
+      <ScrollReveal delay={200}>
+        <div className="mx-auto w-full max-w-3xl">
           <Link
             href="/week"
-            className="surface-card touch-tablet flex flex-1 items-center justify-between px-5 py-4 transition-smooth hover:border-[#D4CFC6]"
+            className="surface-card touch-tablet flex items-center justify-between px-5 py-4 transition-smooth hover:border-[#D4CFC6]"
           >
             <span>
               <span className="section-label block">This week</span>
@@ -98,7 +98,7 @@ export function TodayGlanceHub({ householdName }: TodayGlanceHubProps) {
         </div>
       </ScrollReveal>
 
-      <ScrollReveal delay={200}>
+      <ScrollReveal delay={240}>
         <MemoryPhoneLink />
       </ScrollReveal>
     </div>

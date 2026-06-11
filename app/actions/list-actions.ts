@@ -1,5 +1,6 @@
 'use server'
 
+import { cache } from 'react'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
@@ -17,6 +18,40 @@ export type ListItem = {
 
 const UPGRADE_MESSAGE =
   'Shared lists are part of Pro for your home. Upgrade to add groceries and to-dos your household can see together.'
+
+const GLANCE_PREVIEW_LIMIT = 3
+
+export type TodayListGlance = {
+  success: boolean
+  canEdit: boolean
+  shopping: {
+    openCount: number
+    previewTitles: string[]
+  }
+  todo: {
+    openCount: number
+    previewTitles: string[]
+  }
+  error?: string
+}
+
+function mapListRow(row: {
+  id: string
+  title: string
+  done: boolean
+  sort_order: number
+  due_date: string | null
+  created_at: string
+}): ListItem {
+  return {
+    id: row.id,
+    title: row.title,
+    done: row.done,
+    sortOrder: row.sort_order,
+    dueDate: row.due_date,
+    createdAt: row.created_at,
+  }
+}
 
 async function requireListAccess(): Promise<{
   supabase: Awaited<ReturnType<typeof createClient>>
@@ -65,28 +100,12 @@ export async function getListPageData(): Promise<{
       return { success: false, canEdit: false, shopping: [], todos: [], error: error.message }
     }
 
-    const mapRow = (row: {
-      id: string
-      title: string
-      done: boolean
-      sort_order: number
-      due_date: string | null
-      created_at: string
-    }): ListItem => ({
-      id: row.id,
-      title: row.title,
-      done: row.done,
-      sortOrder: row.sort_order,
-      dueDate: row.due_date,
-      createdAt: row.created_at,
-    })
-
     const rows = data ?? []
     return {
       success: true,
       canEdit,
-      shopping: rows.filter((r) => r.kind === 'shopping').map(mapRow),
-      todos: rows.filter((r) => r.kind === 'todo').map(mapRow),
+      shopping: rows.filter((r) => r.kind === 'shopping').map(mapListRow),
+      todos: rows.filter((r) => r.kind === 'todo').map(mapListRow),
     }
   } catch (error) {
     console.error('getListPageData error:', error)
@@ -99,6 +118,55 @@ export async function getListPageData(): Promise<{
     }
   }
 }
+
+export async function getTodayListGlance(): Promise<TodayListGlance> {
+  const empty: TodayListGlance = {
+    success: true,
+    canEdit: false,
+    shopping: { openCount: 0, previewTitles: [] },
+    todo: { openCount: 0, previewTitles: [] },
+  }
+
+  try {
+    const { supabase, familyId, canEdit } = await requireListAccess()
+
+    const { data, error } = await supabase
+      .from('list_items')
+      .select('title, done, kind, sort_order, created_at')
+      .eq('family_id', familyId)
+      .eq('done', false)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      return { ...empty, success: false, error: error.message }
+    }
+
+    const rows = data ?? []
+    const shoppingOpen = rows.filter((r) => r.kind === 'shopping')
+    const todoOpen = rows.filter((r) => r.kind === 'todo')
+
+    return {
+      success: true,
+      canEdit,
+      shopping: {
+        openCount: shoppingOpen.length,
+        previewTitles: shoppingOpen
+          .slice(0, GLANCE_PREVIEW_LIMIT)
+          .map((r) => r.title),
+      },
+      todo: {
+        openCount: todoOpen.length,
+        previewTitles: todoOpen.slice(0, GLANCE_PREVIEW_LIMIT).map((r) => r.title),
+      },
+    }
+  } catch (error) {
+    console.error('getTodayListGlance error:', error)
+    return empty
+  }
+}
+
+export const getCachedTodayListGlance = cache(getTodayListGlance)
 
 export async function addListItem(
   kind: ListItemKind,
