@@ -4,16 +4,18 @@ import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
 import { ScrollReveal } from '@/components/ui/scroll-reveal'
 import type { TodayListGlance } from '@/app/actions/list-actions'
+import type { TonightMealGlance } from '@/app/actions/meal-actions'
 
 type TodayGlanceHubProps = {
   householdName: string | null
   listGlance: TodayListGlance | null
+  mealGlance: TonightMealGlance | null
 }
 
 /**
- * Today hub — glance-first daily plan. Lists wire live at Step 6A½; meals/calendar at 6C/7.
+ * Today hub — glance (read) → This week (plan meals) → Lists (shop).
  */
-export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProps) {
+export function TodayGlanceHub({ householdName, listGlance, mealGlance }: TodayGlanceHubProps) {
   const now = new Date()
   const timeLabel = now.toLocaleString('en-US', {
     weekday: 'long',
@@ -22,6 +24,9 @@ export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProp
     hour: 'numeric',
     minute: '2-digit',
   })
+
+  const dinnerTitle = mealGlance?.title?.trim() || 'Plan dinner'
+  const dinnerDetail = buildDinnerDetail(mealGlance, listGlance)
 
   return (
     <div className="space-y-6 md:space-y-8">
@@ -51,11 +56,12 @@ export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProp
             accent="schedule"
           />
           <GlanceCardLink
-            href="/week"
+            href="/week#today"
             label="Dinner tonight"
-            title="Tacos"
-            detail="Meal plan lands at Step 6C. Lists below are live."
+            title={dinnerTitle}
+            detail={dinnerDetail}
             accent="dinner"
+            mutedTitle={!mealGlance?.title}
           />
         </div>
       </ScrollReveal>
@@ -91,7 +97,7 @@ export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProp
           >
             <span>
               <span className="section-label block">This week</span>
-              <span className="text-sm font-medium text-primary-900">Meals & events</span>
+              <span className="text-sm font-medium text-primary-900">Plan meals · see events</span>
             </span>
             <Chevron />
           </Link>
@@ -105,18 +111,39 @@ export function TodayGlanceHub({ householdName, listGlance }: TodayGlanceHubProp
   )
 }
 
+function buildDinnerDetail(
+  mealGlance: TonightMealGlance | null,
+  listGlance: TodayListGlance | null
+): string {
+  const hasMeal = Boolean(mealGlance?.title?.trim())
+  const shoppingCount = listGlance?.shopping.openCount ?? 0
+
+  if (hasMeal && shoppingCount > 0) {
+    return `${shoppingCount} on shopping · tap to edit the week`
+  }
+  if (hasMeal) {
+    return 'Need groceries? Add them on Lists →'
+  }
+  if (mealGlance?.canEdit) {
+    return 'Tap to plan tonight on This week'
+  }
+  return 'Pro unlocks shared meal planning for your home'
+}
+
 function GlanceCardLink({
   href,
   label,
   title,
   detail,
   accent,
+  mutedTitle = false,
 }: {
   href: string
   label: string
   title: string
   detail: string
   accent: 'schedule' | 'dinner'
+  mutedTitle?: boolean
 }) {
   return (
     <Link
@@ -126,7 +153,13 @@ function GlanceCardLink({
       } kitchen-wall--animate`}
     >
       <p className="section-label mb-2">{label}</p>
-      <p className="font-serif text-xl font-medium text-primary-900 md:text-2xl">{title}</p>
+      <p
+        className={`font-serif text-xl font-medium md:text-2xl ${
+          mutedTitle ? 'text-[#5C6478]' : 'text-primary-900'
+        }`}
+      >
+        {title}
+      </p>
       <p className="mt-2 text-sm leading-relaxed text-[#5C6478]">{detail}</p>
     </Link>
   )
