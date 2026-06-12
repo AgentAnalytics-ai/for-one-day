@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { Check, Pencil, Plus, UtensilsCrossed, X } from 'lucide-react'
 import { clearMealPlan, setMealPlan, type MealPlanRow } from '@/app/actions/meal-actions'
+import { getMealPickerContext } from '@/app/actions/meal-picker-actions'
 import { DinnerHelper } from '@/components/planner/dinner-helper'
+import { MealPickerChips } from '@/components/planner/meal-picker-chips'
 import { ScheduleEventRow } from '@/components/planner/schedule-event-row'
 import type { HouseholdScheduleEvent } from '@/lib/calendar-merge'
 import type { HouseholdWeekDay } from '@/lib/household-dates'
@@ -30,9 +32,25 @@ export function WeekMealRow({
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(day.meal?.title ?? '')
   const [error, setError] = useState<string | null>(null)
+  const [favoriteTitles, setFavoriteTitles] = useState<string[]>([])
+  const [recentDinners, setRecentDinners] = useState<string[]>([])
+  const [pickerLoading, setPickerLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const sectionId = `meal-${day.dateKey}`
+
+  useEffect(() => {
+    if (!editing || !canEdit) return
+    setPickerLoading(true)
+    getMealPickerContext()
+      .then((ctx) => {
+        if (ctx.success) {
+          setFavoriteTitles(ctx.favoriteTitles)
+          setRecentDinners(ctx.recentDinners)
+        }
+      })
+      .finally(() => setPickerLoading(false))
+  }, [editing, canEdit])
 
   const openEdit = () => {
     setDraft(meal?.title ?? '')
@@ -117,7 +135,17 @@ export function WeekMealRow({
         )}
 
         {editing ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
+            {!draft.trim() && !pickerLoading ? (
+              <MealPickerChips
+                favoriteTitles={favoriteTitles}
+                recentDinners={recentDinners}
+                selectedTitle={draft}
+                onSelectTitle={setDraft}
+              />
+            ) : pickerLoading ? (
+              <p className="text-sm text-[#5C6478]">Loading ideas…</p>
+            ) : null}
             <input
               type="text"
               value={draft}
@@ -132,9 +160,8 @@ export function WeekMealRow({
                   closeEdit()
                 }
               }}
-              placeholder="What's for dinner?"
+              placeholder={draft.trim() ? 'Edit dinner title…' : 'Or type a meal…'}
               disabled={isPending}
-              autoFocus
               className="field-input border-amber-100 bg-white"
             />
             <div className="flex flex-wrap gap-2">
@@ -169,7 +196,21 @@ export function WeekMealRow({
             </div>
           </div>
         ) : meal ? (
-          <p className="font-serif text-lg font-medium text-primary-900">{meal.title}</p>
+          <div className="space-y-1.5">
+            {meal.breakfastTitle ? (
+              <p className="text-sm text-[#5C6478]">
+                <span className="font-medium text-primary-900/80">Breakfast · </span>
+                {meal.breakfastTitle}
+              </p>
+            ) : null}
+            {meal.lunchTitle ? (
+              <p className="text-sm text-[#5C6478]">
+                <span className="font-medium text-primary-900/80">Lunch · </span>
+                {meal.lunchTitle}
+              </p>
+            ) : null}
+            <p className="font-serif text-lg font-medium text-primary-900">{meal.title}</p>
+          </div>
         ) : null}
       </div>
 

@@ -1,12 +1,129 @@
 import { openai } from '@/lib/ai'
 import { stripStepPrefix } from '@/lib/dinner-helper-format'
+import { normalizeMealTitle } from '@/lib/meal-ai-shared'
+import {
+  buildGroundingFactsBlock,
+  filterShoppingSuggestions,
+  isStepGrounded,
+  minutesUntilServe,
+  type DinnerWalkContext,
+} from '@/lib/dinner-helper-grounding'
+
+export type DinnerHelperWalkStep = {
+  time: string | null
+  text: string
+  phase: 'now' | 'prep' | 'cook' | 'serve'
+}
 
 export type DinnerHelperPlan = {
   mealTitle: string
-  rightNow: string[]
-  timeline: Array<{ label: string; step: string }>
-  cookSteps: string[]
+  steps: DinnerHelperWalkStep[]
   shoppingSuggestions: string[]
+  /** @deprecated Legacy — flattened into steps when present */
+  rightNow?: string[]
+  timeline?: Array<{ label: string; step: string }>
+  cookSteps?: string[]
+}
+
+const VALID_PHASES = new Set<DinnerHelperWalkStep['phase']>([
+  'now',
+  'prep',
+  'cook',
+  'serve',
+])
+
+const MIN_STEPS = 4
+
+const SYSTEM_PROMPT = `You write a tap-through dinner plan for tonight — one short action per step.
+
+Rules:
+- Follow GROUNDING FACTS exactly. If facts say NO freezer/delegation/pantry, those steps must not appear.
+- Each step: one imperative action, 6–12 words, no numbering in text.
+- Phases: now | prep | cook | serve. Optional realistic times on cook/serve (12-hour).
+- shoppingSuggestions: only items not already on their shopping list — empty array if none.
+- Calm and direct — not a recipe blog.
+
+Examples (grounding):
+- Meal "Spaghetti", no notes → prep/cook/serve only; no texting, no freezer.
+- Meal "Tacos", notes "Sara starts rice, one GF" → include Sara step + GF step; nothing else invented.
+
+Return ONLY valid JSON. No markdown.`
+
+function normalizeSteps(
+  parsed: DinnerHelperPlan & {
+    rightNow?: string[]
+    timeline?: Array<{ label: string; step: string }>
+  }
+): DinnerHelperWalkStep[] {
+  let steps: DinnerHelperWalkStep[] = (parsed.steps ?? [])
+    .filter((s) => s?.text)
+    .map((s) => ({
+      time: s.time ? String(s.time).trim() : null,
+      text: stripStepPrefix(String(s.text)),
+      phase: VALID_PHASES.has(s.phase) ? s.phase : 'cook',
+    }))
+    .slice(0, 14)
+
+  if (steps.length === 0 && Array.isArray(parsed.rightNow)) {
+    steps = (parsed.rightNow ?? []).map((text) => ({
+      time: null,
+      text: stripStepPrefix(String(text)),
+      phase: 'now' as const,
+    }))
+    for (const row of parsed.timeline ?? []) {
+      if (!row?.step) continue
+      steps.push({
+        time: String(row.label || '').trim() || null,
+        text: stripStepPrefix(String(row.step)),
+        phase: 'cook',
+      })
+    }
+  }
+
+  return steps
+}
+
+function buildUserPrompt(ctx: DinnerWalkContext, mealHint: string, extra?: string): string {
+  const groundingBlock = buildGroundingFactsBlock(ctx)
+  return `${extra ? `${extra}\n\n` : ''}Timezone: ${ctx.timezone}
+Now: ${ctx.nowLabel}
+Dinner on the table: ${ctx.servingTime}
+
+Meal: ${mealHint}
+
+GROUNDING FACTS:
+${groundingBlock}
+
+JSON:
+{
+  "mealTitle": "short title case name",
+  "steps": [
+    { "time": null, "text": "one grounded action", "phase": "prep" },
+    { "time": "5:30 PM", "text": "one grounded action", "phase": "cook" }
+  ],
+  "shoppingSuggestions": []
+}`
+}
+
+async function callDinnerPlan(
+  userContent: string
+): Promise<(DinnerHelperPlan & { rightNow?: string[]; timeline?: Array<{ label: string; step: string }> }) | null> {
+  if (!openai) return null
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: userContent },
+    ],
+    temperature: 0.3,
+    max_tokens: 1000,
+    response_format: { type: 'json_object' },
+  })
+
+  const raw = completion.choices[0]?.message?.content
+  if (!raw) return null
+  return JSON.parse(raw)
 }
 
 export async function generateDinnerHelperPlan(params: {
@@ -15,95 +132,63 @@ export async function generateDinnerHelperPlan(params: {
   servingTime?: string
   nowLabel: string
   timezone: string
-  /** Other household members' first names — use these, never "wife/husband". */
+  cookName?: string | null
   householdNames?: string[]
+  shoppingOnList?: string[]
+  now?: Date
 }): Promise<DinnerHelperPlan | null> {
   if (!openai) return null
 
   const mealHint = params.mealHint.trim() || 'Dinner tonight'
-  const notes = params.notes?.trim()
-  const names = (params.householdNames ?? []).filter(Boolean)
+  const notes = params.notes?.trim() ?? ''
+  const servingTime = params.servingTime?.trim() || '6:00 PM'
+  const householdNames = (params.householdNames ?? []).filter(Boolean)
+  const shoppingOnList = (params.shoppingOnList ?? []).filter(Boolean)
+  const now = params.now ?? new Date()
 
-  const system = `You help a household get dinner on the table tonight — calm, practical, like a friend in the kitchen.
-Write ONE short playbook from the meal name and their notes. You cannot open recipe links or Pinterest.
+  const ctx: DinnerWalkContext = {
+    mealHint,
+    notes,
+    servingTime,
+    nowLabel: params.nowLabel,
+    timezone: params.timezone,
+    cookName: params.cookName ?? null,
+    householdNames,
+    shoppingOnList,
+    minutesUntilServe: minutesUntilServe(now, servingTime, params.timezone),
+  }
 
-Structure:
-1. rightNow — 2-3 immediate actions (text someone by first name, pull from freezer, start water).
-2. timeline — clock order from now until plates hit the table. Prep and cooking here. One short sentence per step.
-3. cookSteps — empty array unless timeline misses a technique detail.
-4. shoppingSuggestions — only items they may still need.
-
-Rules:
-- Use household first names when texting someone: ${names.length ? names.join(', ') : 'use names from their notes'}.
-- NEVER say "your wife", "your husband", or generic spouse labels — first names only.
-- Keep each step under 12 words when possible. Large readable sentences.
-- Never repeat timeline content in cookSteps.
-- No numbered prefixes in strings.
-- mealTitle: short title case, not ALL CAPS.
-Return ONLY valid JSON. No markdown.`
-
-  const user = `Household timezone: ${params.timezone}
-Current local time: ${params.nowLabel}
-Target dinner time: ${params.servingTime || 'around 6:00 PM'}
-${names.length ? `Household (first names): ${names.join(', ')}` : ''}
-
-Meal: ${mealHint}
-${notes ? `What they told you: ${notes}` : ''}
-
-JSON schema:
-{
-  "mealTitle": "short title for tonight's dinner card",
-  "rightNow": ["2-3 immediate actions"],
-  "timeline": [{"label": "5:30 PM", "step": "single action at this time"}, ...],
-  "cookSteps": ["optional extra stove detail — empty array if timeline is enough"],
-  "shoppingSuggestions": ["items to buy — empty array if none"]
-}`
+  const grounding = { notes, householdNames }
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      temperature: 0.5,
-      max_tokens: 900,
-      response_format: { type: 'json_object' },
-    })
+    let parsed = await callDinnerPlan(buildUserPrompt(ctx, mealHint))
+    if (!parsed?.mealTitle) return null
 
-    const raw = completion.choices[0]?.message?.content
-    if (!raw) return null
+    let steps = normalizeSteps(parsed).filter((s) => isStepGrounded(s.text, grounding))
 
-    const parsed = JSON.parse(raw) as DinnerHelperPlan
-    if (!parsed.mealTitle || !Array.isArray(parsed.rightNow)) return null
+    if (steps.length < MIN_STEPS) {
+      parsed = await callDinnerPlan(
+        buildUserPrompt(
+          ctx,
+          mealHint,
+          'Previous draft had steps removed for breaking grounding rules. Write 6–10 cook steps for this meal only — no freezer, no texting, no pantry unless notes allow.'
+        )
+      )
+      if (!parsed?.mealTitle) return null
+      steps = normalizeSteps(parsed).filter((s) => isStepGrounded(s.text, grounding))
+    }
 
-    const titleCase = (s: string) =>
-      s
-        .trim()
-        .toLowerCase()
-        .replace(/\b\w/g, (c) => c.toUpperCase())
+    if (steps.length < MIN_STEPS) return null
+
+    const shoppingSuggestions = filterShoppingSuggestions(
+      (parsed.shoppingSuggestions ?? []).map(String).filter(Boolean).slice(0, 12),
+      shoppingOnList
+    )
 
     return {
-      mealTitle: titleCase(String(parsed.mealTitle)),
-      rightNow: (parsed.rightNow ?? [])
-        .map((s) => stripStepPrefix(String(s)))
-        .filter(Boolean)
-        .slice(0, 4),
-      timeline: (parsed.timeline ?? [])
-        .filter((t) => t?.step)
-        .map((t) => ({
-          label: String(t.label || '').trim(),
-          step: stripStepPrefix(String(t.step)),
-        }))
-        .slice(0, 10),
-      cookSteps: (parsed.cookSteps ?? [])
-        .map((s) => stripStepPrefix(String(s)))
-        .filter(Boolean)
-        .slice(0, 8),
-      shoppingSuggestions: (parsed.shoppingSuggestions ?? [])
-        .map(String)
-        .filter(Boolean)
-        .slice(0, 12),
+      mealTitle: normalizeMealTitle(String(parsed.mealTitle)),
+      steps,
+      shoppingSuggestions,
     }
   } catch (error) {
     console.error('generateDinnerHelperPlan:', error)

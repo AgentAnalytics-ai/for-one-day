@@ -2,28 +2,29 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
-import { ChefHat, ChevronDown, Loader2, Plus, ShoppingBag, X } from 'lucide-react'
+import { ChefHat, ChevronDown, Loader2, Plus, X } from 'lucide-react'
 import Link from 'next/link'
 import {
   applyDinnerHelperResults,
   runDinnerHelper,
 } from '@/app/actions/dinner-helper-actions'
+import { getMealPickerContext } from '@/app/actions/meal-picker-actions'
 import {
   getMealIdeas,
   saveMealIdea,
   type MealIdea,
 } from '@/app/actions/meal-idea-actions'
 import type { DinnerHelperPlan } from '@/lib/dinner-helper-ai'
-import { shouldShowCookSteps } from '@/lib/dinner-helper-format'
+import { DinnerWalkthrough } from '@/components/planner/dinner-walkthrough'
+import { MealPickerChips } from '@/components/planner/meal-picker-chips'
+import { MealNoteChips } from '@/components/planner/meal-note-chips'
 
 type DinnerHelperProps = {
   planDate: string
   initialMealTitle?: string | null
   canUse: boolean
-  /** When set, open on mount (e.g. from Today). */
   defaultOpen?: boolean
   variant?: 'button' | 'inline'
-  /** Controlled sheet — use with hideTrigger on Today glance card. */
   open?: boolean
   onOpenChange?: (open: boolean) => void
   hideTrigger?: boolean
@@ -42,6 +43,8 @@ export function DinnerHelper({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const [mounted, setMounted] = useState(false)
   const [mealHint, setMealHint] = useState(initialMealTitle ?? '')
+  const [fromWeekPlan, setFromWeekPlan] = useState(Boolean(initialMealTitle?.trim()))
+  const [changingMeal, setChangingMeal] = useState(false)
   const [notes, setNotes] = useState('')
   const [servingTime, setServingTime] = useState('6:00 PM')
   const [plan, setPlan] = useState<DinnerHelperPlan | null>(null)
@@ -49,9 +52,12 @@ export function DinnerHelper({
   const [error, setError] = useState<string | null>(null)
   const [savedBanner, setSavedBanner] = useState<string | null>(null)
   const [mealIdeas, setMealIdeas] = useState<MealIdea[]>([])
+  const [favoriteTitles, setFavoriteTitles] = useState<string[]>([])
+  const [recentDinners, setRecentDinners] = useState<string[]>([])
+  const [householdNames, setHouseholdNames] = useState<string[]>([])
   const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null)
   const [showDetails, setShowDetails] = useState(false)
-  const [ideasLoading, setIdeasLoading] = useState(false)
+  const [contextLoading, setContextLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
   const mealInputRef = useRef<HTMLInputElement>(null)
 
@@ -74,12 +80,17 @@ export function DinnerHelper({
     setSelectedIdeaId(null)
     setShowDetails(false)
     setNotes('')
+    setChangingMeal(false)
   }, [])
 
   useEffect(() => setMounted(true), [])
 
   useEffect(() => {
-    if (initialMealTitle) setMealHint(initialMealTitle)
+    if (initialMealTitle?.trim()) {
+      setMealHint(initialMealTitle)
+      setFromWeekPlan(true)
+      setChangingMeal(false)
+    }
   }, [initialMealTitle])
 
   useEffect(() => {
@@ -105,31 +116,48 @@ export function DinnerHelper({
       const timer = window.setTimeout(resetPlan, 320)
       return () => window.clearTimeout(timer)
     }
-    if (!plan) {
-      const focusTimer = window.setTimeout(() => mealInputRef.current?.focus(), 120)
+    const needsPicker = !mealHint.trim() || changingMeal
+    if (!plan && needsPicker) {
+      const focusTimer = window.setTimeout(() => mealInputRef.current?.focus(), 200)
       return () => window.clearTimeout(focusTimer)
     }
-  }, [open, resetPlan, plan])
+  }, [open, resetPlan, plan, mealHint, changingMeal])
 
   useEffect(() => {
     if (!open || !canUse) return
-    setIdeasLoading(true)
-    getMealIdeas()
-      .then((res) => {
-        if (res.success) setMealIdeas(res.ideas)
+    setContextLoading(true)
+    Promise.all([getMealPickerContext(), getMealIdeas()])
+      .then(([ctx, ideasRes]) => {
+        if (ctx.success) {
+          setFavoriteTitles(ctx.favoriteTitles)
+          setRecentDinners(ctx.recentDinners)
+          setHouseholdNames(ctx.householdNames)
+          if (!initialMealTitle?.trim() && ctx.tonightTitle) {
+            setMealHint((prev) => prev.trim() || ctx.tonightTitle || '')
+            setFromWeekPlan(true)
+          }
+        }
+        if (ideasRes.success) setMealIdeas(ideasRes.ideas)
       })
-      .finally(() => setIdeasLoading(false))
-  }, [open, canUse])
+      .finally(() => setContextLoading(false))
+  }, [open, canUse, initialMealTitle])
 
-  const selectIdea = (idea: MealIdea) => {
-    setSelectedIdeaId(idea.id)
-    setMealHint(idea.title)
-    setNotes(idea.notes ?? '')
+  const selectTitle = (title: string) => {
+    setMealHint(title)
+    setFromWeekPlan(false)
+    setChangingMeal(false)
+    setSelectedIdeaId(null)
+    const match = mealIdeas.find((i) => i.title.toLowerCase() === title.toLowerCase())
+    if (match) {
+      setSelectedIdeaId(match.id)
+      if (match.notes) setNotes(match.notes)
+    }
     setError(null)
   }
 
   const handleMealChange = (value: string) => {
     setMealHint(value)
+    setFromWeekPlan(false)
     if (selectedIdeaId) setSelectedIdeaId(null)
   }
 
@@ -143,6 +171,7 @@ export function DinnerHelper({
         return
       }
       setMealIdeas((prev) => [result.idea!, ...prev.filter((i) => i.id !== result.idea!.id)])
+      setFavoriteTitles((prev) => [result.idea!.title, ...prev.filter((t) => t !== result.idea!.title)])
       setSelectedIdeaId(result.idea.id)
     })
   }
@@ -162,9 +191,7 @@ export function DinnerHelper({
       }
       setPlan(result.plan)
       setMealHint(result.plan.mealTitle)
-      setSelectedShop(
-        new Set(result.plan.shoppingSuggestions.map((_, i) => i))
-      )
+      setSelectedShop(new Set(result.plan.shoppingSuggestions.map((_, i) => i)))
     })
   }
 
@@ -206,8 +233,15 @@ export function DinnerHelper({
 
   const openSheet = () => {
     resetPlan()
+    if (initialMealTitle?.trim()) {
+      setMealHint(initialMealTitle)
+      setFromWeekPlan(true)
+    }
     setOpen(true)
   }
+
+  const weekPlanLocked = fromWeekPlan && mealHint.trim() && !changingMeal
+  const showPicker = changingMeal || (!weekPlanLocked && !mealHint.trim())
 
   if (!canUse) {
     return (
@@ -248,7 +282,9 @@ export function DinnerHelper({
                     Dinner tonight
                   </h2>
                   <p className="mt-0.5 text-sm text-[#5C6478]">
-                    The order of things — from right now until plates hit the table
+                    {weekPlanLocked
+                      ? 'From your week — walk through or change it'
+                      : 'Tap a meal or pick a mood — then walk through it'}
                   </p>
                 </div>
                 <button
@@ -281,49 +317,51 @@ export function DinnerHelper({
 
                 {!plan ? (
                   <div className="space-y-4 pb-2">
-                    {mealIdeas.length > 0 ? (
-                      <div>
-                        <p className="section-label mb-2">Favorites</p>
-                        <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
-                          {mealIdeas.map((idea) => {
-                            const selected = selectedIdeaId === idea.id
-                            return (
-                              <button
-                                key={idea.id}
-                                type="button"
-                                onClick={() => selectIdea(idea)}
-                                className={`snap-start shrink-0 rounded-full border px-3.5 py-2 text-left text-sm font-medium transition-smooth ${
-                                  selected
-                                    ? 'border-amber-400 bg-amber-100/90 text-amber-950'
-                                    : 'border-[#E7E2DA] bg-white text-primary-900 hover:border-amber-200'
-                                }`}
-                              >
-                                {idea.title}
-                              </button>
-                            )
-                          })}
-                        </div>
+                    {weekPlanLocked ? (
+                      <div className="rounded-xl border border-amber-200/80 bg-amber-50/60 px-4 py-3.5">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-amber-900/70">
+                          From your week
+                        </p>
+                        <p className="mt-1 font-serif text-xl font-medium text-primary-900">
+                          {mealHint}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setChangingMeal(true)}
+                          className="mt-2 text-sm font-medium text-[#5C6478] hover:text-primary-900 hover:underline"
+                        >
+                          Change meal
+                        </button>
                       </div>
-                    ) : ideasLoading ? (
-                      <p className="text-sm text-[#5C6478]">Loading favorites…</p>
                     ) : null}
 
-                    <label className="block">
-                      <span className="section-label mb-1.5 block">What&apos;s cooking?</span>
-                      <input
-                        ref={mealInputRef}
-                        type="text"
-                        value={mealHint}
-                        onChange={(e) => handleMealChange(e.target.value)}
-                        placeholder={
-                          mealIdeas.length > 0
-                            ? 'Pick a favorite or type tonight\'s meal…'
-                            : 'Garlic butter steak, tacos…'
-                        }
-                        className="field-input text-base"
-                        autoComplete="off"
-                      />
-                    </label>
+                    {showPicker ? (
+                      contextLoading ? (
+                        <p className="text-sm text-[#5C6478]">Loading your meals…</p>
+                      ) : (
+                        <MealPickerChips
+                          favoriteTitles={favoriteTitles}
+                          recentDinners={recentDinners}
+                          selectedTitle={mealHint}
+                          onSelectTitle={selectTitle}
+                        />
+                      )
+                    ) : null}
+
+                    {!weekPlanLocked ? (
+                      <label className="block">
+                        <span className="section-label mb-1.5 block">Or type a meal</span>
+                        <input
+                          ref={mealInputRef}
+                          type="text"
+                          value={mealHint}
+                          onChange={(e) => handleMealChange(e.target.value)}
+                          placeholder="Garlic butter steak…"
+                          className="field-input text-base"
+                          autoComplete="off"
+                        />
+                      </label>
+                    ) : null}
 
                     {mealHint.trim() && !selectedIdeaId ? (
                       <button
@@ -350,12 +388,20 @@ export function DinnerHelper({
 
                     {showDetails ? (
                       <div className="space-y-3 rounded-xl border border-[#E7E2DA]/80 bg-white/50 p-3.5">
+                        <div>
+                          <span className="section-label mb-2 block">Quick adds</span>
+                          <MealNoteChips
+                            notes={notes}
+                            householdNames={householdNames}
+                            onChange={setNotes}
+                          />
+                        </div>
                         <label className="block">
                           <span className="section-label mb-1.5 block">Notes</span>
                           <textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Feeding 6, one gluten-free — text Sara to pull mushrooms from freezer…"
+                            placeholder="Anything else for tonight…"
                             rows={2}
                             className="field-input resize-none"
                           />
@@ -379,145 +425,44 @@ export function DinnerHelper({
                     ) : null}
                   </div>
                 ) : (
-                  <div className="space-y-5 pb-4">
-                    <div className="rounded-xl border border-amber-200/70 bg-amber-50/50 px-4 py-3">
-                      <p className="font-serif text-lg font-medium text-primary-900">
-                        {plan.mealTitle}
-                      </p>
-                      <p className="mt-0.5 text-sm text-[#5C6478]">
-                        Plates by {servingTime || '6:00 PM'}
-                      </p>
-                    </div>
-
-                    <section>
-                      <h3 className="section-label mb-2">Right now</h3>
-                      <ul className="space-y-2">
-                        {plan.rightNow.map((step) => (
-                          <li
-                            key={step}
-                            className="rounded-xl border border-[#E7E2DA] bg-white px-4 py-3 text-base leading-snug text-primary-900"
-                          >
-                            {step}
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-
-                    {plan.timeline.length > 0 ? (
-                      <section>
-                        <h3 className="section-label mb-2">Between now and dinner</h3>
-                        <ul className="space-y-2">
-                          {plan.timeline.map((row) => (
-                            <li
-                              key={`${row.label}-${row.step}`}
-                              className="flex gap-3 rounded-xl border border-[#E7E2DA]/60 bg-white px-4 py-3"
-                            >
-                              {row.label ? (
-                                <span className="shrink-0 text-sm font-semibold tabular-nums text-primary-900">
-                                  {row.label}
-                                </span>
-                              ) : null}
-                              <span className="text-base leading-snug text-primary-900">{row.step}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    ) : null}
-
-                    {shouldShowCookSteps(plan.timeline, plan.cookSteps) ? (
-                      <section>
-                        <h3 className="section-label mb-2">At the stove</h3>
-                        <ul className="space-y-2">
-                          {plan.cookSteps.map((step) => (
-                            <li
-                              key={step}
-                              className="rounded-xl border border-[#E7E2DA] bg-white px-3 py-2.5 text-sm text-[#5C6478]"
-                            >
-                              {step}
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    ) : null}
-
-                    {plan.shoppingSuggestions.length > 0 ? (
-                      <section>
-                        <h3 className="section-label mb-2 flex items-center gap-1.5">
-                          <ShoppingBag className="h-3.5 w-3.5" />
-                          Still need from the store
-                        </h3>
-                        <ul className="space-y-2">
-                          {plan.shoppingSuggestions.map((item, i) => (
-                            <li key={item}>
-                              <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#E7E2DA] bg-white px-3 py-2.5 text-sm">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedShop.has(i)}
-                                  onChange={() => toggleShop(i)}
-                                  className="h-4 w-4 rounded border-[#D4CFC6]"
-                                />
-                                <span className="text-primary-900">{item}</span>
-                              </label>
-                            </li>
-                          ))}
-                        </ul>
-                      </section>
-                    ) : null}
-
+                  <>
+                    <DinnerWalkthrough
+                      key={plan.mealTitle}
+                      plan={plan}
+                      servingTime={servingTime}
+                      selectedShop={selectedShop}
+                      onToggleShop={toggleShop}
+                      onSave={() => handleApply(true)}
+                      onSaveListsOnly={() => handleApply(false)}
+                      onStartOver={resetPlan}
+                      isPending={isPending}
+                    />
                     {error ? (
-                      <p className="text-sm text-red-700" role="alert">
+                      <p className="mt-3 text-sm text-red-700" role="alert">
                         {error}
                       </p>
                     ) : null}
-                  </div>
+                  </>
                 )}
               </div>
 
-              {!savedBanner ? (
+              {!savedBanner && !plan ? (
                 <footer className="shrink-0 border-t border-[#E7E2DA] bg-[#FAF7F2] px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                  {!plan ? (
-                    <button
-                      type="button"
-                      onClick={handleRun}
-                      disabled={isPending}
-                      className="btn-primary flex w-full items-center justify-center gap-2"
-                    >
-                      {isPending ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Figuring out the order…
-                        </>
-                      ) : (
-                        'Walk me through it'
-                      )}
-                    </button>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleApply(true)}
-                        disabled={isPending}
-                        className="btn-primary w-full"
-                      >
-                        {isPending ? 'Saving…' : 'Set for tonight & add to Lists'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleApply(false)}
-                        disabled={isPending || selectedShop.size === 0}
-                        className="btn-secondary w-full text-sm"
-                      >
-                        Just add to Lists
-                      </button>
-                      <button
-                        type="button"
-                        onClick={resetPlan}
-                        className="text-sm font-medium text-[#5C6478] hover:text-primary-900"
-                      >
-                        Start over
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleRun}
+                    disabled={isPending || !mealHint.trim()}
+                    className="btn-primary flex w-full items-center justify-center gap-2 py-3 text-base disabled:opacity-50"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Lining up your steps…
+                      </>
+                    ) : (
+                      'Walk me through it'
+                    )}
+                  </button>
                 </footer>
               ) : null}
             </div>

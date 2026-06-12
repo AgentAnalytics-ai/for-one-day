@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { generateDinnerHelperPlan, type DinnerHelperPlan } from '@/lib/dinner-helper-ai'
+import { firstName } from '@/lib/dinner-helper-grounding'
 import { HOUSEHOLD_TZ, toHouseholdDateKey } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
 import { createClient } from '@/lib/supabase/server'
@@ -42,8 +43,44 @@ async function getOtherHouseholdFirstNames(
     .in('user_id', ids)
 
   return (profiles ?? [])
-    .map((p) => p.full_name?.trim().split(/\s+/)[0])
+    .map((p) => firstName(p.full_name))
     .filter((n): n is string => Boolean(n))
+}
+
+async function getOpenShoppingTitles(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  familyId: string
+): Promise<string[]> {
+  const { data } = await supabase
+    .from('list_items')
+    .select('title')
+    .eq('family_id', familyId)
+    .eq('kind', 'shopping')
+    .eq('done', false)
+    .order('sort_order', { ascending: true })
+    .limit(24)
+
+  return (data ?? []).map((r) => r.title).filter(Boolean)
+}
+
+async function mergeFavoriteNotes(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  familyId: string,
+  mealHint: string,
+  notes?: string
+): Promise<string | undefined> {
+  const fromInput = notes?.trim()
+  if (fromInput) return fromInput
+
+  const { data } = await supabase
+    .from('meal_ideas')
+    .select('notes')
+    .eq('family_id', familyId)
+    .ilike('title', mealHint.trim())
+    .limit(1)
+    .maybeSingle()
+
+  return data?.notes?.trim() || undefined
 }
 
 async function requireDinnerHelperAccess() {
@@ -63,7 +100,25 @@ async function requireDinnerHelperAccess() {
 
   const canUse = await householdHasSharedPlan(supabase, user.id)
   const householdNames = await getOtherHouseholdFirstNames(supabase, familyId, user.id)
-  return { canUse, planDate: toHouseholdDateKey(new Date()), householdNames }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  const cookName = firstName(profile?.full_name)
+  const shoppingOnList = await getOpenShoppingTitles(supabase, familyId)
+
+  return {
+    canUse,
+    planDate: toHouseholdDateKey(new Date()),
+    householdNames,
+    cookName,
+    shoppingOnList,
+    supabase,
+    familyId,
+  }
 }
 
 export async function runDinnerHelper(input: {
@@ -72,7 +127,8 @@ export async function runDinnerHelper(input: {
   servingTime?: string
 }): Promise<{ success: boolean; plan?: DinnerHelperPlan; error?: string }> {
   try {
-    const { canUse, householdNames } = await requireDinnerHelperAccess()
+    const { canUse, householdNames, cookName, shoppingOnList, supabase, familyId } =
+      await requireDinnerHelperAccess()
     if (!canUse) {
       return { success: false, error: UPGRADE_MESSAGE }
     }
@@ -85,13 +141,17 @@ export async function runDinnerHelper(input: {
       }
     }
 
+    const notes = await mergeFavoriteNotes(supabase, familyId, mealHint || 'Dinner tonight', input.notes)
+
     const plan = await generateDinnerHelperPlan({
       mealHint: mealHint || 'Dinner tonight',
-      notes: input.notes,
+      notes,
       servingTime: input.servingTime,
       nowLabel: householdNowLabel(),
       timezone: HOUSEHOLD_TZ,
+      cookName,
       householdNames,
+      shoppingOnList,
     })
 
     if (!plan) {

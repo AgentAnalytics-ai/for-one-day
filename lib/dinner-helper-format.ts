@@ -1,3 +1,5 @@
+import type { DinnerHelperPlan, DinnerHelperWalkStep } from '@/lib/dinner-helper-ai'
+
 /** Strip leading list markers the model sometimes adds (fixes "1. 1. Boil water"). */
 export function stripStepPrefix(step: string): string {
   return step
@@ -7,19 +9,51 @@ export function stripStepPrefix(step: string): string {
     .trim()
 }
 
-/** Hide stove section when the timeline already walks through cooking. */
-export function shouldShowCookSteps(
-  timeline: Array<{ step: string }>,
-  cookSteps: string[]
-): boolean {
-  if (cookSteps.length === 0) return false
-  if (timeline.length < 3) return true
+export type CookWalkStep = DinnerHelperWalkStep & { id: string }
 
-  const timelineText = timeline.map((t) => t.step.toLowerCase()).join(' ')
-  const overlap = cookSteps.filter((step) => {
-    const words = stripStepPrefix(step).toLowerCase().split(/\s+/).slice(0, 4).join(' ')
-    return words.length > 8 && timelineText.includes(words.slice(0, 20))
-  })
+/** Normalize AI output into one linear walk-through list. */
+export function buildWalkSteps(plan: DinnerHelperPlan): CookWalkStep[] {
+  if (plan.steps.length > 0) {
+    return plan.steps.map((s, i) => ({
+      ...s,
+      id: `step-${i}`,
+      text: stripStepPrefix(s.text),
+      time: s.time?.trim() || null,
+    }))
+  }
 
-  return overlap.length < cookSteps.length * 0.6
+  const legacy: CookWalkStep[] = []
+  let i = 0
+  for (const text of plan.rightNow ?? []) {
+    legacy.push({
+      id: `step-${i++}`,
+      time: null,
+      text: stripStepPrefix(text),
+      phase: 'now',
+    })
+  }
+  for (const row of plan.timeline ?? []) {
+    legacy.push({
+      id: `step-${i++}`,
+      time: row.label?.trim() || null,
+      text: stripStepPrefix(row.step),
+      phase: 'cook',
+    })
+  }
+  return legacy
+}
+
+export function phaseLabel(phase: DinnerHelperWalkStep['phase']): string {
+  switch (phase) {
+    case 'now':
+      return 'Right now'
+    case 'prep':
+      return 'Prep'
+    case 'cook':
+      return 'At the stove'
+    case 'serve':
+      return 'Serve'
+    default:
+      return 'Step'
+  }
 }

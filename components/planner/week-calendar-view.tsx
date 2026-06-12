@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { WeekMealRow } from '@/components/planner/week-meal-row'
+import { WeekMealSuggest } from '@/components/planner/week-meal-suggest'
 import { WeekSchedulePanel } from '@/components/planner/week-schedule-panel'
 import type { WeekMealsData } from '@/app/actions/meal-actions'
 import type { WeekScheduleData } from '@/app/actions/calendar-actions'
@@ -39,8 +40,12 @@ export function WeekCalendarView({
           <h2 className="font-serif text-2xl font-medium tracking-tight text-primary-900 md:text-3xl">
             {monthLabel}
           </h2>
-          <p className="mt-1 text-sm text-[#5C6478]">Dinners on the left · Google on the right</p>
+          <p className="mt-1 text-sm text-[#5C6478]">
+            Meals on the left · Google on the right
+          </p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {canEdit ? <WeekMealSuggest canUse={canEdit} /> : null}
         <span
           title={
             connectedMembers > 0 && connectedMembers < householdMembers
@@ -55,6 +60,7 @@ export function WeekCalendarView({
         >
           {calendarLinkLabel(connectedMembers, householdMembers)}
         </span>
+        </div>
       </div>
 
       <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
