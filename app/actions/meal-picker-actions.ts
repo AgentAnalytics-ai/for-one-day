@@ -5,6 +5,7 @@ import { firstName } from '@/lib/dinner-helper-grounding'
 import { cleanMealTitleList } from '@/lib/meal-ai-shared'
 import { getHouseholdWeekDateKeys, toHouseholdDateKey } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
+import { resolveHouseholdTimezone } from '@/lib/household-timezone'
 
 export type MealPickerContext = {
   success: boolean
@@ -34,11 +35,12 @@ export async function getMealPickerContext(): Promise<MealPickerContext> {
     const familyId = await resolveFamilyId(supabase, user.id)
     if (!familyId) return { ...empty, success: false, error: 'No household found' }
 
-    const tonight = toHouseholdDateKey(new Date())
-    const weekKeys = getHouseholdWeekDateKeys()
+    const timezone = await resolveHouseholdTimezone(supabase, familyId)
+    const tonight = toHouseholdDateKey(new Date(), timezone)
+    const weekKeys = getHouseholdWeekDateKeys(new Date(), timezone)
     const lookback = new Date()
     lookback.setDate(lookback.getDate() - 28)
-    const lookbackKey = toHouseholdDateKey(lookback)
+    const lookbackKey = toHouseholdDateKey(lookback, timezone)
 
     const [membersRes, ideasRes, plansRes, tonightRes] = await Promise.all([
       supabase

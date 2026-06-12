@@ -21,6 +21,7 @@ import {
   toHouseholdDateKey,
 } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
+import { resolveHouseholdTimezone } from '@/lib/household-timezone'
 
 type ConnectionRow = {
   id: string
@@ -69,11 +70,11 @@ export type WeekScheduleData = {
   error?: string
 }
 
-function weekFetchBounds(): { timeMin: string; timeMax: string } {
-  const keys = getHouseholdWeekDateKeys()
+function weekFetchBounds(timeZone: string): { timeMin: string; timeMax: string } {
+  const keys = getHouseholdWeekDateKeys(new Date(), timeZone)
   return {
-    timeMin: householdDayRfc3339(keys[0], 'start', HOUSEHOLD_TZ),
-    timeMax: householdDayRfc3339(keys[6], 'end', HOUSEHOLD_TZ),
+    timeMin: householdDayRfc3339(keys[0], 'start', timeZone),
+    timeMax: householdDayRfc3339(keys[6], 'end', timeZone),
   }
 }
 
@@ -128,6 +129,8 @@ async function fetchHouseholdGoogleEvents(): Promise<{
     return { events: [], connectedMembers: 0, householdMembers: 0 }
   }
 
+  const timeZone = await resolveHouseholdTimezone(supabase, familyId)
+
   const admin = createServiceRoleClient()
   if (!admin) {
     return {
@@ -174,7 +177,7 @@ async function fetchHouseholdGoogleEvents(): Promise<{
     }
   }
 
-  const { timeMin, timeMax } = weekFetchBounds()
+  const { timeMin, timeMax } = weekFetchBounds(timeZone)
   const batches: Array<{
     memberUserId: string
     memberName: string
@@ -190,7 +193,7 @@ async function fetchHouseholdGoogleEvents(): Promise<{
         connectionCalendarIds(connection),
         timeMin,
         timeMax,
-        HOUSEHOLD_TZ
+        timeZone
       )
       batches.push({
         memberUserId: connection.user_id,
@@ -204,7 +207,7 @@ async function fetchHouseholdGoogleEvents(): Promise<{
   }
 
   return {
-    events: mergeHouseholdEvents(batches, HOUSEHOLD_TZ),
+    events: mergeHouseholdEvents(batches, timeZone),
     connectedMembers: googleConnections.length,
     householdMembers: memberIds.length,
   }
@@ -278,7 +281,6 @@ export async function getGoogleCalendarStatus(): Promise<GoogleCalendarStatus> {
 }
 
 export async function getTodayScheduleGlance(): Promise<TodayScheduleGlance> {
-  const todayKey = toHouseholdDateKey(new Date())
   const empty: TodayScheduleGlance = {
     success: true,
     nextEvent: null,
@@ -289,6 +291,16 @@ export async function getTodayScheduleGlance(): Promise<TodayScheduleGlance> {
   }
 
   try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    const familyId = user ? await resolveFamilyId(supabase, user.id) : null
+    const timeZone = familyId
+      ? await resolveHouseholdTimezone(supabase, familyId)
+      : HOUSEHOLD_TZ
+    const todayKey = toHouseholdDateKey(new Date(), timeZone)
+
     const { events, connectedMembers, householdMembers, error } =
       await fetchHouseholdGoogleEvents()
 

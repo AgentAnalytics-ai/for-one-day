@@ -14,6 +14,11 @@ import {
 } from '@/lib/household-invite'
 import { sendHouseholdInviteEmail } from '@/lib/email'
 import { resolveFamilyId } from '@/lib/household'
+import {
+  isValidIanaTimezone,
+  normalizeHouseholdTimezone,
+  resolveHouseholdTimezone,
+} from '@/lib/household-timezone'
 import { getUserSubscriptionStatus } from '@/lib/subscription-utils'
 import { revalidatePath } from 'next/cache'
 
@@ -36,11 +41,20 @@ export type PendingHouseholdInvitation = {
 export type HouseholdSettings = {
   familyId: string
   name: string
+  timezone: string | null
+  needsTimezoneConfirm: boolean
   plan: 'free' | 'pro' | 'lifetime'
   isOwner: boolean
   members: HouseholdMember[]
   pendingInvitations: PendingHouseholdInvitation[]
   canInvite: boolean
+}
+
+export type HouseholdTimeContext = {
+  success: boolean
+  timezone: string
+  needsTimezoneConfirm: boolean
+  error?: string
 }
 
 const MAX_HOUSEHOLD_NAME_LENGTH = 80
@@ -111,7 +125,7 @@ export async function getHouseholdSettings(): Promise<{
 
     const { data: family, error: familyError } = await supabase
       .from('families')
-      .select('id, name, owner_id')
+      .select('id, name, owner_id, timezone')
       .eq('id', familyId)
       .single()
 
@@ -187,6 +201,8 @@ export async function getHouseholdSettings(): Promise<{
       household: {
         familyId: family.id,
         name: family.name,
+        timezone: normalizeHouseholdTimezone(family.timezone),
+        needsTimezoneConfirm: !normalizeHouseholdTimezone(family.timezone),
         plan,
         isOwner: family.owner_id === user.id,
         members,
@@ -202,6 +218,116 @@ export async function getHouseholdSettings(): Promise<{
 
 /** Per-request cache — safe to call from layout + page in same render */
 export const getCachedHouseholdSettings = cache(getHouseholdSettings)
+
+export async function getHouseholdTimeContext(): Promise<HouseholdTimeContext> {
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return {
+        success: false,
+        timezone: 'America/Chicago',
+        needsTimezoneConfirm: false,
+        error: 'Not authenticated',
+      }
+    }
+
+    const familyId = await resolveFamilyId(supabase, user.id)
+    if (!familyId) {
+      return {
+        success: false,
+        timezone: 'America/Chicago',
+        needsTimezoneConfirm: false,
+        error: 'No household found',
+      }
+    }
+
+    const { data: family } = await supabase
+      .from('families')
+      .select('timezone')
+      .eq('id', familyId)
+      .maybeSingle()
+
+    const stored = normalizeHouseholdTimezone(family?.timezone)
+    const timezone = stored ?? (await resolveHouseholdTimezone(supabase, familyId))
+
+    return {
+      success: true,
+      timezone,
+      needsTimezoneConfirm: !stored,
+    }
+  } catch (error) {
+    console.error('getHouseholdTimeContext error:', error)
+    return {
+      success: false,
+      timezone: 'America/Chicago',
+      needsTimezoneConfirm: false,
+      error: 'Failed to load home timezone',
+    }
+  }
+}
+
+export const getCachedHouseholdTimeContext = cache(getHouseholdTimeContext)
+
+export async function setHouseholdTimezone(timeZone: string): Promise<{
+  success: boolean
+  timezone?: string
+  error?: string
+}> {
+  try {
+    const trimmed = timeZone.trim()
+    if (!isValidIanaTimezone(trimmed)) {
+      return { success: false, error: 'Invalid timezone' }
+    }
+
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    const familyId = await resolveFamilyId(supabase, user.id)
+    if (!familyId) {
+      return { success: false, error: 'No household found' }
+    }
+
+    const { data: membership } = await supabase
+      .from('family_members')
+      .select('user_id')
+      .eq('family_id', familyId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (!membership) {
+      return { success: false, error: 'Not a member of this household' }
+    }
+
+    const { error } = await supabase.rpc('set_family_timezone', {
+      p_family_id: familyId,
+      p_timezone: trimmed,
+    })
+
+    if (error) {
+      console.error('setHouseholdTimezone error:', error)
+      return { success: false, error: 'Could not save timezone' }
+    }
+
+    revalidatePath('/dashboard')
+    revalidatePath('/week')
+    revalidatePath('/settings')
+
+    return { success: true, timezone: trimmed }
+  } catch (error) {
+    console.error('setHouseholdTimezone error:', error)
+    return { success: false, error: 'Could not save timezone' }
+  }
+}
 
 export async function updateHouseholdName(name: string): Promise<{
   success: boolean

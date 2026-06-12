@@ -6,9 +6,11 @@ import {
   cancelHouseholdInvitation,
   getHouseholdSettings,
   inviteHouseholdMember,
+  setHouseholdTimezone,
   updateHouseholdName,
   type HouseholdSettings,
 } from '@/app/actions/household-actions'
+import { HOME_TIMEZONE_OPTIONS, timezoneLabel } from '@/lib/household-timezone'
 import {
   INVITABLE_HOUSEHOLD_ROLES,
   inviteRoleDescription,
@@ -46,6 +48,9 @@ export function HouseholdSettings() {
   const [inviteError, setInviteError] = useState<string | null>(null)
   const [inviteSuccess, setInviteSuccess] = useState(false)
   const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [timezoneDraft, setTimezoneDraft] = useState('America/Chicago')
+  const [timezoneSaving, setTimezoneSaving] = useState(false)
+  const [timezoneError, setTimezoneError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -54,6 +59,7 @@ export function HouseholdSettings() {
     if (result.success && result.household) {
       setHousehold(result.household)
       setDraftName(result.household.name)
+      setTimezoneDraft(result.household.timezone ?? 'America/Chicago')
     } else {
       setHousehold(null)
       setError(result.error ?? 'Unable to load household')
@@ -95,6 +101,26 @@ export function HouseholdSettings() {
       setInviteError(result.error ?? 'Failed to send invite')
     }
     setInviting(false)
+  }
+
+  const handleTimezoneSave = async () => {
+    setTimezoneSaving(true)
+    setTimezoneError(null)
+    const result = await setHouseholdTimezone(timezoneDraft)
+    if (result.success && result.timezone) {
+      setHousehold((prev) =>
+        prev
+          ? {
+              ...prev,
+              timezone: result.timezone!,
+              needsTimezoneConfirm: false,
+            }
+          : prev
+      )
+    } else {
+      setTimezoneError(result.error ?? 'Could not save timezone')
+    }
+    setTimezoneSaving(false)
   }
 
   const handleCancelInvite = async (id: string) => {
@@ -187,6 +213,48 @@ export function HouseholdSettings() {
             ) : null}
           </div>
         )}
+      </div>
+
+      <div className="surface-inset p-4 sm:p-5">
+        <div className="mb-3 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#5C6478]">
+          <Clock className="h-3.5 w-3.5 text-accent-700" aria-hidden />
+          Home timezone
+        </div>
+        <p className="mb-3 text-xs leading-relaxed text-[#5C6478]">
+          Today, meals, and your week use this clock for everyone at home.
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="min-w-[12rem] flex-1">
+            <span className="sr-only">Timezone</span>
+            <select
+              value={timezoneDraft}
+              onChange={(e) => setTimezoneDraft(e.target.value)}
+              className="field-input w-full"
+            >
+              {HOME_TIMEZONE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            onClick={handleTimezoneSave}
+            disabled={timezoneSaving}
+            className="btn-primary px-4 py-2.5 text-sm"
+          >
+            {timezoneSaving ? 'Saving…' : 'Save clock'}
+          </button>
+        </div>
+        {household.timezone ? (
+          <p className="mt-2 text-xs text-[#5C6478]">
+            Wall shows {timezoneLabel(household.timezone)} time.
+          </p>
+        ) : (
+          <p className="mt-2 text-xs text-amber-800">Confirm your home clock on Today or here.</p>
+        )}
+        {timezoneError ? <p className="mt-2 text-sm text-red-700">{timezoneError}</p> : null}
       </div>
 
       <div>

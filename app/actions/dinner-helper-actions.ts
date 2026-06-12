@@ -3,8 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { generateDinnerHelperPlan, type DinnerHelperPlan } from '@/lib/dinner-helper-ai'
 import { firstName } from '@/lib/dinner-helper-grounding'
-import { HOUSEHOLD_TZ, toHouseholdDateKey } from '@/lib/household-dates'
+import { toHouseholdDateKey } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
+import { resolveHouseholdTimezone } from '@/lib/household-timezone'
 import { createClient } from '@/lib/supabase/server'
 import { setMealPlan } from '@/app/actions/meal-actions'
 import { addListItem } from '@/app/actions/list-actions'
@@ -12,9 +13,9 @@ import { addListItem } from '@/app/actions/list-actions'
 const UPGRADE_MESSAGE =
   'Dinner walk-throughs are included with Pro for your home.'
 
-function householdNowLabel(): string {
+function householdNowLabel(timeZone: string): string {
   return new Date().toLocaleString('en-US', {
-    timeZone: HOUSEHOLD_TZ,
+    timeZone,
     weekday: 'long',
     month: 'short',
     day: 'numeric',
@@ -99,6 +100,7 @@ async function requireDinnerHelperAccess() {
   }
 
   const canUse = await householdHasSharedPlan(supabase, user.id)
+  const timezone = await resolveHouseholdTimezone(supabase, familyId)
   const householdNames = await getOtherHouseholdFirstNames(supabase, familyId, user.id)
 
   const { data: profile } = await supabase
@@ -112,7 +114,8 @@ async function requireDinnerHelperAccess() {
 
   return {
     canUse,
-    planDate: toHouseholdDateKey(new Date()),
+    planDate: toHouseholdDateKey(new Date(), timezone),
+    timezone,
     householdNames,
     cookName,
     shoppingOnList,
@@ -127,7 +130,7 @@ export async function runDinnerHelper(input: {
   servingTime?: string
 }): Promise<{ success: boolean; plan?: DinnerHelperPlan; error?: string }> {
   try {
-    const { canUse, householdNames, cookName, shoppingOnList, supabase, familyId } =
+    const { canUse, householdNames, cookName, shoppingOnList, supabase, familyId, timezone } =
       await requireDinnerHelperAccess()
     if (!canUse) {
       return { success: false, error: UPGRADE_MESSAGE }
@@ -147,8 +150,8 @@ export async function runDinnerHelper(input: {
       mealHint: mealHint || 'Dinner tonight',
       notes,
       servingTime: input.servingTime,
-      nowLabel: householdNowLabel(),
-      timezone: HOUSEHOLD_TZ,
+      nowLabel: householdNowLabel(timezone),
+      timezone,
       cookName,
       householdNames,
       shoppingOnList,

@@ -9,8 +9,8 @@ import {
   type WeekMealDaySuggestion,
   type WeekMealSuggestPlan,
 } from '@/lib/week-meal-suggest-ai'
-import { HOUSEHOLD_TZ } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
+import { resolveHouseholdTimezone } from '@/lib/household-timezone'
 import { createClient } from '@/lib/supabase/server'
 
 const UPGRADE_MESSAGE = 'Meal ideas for your week are included with Pro for your home.'
@@ -53,6 +53,15 @@ export async function runWeekMealSuggest(input: {
 
     const eventsByDate = scheduleData.eventsByDate ?? {}
 
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    const familyId = user ? await resolveFamilyId(supabase, user.id) : null
+    const timezone = familyId
+      ? await resolveHouseholdTimezone(supabase, familyId)
+      : 'America/Chicago'
+
     const existingDays = weekData.days.map((day) => {
       const events = eventsByDate[day.dateKey] ?? []
       return {
@@ -67,7 +76,7 @@ export async function runWeekMealSuggest(input: {
     })
 
     const plan = await generateWeekMealSuggestions({
-      timezone: HOUSEHOLD_TZ,
+      timezone,
       notes: input.notes,
       includeBreakfast: input.includeBreakfast !== false,
       includeLunch: input.includeLunch !== false,

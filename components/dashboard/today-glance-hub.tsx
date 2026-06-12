@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { TimeGreeting } from '@/components/dashboard/time-greeting'
+import { HouseholdClock } from '@/components/dashboard/household-clock'
+import { HouseholdTimezonePrompt } from '@/components/dashboard/household-timezone-prompt'
 import { TodayListsGlance } from '@/components/dashboard/today-lists-glance'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
 import { DinnerTonightGlance } from '@/components/dashboard/dinner-tonight-glance'
@@ -11,6 +12,8 @@ import { shouldShowScheduleOnToday } from '@/lib/today-glance-utils'
 
 type TodayGlanceHubProps = {
   householdName: string | null
+  householdTimezone: string
+  needsTimezoneConfirm: boolean
   listGlance: TodayListGlance | null
   mealGlance: TonightMealGlance | null
   scheduleGlance: TodayScheduleGlance | null
@@ -21,16 +24,12 @@ type TodayGlanceHubProps = {
  */
 export function TodayGlanceHub({
   householdName,
+  householdTimezone,
+  needsTimezoneConfirm,
   listGlance,
   mealGlance,
   scheduleGlance,
 }: TodayGlanceHubProps) {
-  const now = new Date()
-  const timeOnly = now.toLocaleString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
-
   const showSchedule = shouldShowScheduleOnToday(scheduleGlance)
   const scheduleCopy = buildScheduleCopy(scheduleGlance)
   const dinnerTitle = mealGlance?.title?.trim() || 'What’s for dinner?'
@@ -49,10 +48,15 @@ export function TodayGlanceHub({
               <span>{householdName}</span>
             </p>
           ) : null}
-          <TimeGreeting />
-          <p className="text-sm font-medium tabular-nums text-[#5C6478]">{timeOnly}</p>
+          <HouseholdClock timeZone={householdTimezone} />
         </header>
       </ScrollReveal>
+
+      {needsTimezoneConfirm ? (
+        <ScrollReveal delay={40}>
+          <HouseholdTimezonePrompt show={needsTimezoneConfirm} />
+        </ScrollReveal>
+      ) : null}
 
       <ScrollReveal delay={60}>
         <div

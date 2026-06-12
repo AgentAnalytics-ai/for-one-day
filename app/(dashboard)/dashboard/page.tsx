@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { TodayGlanceHub } from '@/components/dashboard/today-glance-hub'
-import { getCachedHouseholdSettings } from '@/app/actions/household-actions'
+import {
+  getCachedHouseholdSettings,
+  getCachedHouseholdTimeContext,
+} from '@/app/actions/household-actions'
 import { getCachedTodayListGlance } from '@/app/actions/list-actions'
 import { getCachedTodayScheduleGlance } from '@/app/actions/calendar-actions'
 import { getCachedTonightMealGlance } from '@/app/actions/meal-actions'
@@ -12,12 +15,14 @@ export default async function DashboardPage() {
 
   if (!user) return null
 
-  const [householdResult, listGlance, mealGlance, scheduleGlance] = await Promise.all([
-    getCachedHouseholdSettings(),
-    getCachedTodayListGlance(),
-    getCachedTonightMealGlance(),
-    getCachedTodayScheduleGlance(),
-  ])
+  const [householdResult, timeContext, listGlance, mealGlance, scheduleGlance] =
+    await Promise.all([
+      getCachedHouseholdSettings(),
+      getCachedHouseholdTimeContext(),
+      getCachedTodayListGlance(),
+      getCachedTonightMealGlance(),
+      getCachedTodayScheduleGlance(),
+    ])
   const household = householdResult.success ? householdResult.household : null
 
   return (
@@ -25,6 +30,8 @@ export default async function DashboardPage() {
       <FirstKeepsakeCelebration />
       <TodayGlanceHub
         householdName={household?.name ?? null}
+        householdTimezone={timeContext.timezone}
+        needsTimezoneConfirm={timeContext.needsTimezoneConfirm}
         listGlance={listGlance}
         mealGlance={mealGlance}
         scheduleGlance={scheduleGlance}

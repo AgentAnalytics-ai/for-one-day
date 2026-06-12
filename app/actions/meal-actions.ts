@@ -10,6 +10,7 @@ import {
   type HouseholdWeekDay,
 } from '@/lib/household-dates'
 import { householdHasSharedPlan, resolveFamilyId } from '@/lib/household'
+import { resolveHouseholdTimezone } from '@/lib/household-timezone'
 
 const UPGRADE_MESSAGE =
   'Meal planning is part of Pro for your home. Upgrade to plan dinners your household shares.'
@@ -53,7 +54,8 @@ async function requireMealAccess() {
   }
 
   const canEdit = await householdHasSharedPlan(supabase, user.id)
-  return { supabase, userId: user.id, familyId, canEdit }
+  const timezone = await resolveHouseholdTimezone(supabase, familyId)
+  return { supabase, userId: user.id, familyId, canEdit, timezone }
 }
 
 function mapMealRow(row: {
@@ -75,16 +77,15 @@ function mapMealRow(row: {
 const MEAL_SELECT = 'id, plan_date, title, breakfast_title, lunch_title'
 
 export async function getTonightMealGlance(): Promise<TonightMealGlance> {
-  const planDate = toHouseholdDateKey(new Date())
-  const empty: TonightMealGlance = {
-    success: true,
-    canEdit: false,
-    planDate,
-    title: null,
-  }
-
   try {
-    const { supabase, familyId, canEdit } = await requireMealAccess()
+    const { supabase, familyId, canEdit, timezone } = await requireMealAccess()
+    const planDate = toHouseholdDateKey(new Date(), timezone)
+    const empty: TonightMealGlance = {
+      success: true,
+      canEdit: false,
+      planDate,
+      title: null,
+    }
 
     const { data, error } = await supabase
       .from('meal_plans')
@@ -105,23 +106,28 @@ export async function getTonightMealGlance(): Promise<TonightMealGlance> {
     }
   } catch (error) {
     console.error('getTonightMealGlance error:', error)
-    return empty
+    return {
+      success: true,
+      canEdit: false,
+      planDate: toHouseholdDateKey(new Date()),
+      title: null,
+    }
   }
 }
 
 export const getCachedTonightMealGlance = cache(getTonightMealGlance)
 
 export async function getWeekMealsData(): Promise<WeekMealsData> {
-  const weekDays = buildHouseholdWeekDays()
   const empty: WeekMealsData = {
     success: true,
     canEdit: false,
-    days: weekDays.map((d) => ({ ...d, meal: null })),
+    days: [],
   }
 
   try {
-    const { supabase, familyId, canEdit } = await requireMealAccess()
-    const keys = getHouseholdWeekDateKeys()
+    const { supabase, familyId, canEdit, timezone } = await requireMealAccess()
+    const weekDays = buildHouseholdWeekDays(new Date(), timezone)
+    const keys = getHouseholdWeekDateKeys(new Date(), timezone)
 
     const { data, error } = await supabase
       .from('meal_plans')
@@ -131,7 +137,12 @@ export async function getWeekMealsData(): Promise<WeekMealsData> {
       .order('plan_date', { ascending: true })
 
     if (error) {
-      return { ...empty, success: false, error: error.message }
+      return {
+        ...empty,
+        success: false,
+        days: weekDays.map((d) => ({ ...d, meal: null })),
+        error: error.message,
+      }
     }
 
     const byDate = new Map((data ?? []).map((row) => [row.plan_date, mapMealRow(row)]))
@@ -146,7 +157,10 @@ export async function getWeekMealsData(): Promise<WeekMealsData> {
     }
   } catch (error) {
     console.error('getWeekMealsData error:', error)
-    return empty
+    return {
+      ...empty,
+      days: buildHouseholdWeekDays().map((d) => ({ ...d, meal: null })),
+    }
   }
 }
 
