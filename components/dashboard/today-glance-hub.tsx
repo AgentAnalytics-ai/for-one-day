@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { TodayHeroClock } from '@/components/dashboard/today-hero-clock'
 import { HouseholdTimezonePrompt } from '@/components/dashboard/household-timezone-prompt'
 import { WeekTasksBar } from '@/components/planner/week-tasks-bar'
-import { WallPhotoStrip } from '@/components/dashboard/wall-photo-strip'
+import { WallPhotoFrame } from '@/components/dashboard/wall-photo-frame'
 import { MemoryPhoneLink } from '@/components/dashboard/memory-phone-link'
 import { DinnerTonightGlance } from '@/components/dashboard/dinner-tonight-glance'
 import { HomeReadinessStrip } from '@/components/dashboard/home-readiness-strip'
@@ -59,8 +59,6 @@ export function TodayGlanceHub({
           <TodayHeroClock timeZone={householdTimezone} />
         </header>
 
-        <WallPhotoStrip />
-
         <div className="today-glance-body">
           <aside className="today-glance-rail self-start" aria-label="Today preparation">
             <HomeReadinessStrip
@@ -111,6 +109,8 @@ export function TodayGlanceHub({
               </p>
             </Link>
           </div>
+
+          <WallPhotoFrame />
         </div>
       </div>
 
