@@ -352,12 +352,56 @@
     animation: wall-focus-pulse 7s ease-in-out infinite;
   }
 
+  /* Completion loops — calm gamification (not streaks) */
+  @keyframes readiness-bar-grow {
+    from { transform: scaleX(0); transform-origin: left center; }
+    to { transform: scaleX(1); transform-origin: left center; }
+  }
+
+  @keyframes readiness-pillar-pop {
+    0% { transform: scale(0.85); opacity: 0.6; }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes list-check-pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes meal-save-glow {
+    0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.45); }
+    70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
+    100% { box-shadow: 0 2px 16px rgba(16, 42, 67, 0.06); }
+  }
+
+  .readiness-bar-fill {
+    animation: readiness-bar-grow 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  .readiness-pillar-done {
+    animation: readiness-pillar-pop 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .list-check-pop {
+    animation: list-check-pop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .meal-save-glow {
+    animation: meal-save-glow 0.9s ease-out forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .kitchen-wall--animate .kw-tab-active,
     .kitchen-wall--animate .kw-card-schedule,
     .kitchen-wall--animate .kw-card-dinner,
     .kitchen-wall--animate .kw-card-lists,
-    .kitchen-wall--animate .kw-focus-line {
+    .kitchen-wall--animate .kw-focus-line,
+    .readiness-bar-fill,
+    .readiness-pillar-done,
+    .list-check-pop,
+    .meal-save-glow {
       animation: none;
     }
   }
@@ -370,10 +414,413 @@
     }
   }
 
-  /* Today glance — fit kitchen wall without scroll (landscape tablet) */
+  /* ── Today glance — hero shares nav center axis; rail beside cards only ── */
+  .today-glance-shell {
+    @apply mx-auto w-full;
+  }
+
+  /* Same width + horizontal padding as the nav pill (max-w-7xl) */
+  .today-glance-frame {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .today-glance-hero {
+    flex-shrink: 0;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.625rem;
+  }
+
+  .today-glance-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 4.75rem;
+    gap: 0.625rem;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .today-glance-rail {
+    order: 2;
+    min-height: 0;
+  }
+
+  .today-glance-main {
+    order: 1;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .today-glance-tz {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Readable card type — phone first */
+  .glance-card-title {
+    font-size: clamp(1.25rem, 4.5vw, 1.5rem);
+    line-height: 1.25;
+  }
+
+  .glance-card-detail {
+    font-size: clamp(0.875rem, 3.2vw, 1rem);
+  }
+
+  .today-glance-hero .page-title {
+    font-size: clamp(2rem, 7vw, 2.5rem);
+    line-height: 1.1;
+  }
+
+  .today-glance-hero p {
+    font-size: clamp(0.9375rem, 3.5vw, 1.125rem);
+  }
+
+  .today-glance-card .section-label {
+    font-size: 0.75rem;
+  }
+
+  /* Tablet portrait — rail on left, hero stays viewport-centered via frame */
+  @media (min-width: 640px) {
+    .today-glance-body {
+      grid-template-columns: 5.5rem minmax(0, 1fr);
+      gap: 0.875rem;
+    }
+
+    .today-glance-rail {
+      order: 0;
+    }
+
+    .today-glance-main {
+      order: 1;
+      gap: 0.875rem;
+    }
+
+    .glance-card-title {
+      font-size: clamp(1.375rem, 3vw, 1.75rem);
+    }
+
+    .today-glance-hero {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  /* Kitchen wall — landscape tablet: full width, no scroll */
   @media (orientation: landscape) and (min-width: 1024px) {
-    .today-glance {
-      max-height: calc(100dvh - 11rem);
+    #app-shell:has(.today-glance-shell),
+    #app-shell:has(.week-page-shell),
+    #app-shell:has(.lists-page-shell) {
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+    }
+
+    #main-content:has(.today-glance-shell),
+    #main-content:has(.week-page-shell),
+    #main-content:has(.lists-page-shell) {
+      flex: 1;
+      min-height: 0;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      overflow: hidden;
+    }
+
+    #main-content:has(.today-glance-shell) > div,
+    #main-content:has(.week-page-shell) > div,
+    #main-content:has(.lists-page-shell) > div {
+      max-width: none;
+      height: 100%;
+    }
+
+    #app-shell:has(.today-glance-shell) footer,
+    #app-shell:has(.week-page-shell) footer,
+    #app-shell:has(.lists-page-shell) footer {
+      display: none;
+    }
+
+    #app-shell:has(.today-glance-shell) > div.hidden[aria-hidden],
+    #app-shell:has(.week-page-shell) > div.hidden[aria-hidden],
+    #app-shell:has(.lists-page-shell) > div.hidden[aria-hidden] {
+      display: none !important;
+    }
+
+    .today-glance-shell {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .today-glance-frame {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .today-glance-tz {
+      flex-shrink: 0;
+      margin-bottom: 0.375rem;
+    }
+
+    .today-glance-hero {
+      flex-shrink: 0;
+      margin-bottom: 0.25rem;
+    }
+
+    .today-wall-photo-strip {
+      flex-shrink: 0;
+      margin-bottom: 0.375rem;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .wall-slideshow-canvas--strip {
+      height: clamp(3.5rem, 8vh, 5rem);
+      width: 100%;
+    }
+
+    .wall-slideshow-canvas--fullscreen {
+      position: absolute;
+      inset: 0;
+    }
+
+    .today-glance-eyebrow {
+      display: none;
+    }
+
+    .today-glance-body {
+      flex: 1;
+      min-height: 0;
+      grid-template-columns: 7.5rem minmax(0, 1fr);
+      gap: 0.625rem 1rem;
+      align-items: stretch;
+    }
+
+    .readiness-rail {
+      padding: 0.875rem 0.625rem;
+    }
+
+    .readiness-rail-message {
+      font-size: 0.6875rem;
+    }
+
+    .readiness-rail-label {
+      font-size: 0.625rem;
+    }
+
+    .readiness-rail-hint {
+      font-size: 0.5625rem;
+    }
+
+    .today-glance-hero .page-title {
+      font-size: clamp(1.875rem, 2.6vw, 2.5rem);
+      line-height: 1.05;
+    }
+
+    .today-glance-hero .today-glance-datetime {
+      font-size: clamp(0.9375rem, 1.15vw, 1.0625rem);
+    }
+
+    .today-glance-main {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 0.375rem;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .today-glance-cards {
+      gap: 0.5rem;
+    }
+
+    .glance-card-title {
+      font-size: clamp(1.5rem, 1.8vw, 2rem);
+      line-height: 1.2;
+    }
+
+    .glance-card-detail {
+      font-size: clamp(0.9375rem, 1.1vw, 1.0625rem);
+    }
+
+    .today-glance-card {
+      padding: 0.75rem 1rem;
+    }
+
+    .today-glance-card .section-label {
+      font-size: 0.625rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .kw-dinner-glance-card {
+      padding: 0.75rem 1rem;
+    }
+
+    .kw-dinner-glance-card .glance-card-title {
+      font-size: clamp(1.25rem, 1.55vw, 1.625rem);
+    }
+
+    .glance-card-title {
+      font-size: clamp(1.25rem, 1.55vw, 1.625rem);
+    }
+
+    .glance-card-detail {
+      font-size: clamp(0.8125rem, 0.95vw, 0.9375rem);
+      margin-top: 0.25rem;
+    }
+
+    .today-glance-tasks {
+      flex-shrink: 0;
+    }
+
+    .today-glance-focus {
+      padding-top: 0.375rem;
+      padding-bottom: 0.375rem;
+    }
+
+    .today-glance-focus .glance-card-detail {
+      font-size: clamp(0.8125rem, 0.95vw, 0.9375rem);
+      line-height: 1.3;
+    }
+
+    /* ── Week page — today forward only, fits one screen ── */
+    .week-page-shell {
+      height: 100%;
+      max-height: 100%;
+      overflow: hidden;
+      padding-bottom: 0;
+    }
+
+    .week-page-hero {
+      padding-bottom: 0.375rem;
+    }
+
+    .week-page-hero .page-subtitle {
+      display: none;
+    }
+
+    .week-page-hero .page-title {
+      font-size: clamp(1.375rem, 2vw, 1.75rem);
+    }
+
+    .week-page-focus,
+    .week-page-back {
+      display: none;
+    }
+
+    .week-page-body {
+      min-height: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .week-calendar-shell {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      overflow: hidden;
+    }
+
+    .week-calendar-toolbar p.text-xs {
+      display: none;
+    }
+
+    .week-calendar-toolbar h2 {
+      font-size: clamp(1rem, 1.25vw, 1.25rem);
+    }
+
+    .week-dinner-progress {
+      flex-shrink: 0;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .week-dinner-progress p.text-\[11px\] {
+      margin-bottom: 0.25rem;
+    }
+
+    .week-calendar-main {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      align-items: start;
+    }
+
+    .week-tasks-bar {
+      flex-shrink: 0;
+      padding-top: 0.375rem;
+      padding-bottom: 0.375rem;
+    }
+
+    .week-calendar-sidebar {
+      align-self: start;
+    }
+
+    .week-calendar-meals {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+
+    .week-meal-row {
+      flex-shrink: 0;
+    }
+
+    .week-meal-row .font-serif.text-xl {
+      font-size: clamp(1.125rem, 1.35vw, 1.375rem);
+    }
+
+    .week-calendar-footnotes {
+      display: none;
+    }
+
+    .week-calendar-main aside.surface-card {
+      max-height: 100%;
+      min-height: 0;
+    }
+
+    .week-calendar-main aside .overflow-y-auto {
+      overflow: hidden;
+    }
+
+    /* ── Lists page — compact wall fit ── */
+    .lists-page-shell {
+      height: 100%;
+      max-height: 100%;
+      max-width: none;
+      overflow: hidden;
+      gap: 0.5rem;
+    }
+
+    .lists-page-shell .page-subtitle {
+      display: none;
+    }
+
+    .lists-page-shell .page-title {
+      font-size: clamp(1.375rem, 2vw, 1.75rem);
+    }
+
+    .lists-page-back {
+      display: none;
+    }
+
+    .lists-page-body {
+      overflow: hidden;
+    }
+
+    .lists-page-body section {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .lists-page-body section ul {
+      max-height: 9rem;
+      overflow: hidden;
     }
   }
 

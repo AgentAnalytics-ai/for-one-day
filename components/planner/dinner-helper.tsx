@@ -214,8 +214,8 @@ export function DinnerHelper({
       if (result.itemsAdded > 0) {
         parts.push(
           result.itemsAdded === 1
-            ? '1 thing on Shopping'
-            : `${result.itemsAdded} on Shopping`
+            ? '1 thing on Groceries'
+            : `${result.itemsAdded} on Groceries`
         )
       }
       setSavedBanner(parts.join(' · ') || 'You’re set')

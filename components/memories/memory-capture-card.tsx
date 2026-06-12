@@ -368,6 +368,13 @@ export function MemoryCaptureCard({ isPro, dailySuggestion }: MemoryCaptureCardP
                 ))}
               </div>
             )}
+            <p className="mt-4 text-xs leading-relaxed text-[#5C6478]">
+              For the kitchen tablet rotation, use{' '}
+              <Link href="/more/gallery" className="font-medium text-primary-900 hover:underline">
+                Kitchen tablet photos
+              </Link>{' '}
+              — add many photos at once, no note required.
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-1">

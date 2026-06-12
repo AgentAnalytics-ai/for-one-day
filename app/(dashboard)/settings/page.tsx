@@ -8,6 +8,7 @@ import { ProfileSettingsView } from '@/components/settings/profile-settings-view
 import { HouseholdSettings } from '@/components/settings/household-settings'
 import { SubscriptionManagement } from '@/components/settings/subscription-management'
 import { AccountManagement } from '@/components/settings/account-management'
+import { SignOutSection } from '@/components/settings/sign-out-section'
 import { SupportContactButton } from '@/components/support-contact-button'
 import {
   SettingsTabs,
@@ -136,12 +137,19 @@ export default function SettingsPage() {
         {activeTab === 'billing' && <SubscriptionManagement />}
         {activeTab === 'account' && (
           <div className="space-y-6">
+            <SignOutSection userName={profile?.full_name} />
             <AccountManagement profile={profile} />
             <div className="border-t border-[#F0EBE3] pt-6">
               <SupportContactButton />
             </div>
           </div>
         )}
+      </div>
+
+      <div className="mt-6 flex items-center justify-center gap-2 text-sm text-[#5C6478] lg:hidden">
+        <span>{profile?.full_name ?? 'Signed in'}</span>
+        <span aria-hidden>·</span>
+        <SignOutSection variant="inline" />
       </div>
     </div>
   )

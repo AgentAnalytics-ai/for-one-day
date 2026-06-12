@@ -4,6 +4,7 @@ import { getCachedHouseholdSettings } from '@/app/actions/household-actions'
 import { HouseholdChrome } from '@/components/dashboard/household-chrome'
 import { SimpleNav } from '@/components/dashboard/simple-nav'
 import { SupportFooter } from '@/components/support-footer'
+import { WallIdleGallery } from '@/components/dashboard/wall-idle-gallery'
 import { NavigationTour } from '@/components/onboarding/navigation-tour'
 import { KeyboardShortcuts } from '@/components/ui/keyboard-shortcuts'
 import { SkipLink } from '@/components/ui/skip-link'
@@ -86,6 +87,7 @@ export default async function DashboardLayout({
       </main>
 
       <SupportFooter />
+      <WallIdleGallery />
     </div>
   )
 }

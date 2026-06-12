@@ -25,7 +25,7 @@ export function WeekSchedulePanel({
 
   return (
     <aside
-      className="surface-card flex max-h-[min(32rem,calc(100dvh-10rem))] flex-col overflow-hidden lg:sticky lg:top-24 lg:max-h-[calc(100dvh-8rem)]"
+      className="week-schedule-panel surface-card flex w-full max-h-[min(28rem,calc(100dvh-12rem))] flex-col overflow-hidden lg:max-h-[calc(100dvh-11rem)]"
       aria-labelledby="week-schedule-heading"
     >
       <div className="border-b border-[#E7E2DA]/80 px-4 py-4 sm:px-5">

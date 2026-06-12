@@ -11,10 +11,10 @@ export function MemoryPhoneLink() {
   return (
     <p className="mx-auto max-w-3xl text-center">
       <Link
-        href="/more/capture"
+        href="/more/gallery"
         className="text-sm font-medium text-[#5C6478] underline-offset-4 transition-colors hover:text-primary-900 hover:underline"
       >
-        Save a memory for someone you love →
+        Add photos for kitchen tablet →
       </Link>
     </p>
   )

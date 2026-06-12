@@ -19,7 +19,7 @@ export function MoreHub() {
         <span className="page-eyebrow mb-4">Your phone</span>
         <h1 className="page-title text-balance">More</h1>
         <p className="page-subtitle mx-auto mt-2 max-w-sm">
-          Memories and keepsakes live here — not on the kitchen wall.
+          Tablet photos and keepsakes live here — not on the kitchen wall daily view.
         </p>
       </header>
 
@@ -39,19 +39,32 @@ export function MoreHub() {
       </div>
 
       <Link
-        href="/more/capture"
+        href="/more/gallery"
         className="surface-card group flex items-center justify-between px-5 py-4 transition-smooth hover:border-[#D4CFC6]"
       >
         <span>
-          <span className="section-label block">Capture</span>
-          <span className="font-serif text-lg font-medium text-primary-900">Save a memory</span>
-          <span className="mt-0.5 block text-sm text-[#5C6478]">Photo, a few words, for someone you love</span>
+          <span className="section-label block">Kitchen tablet</span>
+          <span className="font-serif text-lg font-medium text-primary-900">Add photos for the wall</span>
+          <span className="mt-0.5 block text-sm text-[#5C6478]">
+            Pick many at once — they rotate when the tablet is idle
+          </span>
         </span>
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-900 text-white transition-transform duration-300 group-hover:scale-105">
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </span>
+      </Link>
+
+      <Link
+        href="/more/capture"
+        className="flex items-center justify-between rounded-2xl border border-[#E7E2DA] bg-white/60 px-4 py-3 text-sm transition-smooth hover:border-[#D4CFC6]"
+      >
+        <span className="text-[#5C6478]">
+          <span className="font-medium text-primary-900">Notes for someone</span>
+          {' · '}photo + a few words (optional)
+        </span>
+        <span className="text-[#5C6478]">→</span>
       </Link>
 
       <div className="border-t border-[#E7E2DA] pt-4">

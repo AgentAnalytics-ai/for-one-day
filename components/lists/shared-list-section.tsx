@@ -17,6 +17,7 @@ type SharedListSectionProps = {
   canEdit: boolean
   emptyMessage: string
   addLabel: string
+  sectionId?: string
 }
 
 export function SharedListSection({
@@ -26,6 +27,7 @@ export function SharedListSection({
   canEdit,
   emptyMessage,
   addLabel,
+  sectionId,
 }: SharedListSectionProps) {
   const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -97,7 +99,11 @@ export function SharedListSection({
   }
 
   return (
-    <section className="p-5 sm:p-6" aria-labelledby={`${inputId}-heading`}>
+    <section
+      id={sectionId}
+      className="scroll-mt-24 p-5 sm:p-6"
+      aria-labelledby={`${inputId}-heading`}
+    >
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <h2 id={`${inputId}-heading`} className="section-label">
@@ -252,14 +258,30 @@ function ListRow({
   onToggle: (id: string, done: boolean) => void
   onDelete: (id: string) => void
 }) {
+  const [justChecked, setJustChecked] = useState(false)
+
+  const handleCheck = (checked: boolean) => {
+    if (checked && !item.done) {
+      setJustChecked(true)
+      window.setTimeout(() => setJustChecked(false), 400)
+    }
+    onToggle(item.id, checked)
+  }
+
   return (
-    <li className="group flex items-center gap-3 rounded-xl border border-[#F0EBE3] bg-white px-3 py-3 shadow-sm shadow-[#102A43]/[0.03]">
+    <li
+      className={`group flex items-center gap-3 rounded-xl border bg-white px-3 py-3 shadow-sm shadow-[#102A43]/[0.03] transition-colors duration-300 ${
+        item.done ? 'border-emerald-100/80 bg-emerald-50/30' : 'border-[#F0EBE3]'
+      }`}
+    >
       <input
         type="checkbox"
         checked={item.done}
         disabled={!canEdit || disabled}
-        onChange={(e) => onToggle(item.id, e.target.checked)}
-        className="touch-tablet h-5 w-5 shrink-0 rounded-md border-[#D4CFC6] text-primary-800 focus:ring-primary-700 disabled:cursor-not-allowed"
+        onChange={(e) => handleCheck(e.target.checked)}
+        className={`touch-tablet h-5 w-5 shrink-0 rounded-md border-[#D4CFC6] text-emerald-600 focus:ring-primary-700 disabled:cursor-not-allowed ${
+          justChecked ? 'list-check-pop' : ''
+        }`}
         aria-label={`Mark ${item.title} as ${item.done ? 'not done' : 'done'}`}
       />
       <span

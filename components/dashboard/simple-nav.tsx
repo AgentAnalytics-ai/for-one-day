@@ -60,12 +60,18 @@ export function SimpleNav({
   const pathname = usePathname() ?? ''
   const isWall = useWallMode()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isGearOpen, setIsGearOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const gearRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setIsDropdownOpen(false)
+      }
+      if (gearRef.current && !gearRef.current.contains(target)) {
+        setIsGearOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -89,10 +95,12 @@ export function SimpleNav({
     return daily
   }, [pathname, isWall])
 
-  const GearButton = ({ className }: { className?: string }) => (
-    <Link
-      href="/settings#household"
-      aria-label="Family settings"
+  const GearButton = ({ className, onClick }: { className?: string; onClick?: () => void }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Family settings and sign out"
+      aria-expanded={onClick ? isGearOpen : undefined}
       className={cn(
         'touch-tablet inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E7E2DA] bg-white text-[#5C6478] shadow-sm transition-all duration-300 hover:border-[#D4CFC6] hover:text-primary-900 active:scale-95',
         pathname.startsWith('/settings') && 'border-primary-900/30 text-primary-900',
@@ -103,7 +111,43 @@ export function SimpleNav({
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
-    </Link>
+    </button>
+  )
+
+  const GearMenu = () => (
+    <div className="absolute right-0 z-50 mt-2 w-52 rounded-xl border border-[#E7E2DA] bg-white py-2 shadow-sm">
+      <Link
+        href="/settings#household"
+        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#5C6478] hover:bg-[#F3EDE4]/50"
+        onClick={() => setIsGearOpen(false)}
+      >
+        Family settings
+      </Link>
+      <Link
+        href="/settings#account"
+        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#5C6478] hover:bg-[#F3EDE4]/50"
+        onClick={() => setIsGearOpen(false)}
+      >
+        Account · Sign out
+      </Link>
+      <div className="border-t border-[#F0EBE3] py-1">
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#5C6478] hover:bg-[#F3EDE4]/50"
+          >
+            Sign out now
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+
+  const WallGear = ({ className }: { className?: string }) => (
+    <div className={cn('relative', className)} ref={gearRef}>
+      <GearButton onClick={() => setIsGearOpen(!isGearOpen)} />
+      {isGearOpen ? <GearMenu /> : null}
+    </div>
   )
 
   const DropdownMenu = () => (
@@ -151,7 +195,7 @@ export function SimpleNav({
       >
         <div className="mx-auto flex max-w-lg items-center gap-2 sm:max-w-xl">
           <AppTabBar items={tabItems} variant="bottom" className="flex-1" />
-          {isWall ? <GearButton /> : null}
+          {isWall ? <WallGear /> : null}
         </div>
       </nav>
 
@@ -169,7 +213,7 @@ export function SimpleNav({
             </div>
 
             <div className="relative flex min-w-0 items-center justify-end gap-2" ref={dropdownRef}>
-              {isWall ? <GearButton /> : null}
+              {isWall ? <WallGear /> : null}
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

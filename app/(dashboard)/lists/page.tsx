@@ -20,14 +20,14 @@ export default async function ListsPage() {
   const { canEdit, shopping, todos } = result
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="lists-page-shell mx-auto flex h-full max-w-3xl flex-col gap-6 sm:gap-8">
       <ScrollReveal>
         <PageHeader
           eyebrow={<span className="text-primary-900">Lists</span>}
-          title="To do & shopping"
+          title="Groceries & to-do"
           subtitle={
             canEdit
-              ? 'Shared with everyone in your home — check off from the wall or your phone.'
+              ? 'Groceries tie to meal planning — walk-throughs add what you still need.'
               : 'Upgrade to Pro to share groceries and to-dos with your household.'
           }
         />
@@ -40,8 +40,18 @@ export default async function ListsPage() {
       ) : null}
 
       <ScrollReveal delay={100}>
-        <div className="surface-card divide-y divide-[#F0EBE3]">
+        <div className="lists-page-body surface-card min-h-0 flex-1 divide-y divide-[#F0EBE3] overflow-hidden">
           <SharedListSection
+            sectionId="groceries"
+            title="Groceries"
+            kind="shopping"
+            items={shopping}
+            canEdit={canEdit}
+            emptyMessage="Nothing yet — plan dinner or run a walk-through to add items."
+            addLabel="Add groceries"
+          />
+          <SharedListSection
+            sectionId="todo"
             title="To do today"
             kind="todo"
             items={todos}
@@ -49,19 +59,11 @@ export default async function ListsPage() {
             emptyMessage="Nothing on the list yet — add a task your household can see."
             addLabel="Add a task for today"
           />
-          <SharedListSection
-            title="Shopping"
-            kind="shopping"
-            items={shopping}
-            canEdit={canEdit}
-            emptyMessage="Groceries for tonight's dinner show up here."
-            addLabel="Add to shopping list"
-          />
         </div>
       </ScrollReveal>
 
       <ScrollReveal delay={150}>
-        <p className="text-center text-sm text-[#5C6478]">
+        <p className="lists-page-back text-center text-sm text-[#5C6478]">
           <Link href="/dashboard" className="font-medium text-primary-900 hover:underline">
             ← Back to Today
           </Link>

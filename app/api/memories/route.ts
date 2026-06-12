@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
       typeof body.polished_text === 'string' && body.polished_text.trim()
         ? body.polished_text.trim()
         : null
+    const wall_slideshow = body.wall_slideshow === true
 
     if (!person_id) {
       return NextResponse.json({ error: 'person_id is required' }, { status: 400 })
@@ -112,8 +113,9 @@ export async function POST(request: NextRequest) {
         body_text: body_text || '',
         media_urls,
         polished_text,
+        wall_slideshow: wall_slideshow && media_urls.length > 0,
       })
-      .select('id, person_id, body_text, polished_text, media_urls, created_at')
+      .select('id, person_id, body_text, polished_text, media_urls, wall_slideshow, created_at')
       .single()
 
     if (error) {

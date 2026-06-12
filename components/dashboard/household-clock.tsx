@@ -9,13 +9,15 @@ import {
 
 type HouseholdClockProps = {
   timeZone: string
+  /** One line date · time — saves height on kitchen wall. */
+  compact?: boolean
 }
 
 /**
  * Single kitchen-wall clock — greeting, date, and time in the household timezone.
  * Client-only tick avoids SSR UTC vs local mismatch.
  */
-export function HouseholdClock({ timeZone }: HouseholdClockProps) {
+export function HouseholdClock({ timeZone, compact = false }: HouseholdClockProps) {
   const [now, setNow] = useState<Date | null>(null)
 
   useEffect(() => {
@@ -50,8 +52,16 @@ export function HouseholdClock({ timeZone }: HouseholdClockProps) {
   return (
     <>
       <h1 className="page-title text-balance text-slate-900">{greeting}</h1>
-      <p className="mt-1 text-base text-slate-600 md:text-lg md:text-slate-500">{dateString}</p>
-      <p className="text-sm font-medium tabular-nums text-[#5C6478]">{timeString}</p>
+      {compact ? (
+        <p className="today-glance-datetime mt-0.5 text-base tabular-nums text-[#5C6478] sm:text-lg">
+          {dateString} · {timeString}
+        </p>
+      ) : (
+        <>
+          <p className="mt-1 text-base text-slate-600 md:text-lg md:text-slate-500">{dateString}</p>
+          <p className="text-sm font-medium tabular-nums text-[#5C6478]">{timeString}</p>
+        </>
+      )}
       <p className="sr-only">Home timezone: {timezoneLabel(timeZone)}</p>
     </>
   )

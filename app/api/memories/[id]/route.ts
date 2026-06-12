@@ -22,13 +22,16 @@ export async function PATCH(
     if (Array.isArray(body.media_urls)) {
       updates.media_urls = body.media_urls.filter((p: unknown) => typeof p === 'string')
     }
+    if (typeof body.wall_slideshow === 'boolean') {
+      updates.wall_slideshow = body.wall_slideshow
+    }
 
     const { data, error } = await supabase
       .from('memories')
       .update(updates)
       .eq('id', id)
       .eq('user_id', user.id)
-      .select('id, person_id, body_text, polished_text, media_urls, created_at')
+      .select('id, person_id, body_text, polished_text, media_urls, wall_slideshow, created_at')
       .single()
 
     if (error || !data) {

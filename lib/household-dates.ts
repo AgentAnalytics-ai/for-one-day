@@ -35,6 +35,7 @@ export type HouseholdWeekDay = {
   weekdayShort: string
   dateNum: number
   isToday: boolean
+  isPast: boolean
 }
 
 function zonedParts(date: Date, timeZone: string) {
@@ -94,6 +95,14 @@ export function buildHouseholdWeekDays(anchor = new Date(), timeZone = HOUSEHOLD
       weekdayShort: new Intl.DateTimeFormat('en-US', { timeZone, weekday: 'short' }).format(noon),
       dateNum: d,
       isToday: dateKey === todayKey,
+      isPast: dateKey < todayKey,
     }
   })
+}
+
+/** Today and future days in the household week — hide past from wall glance. */
+export function upcomingHouseholdWeekDays<D extends { dateKey: string; isPast?: boolean }>(
+  days: D[]
+): D[] {
+  return days.filter((d) => !d.isPast)
 }
