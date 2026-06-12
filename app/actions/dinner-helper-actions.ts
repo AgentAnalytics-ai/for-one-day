@@ -22,6 +22,30 @@ function householdNowLabel(): string {
   })
 }
 
+async function getOtherHouseholdFirstNames(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  familyId: string,
+  currentUserId: string
+): Promise<string[]> {
+  const { data: memberRows } = await supabase
+    .from('family_members')
+    .select('user_id')
+    .eq('family_id', familyId)
+    .neq('user_id', currentUserId)
+
+  const ids = (memberRows ?? []).map((m) => m.user_id)
+  if (ids.length === 0) return []
+
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .in('user_id', ids)
+
+  return (profiles ?? [])
+    .map((p) => p.full_name?.trim().split(/\s+/)[0])
+    .filter((n): n is string => Boolean(n))
+}
+
 async function requireDinnerHelperAccess() {
   const supabase = await createClient()
   const {
@@ -38,17 +62,17 @@ async function requireDinnerHelperAccess() {
   }
 
   const canUse = await householdHasSharedPlan(supabase, user.id)
-  return { canUse, planDate: toHouseholdDateKey(new Date()) }
+  const householdNames = await getOtherHouseholdFirstNames(supabase, familyId, user.id)
+  return { canUse, planDate: toHouseholdDateKey(new Date()), householdNames }
 }
 
 export async function runDinnerHelper(input: {
   mealHint: string
-  recipeLink?: string
   notes?: string
   servingTime?: string
 }): Promise<{ success: boolean; plan?: DinnerHelperPlan; error?: string }> {
   try {
-    const { canUse } = await requireDinnerHelperAccess()
+    const { canUse, householdNames } = await requireDinnerHelperAccess()
     if (!canUse) {
       return { success: false, error: UPGRADE_MESSAGE }
     }
@@ -57,17 +81,17 @@ export async function runDinnerHelper(input: {
     if (!mealHint && !input.notes?.trim()) {
       return {
         success: false,
-        error: 'What are you making tonight? A name, a link, or a quick note is enough.',
+        error: 'What’s for dinner? A meal name or a quick note is enough.',
       }
     }
 
     const plan = await generateDinnerHelperPlan({
       mealHint: mealHint || 'Dinner tonight',
-      recipeLink: input.recipeLink,
       notes: input.notes,
       servingTime: input.servingTime,
       nowLabel: householdNowLabel(),
       timezone: HOUSEHOLD_TZ,
+      householdNames,
     })
 
     if (!plan) {

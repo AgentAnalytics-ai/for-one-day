@@ -11,41 +11,43 @@ export type DinnerHelperPlan = {
 
 export async function generateDinnerHelperPlan(params: {
   mealHint: string
-  recipeLink?: string
   notes?: string
   servingTime?: string
   nowLabel: string
   timezone: string
+  /** Other household members' first names — use these, never "wife/husband". */
+  householdNames?: string[]
 }): Promise<DinnerHelperPlan | null> {
   if (!openai) return null
 
   const mealHint = params.mealHint.trim() || 'Dinner tonight'
-  const link = params.recipeLink?.trim()
   const notes = params.notes?.trim()
+  const names = (params.householdNames ?? []).filter(Boolean)
 
-  const system = `You help a busy parent get dinner on the table tonight — like a calm friend in the kitchen, not a chef or an app.
-Write ONE playbook, not three versions of the same recipe.
+  const system = `You help a household get dinner on the table tonight — calm, practical, like a friend in the kitchen.
+Write ONE short playbook from the meal name and their notes. You cannot open recipe links or Pinterest.
 
 Structure:
-1. rightNow — 2-3 immediate actions only (text someone, pull from freezer, start water). Use their notes literally when they ask ("text wife to pull mushrooms out").
-2. timeline — the full evening in clock order from current time until plates hit the table. Include prep AND cooking here. Each step is one short sentence. Labels must be realistic times between now and dinner.
-3. cookSteps — ONLY detailed stove technique that does NOT fit a timed line (empty array is fine and preferred when timeline covers cooking).
-4. shoppingSuggestions — only items they might still need to buy.
+1. rightNow — 2-3 immediate actions (text someone by first name, pull from freezer, start water).
+2. timeline — clock order from now until plates hit the table. Prep and cooking here. One short sentence per step.
+3. cookSteps — empty array unless timeline misses a technique detail.
+4. shoppingSuggestions — only items they may still need.
 
 Rules:
-- Never repeat the same instruction in timeline and cookSteps.
-- Do not number steps in strings (no "1." prefix).
-- mealTitle: short title case (e.g. "Mushroom cream pasta"), not ALL CAPS.
-- Plain language. They can do this.
-They may paste a Pinterest link you cannot open — rely on meal hint and notes.
+- Use household first names when texting someone: ${names.length ? names.join(', ') : 'use names from their notes'}.
+- NEVER say "your wife", "your husband", or generic spouse labels — first names only.
+- Keep each step under 12 words when possible. Large readable sentences.
+- Never repeat timeline content in cookSteps.
+- No numbered prefixes in strings.
+- mealTitle: short title case, not ALL CAPS.
 Return ONLY valid JSON. No markdown.`
 
   const user = `Household timezone: ${params.timezone}
 Current local time: ${params.nowLabel}
 Target dinner time: ${params.servingTime || 'around 6:00 PM'}
+${names.length ? `Household (first names): ${names.join(', ')}` : ''}
 
 Meal: ${mealHint}
-${link ? `Recipe link (for context only): ${link}` : ''}
 ${notes ? `What they told you: ${notes}` : ''}
 
 JSON schema:

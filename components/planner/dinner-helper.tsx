@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
-import { ChefHat, ChevronDown, Link2, Loader2, Pin, Plus, ShoppingBag, X } from 'lucide-react'
+import { ChefHat, ChevronDown, Loader2, Plus, ShoppingBag, X } from 'lucide-react'
 import Link from 'next/link'
 import {
   applyDinnerHelperResults,
@@ -42,7 +42,6 @@ export function DinnerHelper({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const [mounted, setMounted] = useState(false)
   const [mealHint, setMealHint] = useState(initialMealTitle ?? '')
-  const [recipeLink, setRecipeLink] = useState('')
   const [notes, setNotes] = useState('')
   const [servingTime, setServingTime] = useState('6:00 PM')
   const [plan, setPlan] = useState<DinnerHelperPlan | null>(null)
@@ -52,8 +51,6 @@ export function DinnerHelper({
   const [mealIdeas, setMealIdeas] = useState<MealIdea[]>([])
   const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null)
   const [showDetails, setShowDetails] = useState(false)
-  const [showSaveLink, setShowSaveLink] = useState(false)
-  const [saveForNextTime, setSaveForNextTime] = useState(true)
   const [ideasLoading, setIdeasLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
   const mealInputRef = useRef<HTMLInputElement>(null)
@@ -76,8 +73,6 @@ export function DinnerHelper({
     setSavedBanner(null)
     setSelectedIdeaId(null)
     setShowDetails(false)
-    setShowSaveLink(false)
-    setRecipeLink('')
     setNotes('')
   }, [])
 
@@ -129,9 +124,7 @@ export function DinnerHelper({
   const selectIdea = (idea: MealIdea) => {
     setSelectedIdeaId(idea.id)
     setMealHint(idea.title)
-    setRecipeLink(idea.sourceUrl ?? '')
     setNotes(idea.notes ?? '')
-    setShowSaveLink(false)
     setError(null)
   }
 
@@ -140,36 +133,17 @@ export function DinnerHelper({
     if (selectedIdeaId) setSelectedIdeaId(null)
   }
 
-  const handleMealPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const text = e.clipboardData.getData('text').trim()
-    if (/^https?:\/\//i.test(text)) {
-      e.preventDefault()
-      setRecipeLink(text)
-      setShowDetails(true)
-      setSaveForNextTime(true)
-      if (!mealHint.trim()) setMealHint('Tonight\'s dinner')
-    }
-  }
-
-  const handleQuickSaveLink = () => {
-    if (!recipeLink.trim() || !mealHint.trim()) {
-      setError('Add a name and link to save this recipe.')
-      return
-    }
+  const handleSaveFavorite = () => {
+    if (!mealHint.trim()) return
     setError(null)
     startTransition(async () => {
-      const result = await saveMealIdea({
-        title: mealHint.trim(),
-        sourceUrl: recipeLink.trim(),
-        notes: notes.trim() || undefined,
-      })
+      const result = await saveMealIdea({ title: mealHint.trim() })
       if (!result.success || !result.idea) {
-        setError(result.error ?? 'Could not save recipe')
+        setError(result.error ?? 'Could not save favorite')
         return
       }
       setMealIdeas((prev) => [result.idea!, ...prev.filter((i) => i.id !== result.idea!.id)])
       setSelectedIdeaId(result.idea.id)
-      setShowSaveLink(false)
     })
   }
 
@@ -177,26 +151,8 @@ export function DinnerHelper({
     setError(null)
     setSavedBanner(null)
     startTransition(async () => {
-      if (
-        saveForNextTime &&
-        recipeLink.trim() &&
-        mealHint.trim() &&
-        !selectedIdeaId
-      ) {
-        const saved = await saveMealIdea({
-          title: mealHint.trim(),
-          sourceUrl: recipeLink.trim(),
-          notes: notes.trim() || undefined,
-        })
-        if (saved.success && saved.idea) {
-          setMealIdeas((prev) => [saved.idea!, ...prev])
-          setSelectedIdeaId(saved.idea.id)
-        }
-      }
-
       const result = await runDinnerHelper({
         mealHint,
-        recipeLink: recipeLink || undefined,
         notes: notes || undefined,
         servingTime,
       })
@@ -327,7 +283,7 @@ export function DinnerHelper({
                   <div className="space-y-4 pb-2">
                     {mealIdeas.length > 0 ? (
                       <div>
-                        <p className="section-label mb-2">Saved for your home</p>
+                        <p className="section-label mb-2">Favorites</p>
                         <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 snap-x">
                           {mealIdeas.map((idea) => {
                             const selected = selectedIdeaId === idea.id
@@ -342,21 +298,14 @@ export function DinnerHelper({
                                     : 'border-[#E7E2DA] bg-white text-primary-900 hover:border-amber-200'
                                 }`}
                               >
-                                <span className="flex items-center gap-1.5">
-                                  {idea.sourceUrl?.includes('pinterest') ? (
-                                    <Pin className="h-3.5 w-3.5 shrink-0 opacity-70" />
-                                  ) : idea.sourceUrl ? (
-                                    <Link2 className="h-3.5 w-3.5 shrink-0 opacity-70" />
-                                  ) : null}
-                                  {idea.title}
-                                </span>
+                                {idea.title}
                               </button>
                             )
                           })}
                         </div>
                       </div>
                     ) : ideasLoading ? (
-                      <p className="text-sm text-[#5C6478]">Loading saved recipes…</p>
+                      <p className="text-sm text-[#5C6478]">Loading favorites…</p>
                     ) : null}
 
                     <label className="block">
@@ -366,67 +315,26 @@ export function DinnerHelper({
                         type="text"
                         value={mealHint}
                         onChange={(e) => handleMealChange(e.target.value)}
-                        onPaste={handleMealPaste}
                         placeholder={
                           mealIdeas.length > 0
-                            ? 'Pick above or type tonight\'s meal…'
+                            ? 'Pick a favorite or type tonight\'s meal…'
                             : 'Garlic butter steak, tacos…'
                         }
                         className="field-input text-base"
                         autoComplete="off"
                       />
-                      {selectedIdeaId && recipeLink ? (
-                        <p className="mt-1.5 flex items-center gap-1 text-xs text-[#5C6478]">
-                          <Pin className="h-3 w-3" />
-                          Recipe link attached
-                        </p>
-                      ) : null}
                     </label>
 
-                    {!selectedIdeaId && !showSaveLink ? (
+                    {mealHint.trim() && !selectedIdeaId ? (
                       <button
                         type="button"
-                        onClick={() => setShowSaveLink(true)}
+                        onClick={handleSaveFavorite}
+                        disabled={isPending}
                         className="inline-flex items-center gap-1.5 text-sm font-medium text-[#5C6478] transition-smooth hover:text-primary-900"
                       >
                         <Plus className="h-4 w-4" />
-                        Save a Pinterest link
+                        Save to favorites
                       </button>
-                    ) : null}
-
-                    {showSaveLink && !selectedIdeaId ? (
-                      <div className="space-y-3 rounded-xl border border-[#E7E2DA] bg-white/80 p-3.5">
-                        <label className="block">
-                          <span className="section-label mb-1.5 block">Paste link</span>
-                          <input
-                            type="url"
-                            value={recipeLink}
-                            onChange={(e) => {
-                              setRecipeLink(e.target.value)
-                              setSaveForNextTime(true)
-                            }}
-                            placeholder="pinterest.com/pin/…"
-                            className="field-input"
-                          />
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            onClick={handleQuickSaveLink}
-                            disabled={isPending || !recipeLink.trim() || !mealHint.trim()}
-                            className="btn-secondary text-xs"
-                          >
-                            Save for your home
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setShowSaveLink(false)}
-                            className="text-xs font-medium text-[#5C6478] hover:text-primary-900"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
                     ) : null}
 
                     <button
@@ -461,17 +369,6 @@ export function DinnerHelper({
                             className="field-input max-w-[10rem]"
                           />
                         </label>
-                        {recipeLink.trim() && !selectedIdeaId ? (
-                          <label className="flex cursor-pointer items-center gap-2 text-sm text-[#5C6478]">
-                            <input
-                              type="checkbox"
-                              checked={saveForNextTime}
-                              onChange={(e) => setSaveForNextTime(e.target.checked)}
-                              className="h-4 w-4 rounded border-[#D4CFC6]"
-                            />
-                            Save link for next time
-                          </label>
-                        ) : null}
                       </div>
                     ) : null}
 
@@ -498,7 +395,7 @@ export function DinnerHelper({
                         {plan.rightNow.map((step) => (
                           <li
                             key={step}
-                            className="rounded-xl border border-[#E7E2DA] bg-white px-3 py-2.5 text-sm text-primary-900"
+                            className="rounded-xl border border-[#E7E2DA] bg-white px-4 py-3 text-base leading-snug text-primary-900"
                           >
                             {step}
                           </li>
@@ -513,14 +410,14 @@ export function DinnerHelper({
                           {plan.timeline.map((row) => (
                             <li
                               key={`${row.label}-${row.step}`}
-                              className="flex gap-3 rounded-xl bg-white/80 px-3 py-2.5 text-sm"
+                              className="flex gap-3 rounded-xl border border-[#E7E2DA]/60 bg-white px-4 py-3"
                             >
                               {row.label ? (
-                                <span className="shrink-0 font-mono text-xs font-semibold text-primary-900">
+                                <span className="shrink-0 text-sm font-semibold tabular-nums text-primary-900">
                                   {row.label}
                                 </span>
                               ) : null}
-                              <span className="text-[#5C6478]">{row.step}</span>
+                              <span className="text-base leading-snug text-primary-900">{row.step}</span>
                             </li>
                           ))}
                         </ul>
